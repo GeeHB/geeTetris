@@ -41,8 +41,8 @@ int main(){
     // # of dirty lines
     tabRangedValue tabLines(TAB_LINES, MIN_DIRTY_LINES, MAX_DIRTY_LINES);
     value.uVal = params.dirtyLines_;
-    tabLevel.setValue(value);
-    tabLevel.setComment(TAB_DIRTY_LINES_STR);
+    tabLines.setValue(value);
+    tabLines.setComment(TAB_DIRTY_LINES_STR);
 
     // display shadows ?
     value.bVal = params.shadow_;
@@ -58,6 +58,7 @@ int main(){
     // Add tabs ...
     //
     tabManager tmanager;
+    TAB_STATUS tStatus;
     tab::clearScreen();
 
     tmanager.add(&tabAbout, 0);
@@ -67,12 +68,14 @@ int main(){
     tmanager.add(&tabTetris, 4);
     tmanager.add(&tabExit, 5);
 
+    // Select the first
+    tmanager.select(0)->select(tStatus);
+
     // Handle options
     bool quitApp(false), getNextKey(true);
     uint car(0);
     int8_t sel(0);
     tab* currentTab;
-    TAB_STATUS tStatus;
 
 #ifdef DEST_CASIO_FXCG50
     key_event_t evt;

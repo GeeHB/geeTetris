@@ -173,9 +173,9 @@ void tabRangedValue::setRange(uint8_t minVal, uint8_t maxVal){
 
     // Position
     xPos_ = (CASIO_WIDTH - TAB_RANGE_WIDTH * (maxVal_ - minVal_ + 1)) / 2;
-    yPos_ = TAB_RANGE_POS_Y;
+    yPos_ = int((CASIO_HEIGHT - TAB_HEIGHT) / 2);
 
-    // Current val must be in the range
+    // Current value must be in the range
     value_.uVal = (uint8_t)_inRange(value_.iVal);
 }
 
@@ -188,6 +188,10 @@ void tabRangedValue::select(TAB_STATUS& status){
     int8_t oldVal = -1;
     int8_t newVal = value_.uVal;
     bool stay(true);
+
+#ifdef DEST_CASIO_FXCG50
+    clearScreen();
+#endif // #ifdef DEST_CASIO_FXCG50
 
     // Draw all possible numbers
     _drawRange();
@@ -262,6 +266,10 @@ void tabRangedValue::_drawRange(){
     }
 
 #ifdef DEST_CASIO_FXCG50
+    if (comment_){
+        dtext(5, yPos_ - 15, COLOUR_BLACK, comment_);
+    }
+
     dupdate();
 #endif // #ifdef DEST_CASIO_FXCG50
 }
@@ -273,6 +281,7 @@ void tabRangedValue::_selectValue(int8_t value, bool select){
         uint16_t x(xPos_ + (value - minVal_) * TAB_RANGE_WIDTH + 1);
 
 #ifdef DEST_CASIO_FXCG50
+        clearScreen();
         drect(x, yPos_ + 1 , x + TAB_RANGE_WIDTH - 1, yPos_ + TAB_RANGE_WIDTH - 1 , select?COLOUR_BK_HILITE:COLOUR_WHITE);
         dprint(x + 3, yPos_ + 2, select?COLOUR_WHITE:COLOUR_BLACK, "%d", value);
 #else
@@ -343,8 +352,8 @@ tab* tabManager::select(int8_t ID){
         return tabs_[ID];
     }
 
-    // Not a valid tab
-    return NULL;
+    // Not a valid tab ?
+    return (ID == active_ && active_ != -1?tabs_[ID]:NULL);
 }
 
 // Redraw all tabs

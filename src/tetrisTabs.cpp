@@ -31,6 +31,7 @@ extern bopti_image_t img_geeTetris;
 void aboutTab::select(TAB_STATUS& status){
     // Draw the image and text
 #ifdef DEST_CASIO_FXCG50
+    clearScreen();
     dimage(0, 0, &img_geeTetris);
 
     char copyright[255];    // Should be enough !
@@ -61,6 +62,10 @@ void aboutTab::select(TAB_STATUS& status){
 void tetrisTab::select(TAB_STATUS& status){
 
     if (params_){
+#ifdef DEST_CASIO_FXCG50
+        clearScreen();
+#endif // #ifdef DEST_CASIO_FXCG50
+
         tetrisGame game(params_);
         if (game.start()){
             _showScores(game.score());  // Show final score

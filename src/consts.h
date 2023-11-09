@@ -41,7 +41,7 @@ extern "C" {
 
 // App. infos
 #define APP_NAME     "geeTetris"
-#define APP_VERSION  "0.1 - beta"
+#define APP_VERSION  "0.1 - beta 2"
 #define APP_AUTHOR   "GeeHB"
 
 // Playfield's dimensions (in box units)
@@ -174,7 +174,7 @@ enum GAME_KEY{
 
 // Comments for tabs
 #define TAB_LEVEL_STR   "Choose starting level"
-#define TAB_DIRTY_LINES_STR   "Number of 'dirty' lines when starting game"
+#define TAB_DIRTY_LINES_STR   "Number of 'dirty' lines when starting the game"
 #define TAB_SHADOW_OFF_STR  "No shadows"
 #define TAB_SHADOW_ON_STR   "Shadows will be drawn"
 

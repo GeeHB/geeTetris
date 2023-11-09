@@ -9,7 +9,7 @@ include(Fxconv)
 find_package(Gint 2.9 REQUIRED)
 
 set(SOURCES
-  src/jTetris.cpp
+  src/geeTetris.cpp
   src/tabs.cpp
   src/tetrisTabs.cpp
   src/tetrisGame.cpp
@@ -35,6 +35,6 @@ if("${FXSDK_PLATFORM_LONG}" STREQUAL fx9860G)
   generate_g1a(TARGET myaddin OUTPUT "MyAddin.g1a"
     NAME "MyAddin" ICON assets-fx/icon.png)
 elseif("${FXSDK_PLATFORM_LONG}" STREQUAL fxCG50)
-  generate_g3a(TARGET myaddin OUTPUT "jtetris.g3a"
-    NAME "jTetris" ICONS assets-cg/icon-uns.png assets-cg/icon-sel.png)
+  generate_g3a(TARGET myaddin OUTPUT "geeTetris.g3a"
+    NAME "geeTetris" ICONS assets-cg/icon-uns.png assets-cg/icon-sel.png)
 endif()
