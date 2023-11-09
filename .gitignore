@@ -1,0 +1,9 @@
+/build-cg
+/build-cg-push
+/*.g3a
+
+# Python bytecode
+__pycache__/
+
+# Common IDE files
+.vscode
