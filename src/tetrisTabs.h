@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //--
-//--	File	: tabs.h
+//--	File	: tetrisTabs.h
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
@@ -14,8 +14,8 @@
 //--
 //---------------------------------------------------------------------------
 
-#ifndef __J_TETRIS_CASIO_TETRIS_TAB_h__
-#define __J_TETRIS_CASIO_TETRIS_TAB_h__    1
+#ifndef __J_TETRIS_CASIO_TETRIS_TABS_h__
+#define __J_TETRIS_CASIO_TETRIS_TABS_h__    1
 
 #include "tabs.h"
 
@@ -81,6 +81,6 @@ private:
 }
 #endif // #ifdef __cplusplus
 
-#endif // __J_TETRIS_CASIO_TETRIS_TAB_h__
+#endif // __J_TETRIS_CASIO_TETRIS_TABS_h__
 
 // EOF
