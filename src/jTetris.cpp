@@ -15,7 +15,7 @@
 //---------------------------------------------------------------------------
 
 #include "tabs.h"
-#include "tetrisTab.h"
+#include "tetrisTabs.h"
 
 #ifdef DEST_CASIO_FXCG50
 #include <gint/gint.h>
@@ -29,7 +29,8 @@ int main(){
 
     // Create tabs
     //
-    tabValue tabAbout(TAB_ABOUT), tabShadow(TAB_SHADOW);
+    aboutTab tabAbout(TAB_ABOUT);
+    tabValue tabShadow(TAB_SHADOW);
 
     // starting level
     tabRangedValue tabLevel(TAB_LEVEL, MIN_LEVEL, MAX_LEVEL);

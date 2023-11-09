@@ -10,12 +10,38 @@
 //--
 //--	Description:
 //--
-//--			Implementation of tetrisTab - The tetris Game
+//--			Implementation of tetrisTab and aboutTab
 //--
 //---------------------------------------------------------------------------
 
-#include "tetrisTab.h"
+#include "tetrisTabs.h"
 #include "tetrisGame.h"
+
+// Background image
+#ifdef DEST_CASIO_FXCG50
+extern bopti_image_t img_geeTetris;
+#endif // #ifdef DEST_CASIO_FXCG50
+
+//
+// aboutTab
+//
+
+// The current tab is selected => show splash screen
+//
+void aboutTab::select(TAB_STATUS& status){
+    // Draw the image
+#ifdef DEST_CASIO_FXCG50
+    dimage(0, 0, &img_geeTetris);
+#endif // #ifdef DEST_CASIO_FXCG50
+
+    // Nothing special
+    status.action = ACTION_NONE;
+    status.exitKey = KEY_NONE;
+}
+
+//
+// tetrisTab
+//
 
 // The current tab is selected => let's play
 //

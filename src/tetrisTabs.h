@@ -10,7 +10,7 @@
 //--
 //--	Description:
 //--
-//--			Definition of tetrisTab
+//--			Definition of tetrisTab and aboutTab
 //--
 //---------------------------------------------------------------------------
 
@@ -23,6 +23,23 @@
 extern "C" {
 #endif // #ifdef __cplusplus
 
+
+//---------------------------------------------------------------------------
+//--
+//-- aboutTab - Splash screen
+//--
+//---------------------------------------------------------------------------
+
+class aboutTab : public tab{
+public:
+    // Construction
+    aboutTab(const char* tname)
+    :tab(tname, ACTION_NONE){
+    }
+
+    // The current tab is selected => show splash screen
+    void select(TAB_STATUS& status);
+};
 
 //---------------------------------------------------------------------------
 //--

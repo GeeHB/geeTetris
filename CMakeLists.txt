@@ -21,16 +21,11 @@ set(ASSETS
   assets-cg/font_default.png
   assets-cg/font_vert.png
  )
-set(ASSETS_fx
-  assets-fx/example.png
-  # ...
-)
 set(ASSETS_cg
-  assets-cg/example.png
-  # ...
+  assets-cg/coloured.png
 )
 
-fxconv_declare_assets(${ASSETS} ${ASSETS_fx} ${ASSETS_cg} WITH_METADATA)
+fxconv_declare_assets(${ASSETS} ${ASSETS_cg} WITH_METADATA)
 
 add_executable(myaddin ${SOURCES} ${ASSETS} ${ASSETS_${FXSDK_PLATFORM}})
 target_compile_options(myaddin PRIVATE -Wall -Wextra -Os)

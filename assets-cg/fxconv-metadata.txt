@@ -1,6 +1,6 @@
-example.png:
+coloured.png:
   type: bopti-image
-  name: img_example
+  name: img_geeTetris
   
 font_vert.png:
   type: font
