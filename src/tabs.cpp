@@ -171,7 +171,7 @@ void tabRangedValue::setRange(uint8_t minVal, uint8_t maxVal){
         maxVal_ = (minVal==maxVal?maxVal+1:minVal);
     }
 
-    // Position
+    // Position (centered)
     xPos_ = (CASIO_WIDTH - TAB_RANGE_WIDTH * (maxVal_ - minVal_ + 1)) / 2;
     yPos_ = int((CASIO_HEIGHT - TAB_HEIGHT) / 2);
 
@@ -185,13 +185,10 @@ void tabRangedValue::setRange(uint8_t minVal, uint8_t maxVal){
 void tabRangedValue::select(TAB_STATUS& status){
 
     int key(0);
-    int8_t oldVal = -1;
-    int8_t newVal = value_.uVal;
+    int8_t oldVal(-1), newVal(value_.uVal);
     bool stay(true);
 
-#ifdef DEST_CASIO_FXCG50
     clearScreen();
-#endif // #ifdef DEST_CASIO_FXCG50
 
     // Draw all possible numbers
     _drawRange();
@@ -243,7 +240,6 @@ void tabRangedValue::select(TAB_STATUS& status){
                 oldVal = newVal;
             }
         }
-
     }
     while (stay);
 
@@ -254,7 +250,7 @@ void tabRangedValue::select(TAB_STATUS& status){
 
 // Draw the range
 void tabRangedValue::_drawRange(){
-    uint8_t max = maxVal_ - minVal_;
+    uint8_t max(maxVal_ - minVal_);
     uint16_t x(xPos_);
 
     for (uint8_t index=0; index<max; index++){
@@ -281,7 +277,6 @@ void tabRangedValue::_selectValue(int8_t value, bool select){
         uint16_t x(xPos_ + (value - minVal_) * TAB_RANGE_WIDTH + 1);
 
 #ifdef DEST_CASIO_FXCG50
-        clearScreen();
         drect(x, yPos_ + 1 , x + TAB_RANGE_WIDTH - 1, yPos_ + TAB_RANGE_WIDTH - 1 , select?COLOUR_BK_HILITE:COLOUR_WHITE);
         dprint(x + 3, yPos_ + 2, select?COLOUR_WHITE:COLOUR_BLACK, "%d", value);
 #else
@@ -309,7 +304,7 @@ bool tabManager::add(tab* ptab, int8_t ID){
         return false;
     }
 
-    int8_t index = ((ID==-1)?_findFreeID():ID);
+    int8_t index((ID==-1)?_findFreeID():ID);
     if (-1 == index){
         return false;   // no free place
     }
@@ -359,7 +354,7 @@ tab* tabManager::select(int8_t ID){
 // Redraw all tabs
 //
 void tabManager::update(){
-    tab* ptab;
+    tab* ptab(NULL);
     RECT anchor;
     for (uint8_t index(0); index < TAB_COUNT; index++){
         ptab = tabs_[index];
