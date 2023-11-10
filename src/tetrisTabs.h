@@ -4,7 +4,7 @@
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: jtetris - cpp version
+//--	Project	: geeTetris - cpp version
 //--
 //---------------------------------------------------------------------------
 //--
@@ -14,8 +14,8 @@
 //--
 //---------------------------------------------------------------------------
 
-#ifndef __J_TETRIS_CASIO_TETRIS_TABS_h__
-#define __J_TETRIS_CASIO_TETRIS_TABS_h__    1
+#ifndef __GEE_TETRIS_CASIO_TETRIS_TABS_h__
+#define __GEE_TETRIS_CASIO_TETRIS_TABS_h__    1
 
 #include "tabs.h"
 
@@ -81,6 +81,6 @@ private:
 }
 #endif // #ifdef __cplusplus
 
-#endif // __J_TETRIS_CASIO_TETRIS_TABS_h__
+#endif // __GEE_TETRIS_CASIO_TETRIS_TABS_h__
 
 // EOF

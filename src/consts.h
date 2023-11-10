@@ -4,7 +4,7 @@
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: jtetris - cpp version
+//--	Project	: geeTetris - cpp version
 //--
 //---------------------------------------------------------------------------
 //--
@@ -14,8 +14,8 @@
 //--
 //---------------------------------------------------------------------------
 
-#ifndef __J_TETRIS_CONSTS_h__
-#define __J_TETRIS_CONSTS_h__    1
+#ifndef __GEE_TETRIS_CONSTS_h__
+#define __GEE_TETRIS_CONSTS_h__    1
 
 #ifndef LINUX_VER
 #define DEST_CASIO_FXCG50        1   // Compile for Casio FX CG50 calculator
@@ -41,7 +41,7 @@ extern "C" {
 
 // App. infos
 #define APP_NAME     "geeTetris"
-#define APP_VERSION  "0.1 - beta 2"
+#define APP_VERSION  "0.2 - beta 3"
 #define APP_AUTHOR   "GeeHB"
 
 // Playfield's dimensions (in box units)
@@ -88,7 +88,7 @@ enum VALUE_ID{
 #define LEVEL_STR   "Level : "
 #define COMPLETED_LINES_STR "Lines : "
 
-#define MAX_VALUE_LEN 30
+#define MAX_VALUE_NAME_LEN 30
 
 //
 // Colour IDs
@@ -163,6 +163,10 @@ enum GAME_KEY{
 };
 #endif // #ifdef DEST_CASIO_FXCG50
 
+#ifndef KEY_NONE
+#define KEY_NONE        0       // No key pressed
+#endif // #ifndef KEY_NONE
+
 // Tab names
 //
 #define TAB_ABOUT   "Tetris"
@@ -183,14 +187,10 @@ enum GAME_KEY{
 //
 
 #define MIN_LEVEL   1
-#define MAX_LEVEL   9
+#define MAX_LEVEL   7
 
 #define MIN_DIRTY_LINES   0
 #define MAX_DIRTY_LINES   8
-
-
-#define TAB_RANGE_WIDTH         11
-#define TAB_RANGE_POS_Y         200     // Vertical pos of scale
 
 //---------------------------------------------------------------------------
 //--
@@ -268,6 +268,6 @@ typedef struct __uvalue{
 }
 #endif // #ifdef __cplusplus
 
-#endif // __J_TETRIS_CONSTS_h__
+#endif // __GEE_TETRIS_CONSTS_h__
 
 // EOF

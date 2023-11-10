@@ -4,7 +4,7 @@
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: jtetris - cpp version
+//--	Project	: geeTetris - cpp version
 //--
 //---------------------------------------------------------------------------
 //--
@@ -14,8 +14,8 @@
 //--
 //---------------------------------------------------------------------------
 
-#ifndef __J_TETRIS_CASIO_FXCG50_h__
-#define __J_TETRIS_CASIO_FXCG50_h__    1
+#ifndef __GEE_TETRIS_CASIO_FXCG50_h__
+#define __GEE_TETRIS_CASIO_FXCG50_h__    1
 
 #include "consts.h"
 
@@ -131,6 +131,6 @@ class casioFXCG50{
 }
 #endif // #ifdef __cplusplus
 
-#endif // __J_TETRIS_CASIO_FXCG50_h__
+#endif // __GEE_TETRIS_CASIO_FXCG50_h__
 
 // EOF

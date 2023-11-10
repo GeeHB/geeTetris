@@ -4,7 +4,7 @@
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: jtetris - cpp version
+//--	Project	: geeTetris - cpp version
 //--
 //---------------------------------------------------------------------------
 //--
@@ -49,8 +49,7 @@ void aboutTab::select(TAB_STATUS& status){
 #endif // #ifdef DEST_CASIO_FXCG50
 
     // Nothing special
-    status.action = ACTION_NONE;
-    status.exitKey = KEY_NONE;
+    tab::select(status);
 }
 
 //
@@ -60,6 +59,8 @@ void aboutTab::select(TAB_STATUS& status){
 // The current tab is selected => let's play
 //
 void tetrisTab::select(TAB_STATUS& status){
+
+    tab::select(status);
 
     if (params_){
 #ifdef DEST_CASIO_FXCG50

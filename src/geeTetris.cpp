@@ -4,7 +4,7 @@
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: jtetris / cpp version
+//--	Project	: geeTetris / cpp version
 //--
 //---------------------------------------------------------------------------
 //--

@@ -4,7 +4,7 @@
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: jtetris - cpp version
+//--	Project	: geeTetris - cpp version
 //--
 //---------------------------------------------------------------------------
 //--
@@ -21,8 +21,8 @@
 //--
 //---------------------------------------------------------------------------
 
-#ifndef __J_TETRIS_PIECE_TEMPLATE_h__
-#define __J_TETRIS_PIECE_TEMPLATE_h__    1
+#ifndef __GEE_TETRIS_PIECE_TEMPLATE_h__
+#define __GEE_TETRIS_PIECE_TEMPLATE_h__    1
 
 #ifdef __cplusplus
 extern "C" {
@@ -140,6 +140,6 @@ extern "C" {
 #endif // #ifdef __cplusplus
 
 
-#endif // __J_TETRIS_PIECE_TEMPLATE_h__
+#endif // __GEE_TETRIS_PIECE_TEMPLATE_h__
 
 // EOF

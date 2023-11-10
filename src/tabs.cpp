@@ -4,7 +4,7 @@
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: jtetris - cpp version
+//--	Project	: geeTetris - cpp version
 //--
 //---------------------------------------------------------------------------
 //--
@@ -136,15 +136,18 @@ char* tabValue::_dup(char* source, const char* val){
 //
 void tabValue::select(TAB_STATUS& status){
 
-    // Change the value
-    value_.bVal = !value_.bVal;
+    // Avoid to change the value when F key is first pressed
+    if (selected()){
+        // Change the value
+        value_.bVal = !value_.bVal;
+    }
 
     // update comment
     clearScreen();
 
 #ifdef DEST_CASIO_FXCG50
     if (comment_){
-        dtext(20, 20, COLOUR_BLACK, value_.bVal?comment_:(ucomment_?ucomment_:comment_));
+        dtext(TAB_RANGE_COMMENT_X, int((CASIO_HEIGHT - TAB_HEIGHT) / 2), COLOUR_BLACK, value_.bVal?comment_:(ucomment_?ucomment_:comment_));
     }
 
     dupdate();
@@ -172,13 +175,12 @@ void tabRangedValue::setRange(uint8_t minVal, uint8_t maxVal){
     }
 
     // Position (centered)
-    xPos_ = (CASIO_WIDTH - TAB_RANGE_WIDTH * (maxVal_ - minVal_ + 1)) / 2;
+    xPos_ = (CASIO_WIDTH - TAB_RANGE_BOX_WIDTH * (maxVal_ - minVal_ + 1)) / 2;
     yPos_ = int((CASIO_HEIGHT - TAB_HEIGHT) / 2);
 
     // Current value must be in the range
     value_.uVal = (uint8_t)_inRange(value_.iVal);
 }
-
 
 // Change the value
 //
@@ -244,6 +246,7 @@ void tabRangedValue::select(TAB_STATUS& status){
     while (stay);
 
     // "return" key pressed (or 0 if none)
+    tab::select(status);
     status.action = ACTION_NONE;
     status.exitKey = key;
 }
@@ -255,15 +258,15 @@ void tabRangedValue::_drawRange(){
 
     for (uint8_t index=0; index<max; index++){
 #ifdef DEST_CASIO_FXCG50
-        drect_border(x, yPos_, x + TAB_RANGE_WIDTH, yPos_ + TAB_RANGE_WIDTH, NO_COLOR, 1, COLOUR_BLACK);
+        drect_border(x, yPos_, x + TAB_RANGE_BOX_WIDTH, yPos_ + TAB_RANGE_BOX_WIDTH, NO_COLOR, 1, COLOUR_BLACK);
         dprint(x + 3, yPos_ + 2, COLOUR_BLACK, "%d", (index+minVal_));
 #endif // #ifdef DEST_CASIO_FXCG50
-        x+=TAB_RANGE_WIDTH;
+        x+=TAB_RANGE_BOX_WIDTH;
     }
 
 #ifdef DEST_CASIO_FXCG50
     if (comment_){
-        dtext(5, yPos_ - 15, COLOUR_BLACK, comment_);
+        dtext(TAB_RANGE_COMMENT_X, yPos_ - 15, COLOUR_BLACK, comment_);
     }
 
     dupdate();
@@ -274,10 +277,10 @@ void tabRangedValue::_drawRange(){
 //
 void tabRangedValue::_selectValue(int8_t value, bool select){
     if (value >= minVal_ && value <= maxVal_){
-        uint16_t x(xPos_ + (value - minVal_) * TAB_RANGE_WIDTH + 1);
+        uint16_t x(xPos_ + (value - minVal_) * TAB_RANGE_BOX_WIDTH + 1);
 
 #ifdef DEST_CASIO_FXCG50
-        drect(x, yPos_ + 1 , x + TAB_RANGE_WIDTH - 1, yPos_ + TAB_RANGE_WIDTH - 1 , select?COLOUR_BK_HILITE:COLOUR_WHITE);
+        drect(x, yPos_ + 1 , x + TAB_RANGE_BOX_WIDTH - 1, yPos_ + TAB_RANGE_BOX_WIDTH - 1 , select?COLOUR_BK_HILITE:COLOUR_WHITE);
         dprint(x + 3, yPos_ + 2, select?COLOUR_WHITE:COLOUR_BLACK, "%d", value);
 #else
         x++;    // for compiler
@@ -418,6 +421,14 @@ void tabManager::_select(int8_t ID, bool activate){
         tab* ptab = tabs_[ID];
 
         if (ptab){
+            // Change selection status
+            if (activate){
+                ptab->select();
+            }
+            else{
+                ptab->unSelect();
+            }
+
             ptab->draw(activate);
         }
         else{

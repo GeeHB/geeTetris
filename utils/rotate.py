@@ -54,13 +54,13 @@ if "__main__" == __name__:
     destV = Image.new('RGB', (HORZ_COUNT * CHAR_H, VERT_COUNT * CHAR_W), C_WHITE)
     destH = Image.new('RGB', (width, height), C_WHITE)
 
-    # Rotate char bits.
+    # Rotate char pixels
     for row in range(VERT_COUNT):
         for y in range(CHAR_H):
             for col in range(HORZ_COUNT):
                 for x in range(CHAR_W):
                     
-                    pos = (col * CHAR_W + x, row * CHAR_H + y)
+                    pos = (col * CHAR_W + x, row * CHAR_H + y)  # tuple containing pixel position
                     
                     # put the same pixel in the dest vert. file
                     destV.putpixel((col * CHAR_H + y, (row + 1) * CHAR_W - x -1), src.getpixel(pos))

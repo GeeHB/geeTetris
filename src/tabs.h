@@ -4,7 +4,7 @@
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: jtetris - cpp version
+//--	Project	: geeTetris - cpp version
 //--
 //---------------------------------------------------------------------------
 //--
@@ -14,8 +14,8 @@
 //--
 //---------------------------------------------------------------------------
 
-#ifndef __J_TETRIS_CASIO_TABS_h__
-#define __J_TETRIS_CASIO_TABS_h__    1
+#ifndef __GEE_TETRIS_CASIO_TABS_h__
+#define __GEE_TETRIS_CASIO_TABS_h__    1
 
 #include "casioFX-CG50.h"
 
@@ -35,11 +35,12 @@ extern "C" {
 #define TAB_HEIGHT      22
 #define TAB_WIDTH       (CASIO_WIDTH / TAB_COUNT)
 
-#define TAB_ROUNDED_DIM     4
-
+#define TAB_ROUNDED_DIM  4
 #define TAB_NAME_LEN    10      // max char
 
-#define KEY_NONE        0       // No key pressed
+#define TAB_RANGE_BOX_WIDTH     11      // width of a single box in pixels
+
+#define TAB_RANGE_COMMENT_X     10
 
 // Data handled by a tabValue object
 //
@@ -95,16 +96,27 @@ public:
     ~tab(){}
 
     // The current tab is selected (and can take control of the keyboard)
+    // this method could/should be overloaded
     virtual void select(TAB_STATUS& status){
+
+        select();
+
         // Nothing todo
         status.action = action_;
         status.exitKey = KEY_NONE;
     }
+    void select(){
+        selected_ = true;
+    }
 
-    /*
-    // Unselect the current tab
-    void unSelect(){}
-    */
+    // The current tab is unselected
+    virtual void unSelect(){
+        selected_ = false;
+    }
+
+    bool selected(){
+        return selected_;
+    }
 
     // Draw
      void draw(bool selected = false){
@@ -136,6 +148,7 @@ public:
 protected:
     // Members
     char        name_[TAB_NAME_LEN + 1];
+    bool        selected_;
     int         action_;        // What todo when pressed ?
     RECT        rect_;
 };
@@ -273,6 +286,6 @@ private:
 }
 #endif // #ifdef __cplusplus
 
-#endif // __J_TETRIS_CASIO_TABS_h__
+#endif // __GEE_TETRIS_CASIO_TABS_h__
 
 // EOF

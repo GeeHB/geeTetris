@@ -4,7 +4,7 @@
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: jtetris - cpp version
+//--	Project	: geeTetris - cpp version
 //--
 //---------------------------------------------------------------------------
 //--
@@ -13,8 +13,8 @@
 //--	    Definition of tetrisGame
 //---------------------------------------------------------------------------
 
-#ifndef __J_TETRIS_GAME_h__
-#define __J_TETRIS_GAME_h__	1
+#ifndef __GEE_TETRIS_GAME_h__
+#define __GEE_TETRIS_GAME_h__	1
 
 #include "consts.h"
 #include "piece.h"
@@ -229,6 +229,6 @@ class tetrisGame {
 }
 #endif // #ifdef __cpluscplus
 
-#endif // __J_TETRIS_GAME_h__
+#endif // __GEE_TETRIS_GAME_h__
 
 // EOF

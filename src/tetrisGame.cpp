@@ -4,7 +4,7 @@
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: jtetris / cpp version
+//--	Project	: geeTetris / cpp version
 //--
 //---------------------------------------------------------------------------
 //--
@@ -856,7 +856,7 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
 //  @index of the VALUE object to be drawn
 //
 void tetrisGame::_drawNumValue(uint8_t index){
-    char valStr[MAX_VALUE_LEN + 1];
+    char valStr[MAX_VALUE_NAME_LEN + 1];
 
     // Erase previous value ?
     if (-1 != values_[index].previous){
