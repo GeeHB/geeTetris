@@ -127,9 +127,9 @@ int main(){
                         break;
                 }
 
-                // An exit char ?
+                // An (exit) char ?
                 car = tStatus.exitKey;
-                getNextKey = (car != KEY_NONE);
+                getNextKey = (car == KEY_NONE); // no char. from previous tab => read keyboard
 
                 // What's next ?
                 //
@@ -147,7 +147,7 @@ int main(){
         }else{
             // The "Exit" key
             if (KEY_CODE_EXIT == car){
-                quitApp = false;
+                quitApp = true;
             }
         }
     } while (!quitApp);
