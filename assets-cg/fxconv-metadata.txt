@@ -10,7 +10,7 @@ font_vert.png:
   grid.padding: 1
   proportional: true
 
-font_default.png:
+font_horz.png:
   type: font
   name: font_horz
   charset: print

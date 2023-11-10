@@ -4,7 +4,7 @@
 #
 #   Author     :   GeeHB
 #
-#   Description :   Simple script for rotating chars in a png font file
+#   Description :   Simple script for 'rotating' chars in a png font file
 #                   
 #   Comment    :   Python 3.xx
 #
@@ -18,7 +18,9 @@ from PIL import Image
 
 # Filenames
 FILE_SRC = "../assets-cg/font_default.png"
-FILE_DEST = "../assets-cg/font_vert.png"
+
+FILE_DEST_HORZ = "../assets-cg/font_horz.png"  # smaller than orginal ?
+FILE_DEST_VERT = "../assets-cg/font_vert.png"
 
 # Char dimensions
 CHAR_W = 7
@@ -48,18 +50,26 @@ if "__main__" == __name__:
         print("Image dimension are not valid")
         sys.exit(1)
 
-    # Create dest image
-    dest = Image.new('RGB', (HORZ_COUNT * CHAR_H, VERT_COUNT * CHAR_W), C_WHITE)
+    # Create dest images
+    destV = Image.new('RGB', (HORZ_COUNT * CHAR_H, VERT_COUNT * CHAR_W), C_WHITE)
+    destH = Image.new('RGB', (width, height), C_WHITE)
 
     # Rotate char bits.
     for row in range(VERT_COUNT):
         for y in range(CHAR_H):
             for col in range(HORZ_COUNT):
                 for x in range(CHAR_W):
-                    # put the same pixel in the dest file
-                    dest.putpixel((col * CHAR_H + y, (row + 1) * CHAR_W - x -1), src.getpixel((col * CHAR_W + x, row * CHAR_H + y)))
+                    
+                    pos = (col * CHAR_W + x, row * CHAR_H + y)
+                    
+                    # put the same pixel in the dest vert. file
+                    destV.putpixel((col * CHAR_H + y, (row + 1) * CHAR_W - x -1), src.getpixel(pos))
 
-    # Save dest file
-    dest.save(FILE_DEST, 'png')
+                    # copy in the horz. file
+                    destH.putpixel(pos, src.getpixel(pos))
+
+    # Save dest files
+    destV.save(FILE_DEST_VERT, 'png')
+    destH.save(FILE_DEST_HORZ, 'png')
 
 # EOF
