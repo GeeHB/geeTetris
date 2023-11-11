@@ -428,11 +428,11 @@ void tabManager::_select(int8_t ID, bool activate){
 
         if (ptab){
             // Change selection status
-            if (activate){
-                ptab->select();
+            if (!activate)/*{
+                ptab->select();     // No need to preselect, tab::select(status) will soon be called !
             }
-            else{
-                ptab->unSelect();
+            else*/{
+                ptab->unSelect();   // Tell tab it's unselected
             }
 
             ptab->draw(activate);

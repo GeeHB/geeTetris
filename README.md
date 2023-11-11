@@ -15,7 +15,6 @@ Quel que soit le mode d'affichage choisi, vertical ou horizontal, les touches su
 | --------------- |----------------|
 | ![Rotation](assets/key_xot.png) | Changement de mode d'affichage. Par défaut l'affichage est en mode horizontal (calculatrice en mode normal), un appui transformera instantanément les affichages du jeu vers le mode vertical. Et réciproquement suite à un second appui.|
 | ![Exit](assets/key_exit.png) | Sortie du jeu |
-| ![Menu](assets/key_menu.png) | Sortie du jeu |
 
 
 #### Contrôles en mode horizontal

@@ -149,8 +149,8 @@ enum GAME_KEY{
 };
 #else
 enum GAME_KEY{
-    KEY_CODE_F1 = '&',
-    KEY_CODE_F6 = '-',
+    KEY_CODE_F1 = 'A',
+    KEY_CODE_F6 = 'F',
     KEY_CODE_LEFT = '4',
     KEY_CODE_RIGHT = '5',
     KEY_CODE_UP = '3',
