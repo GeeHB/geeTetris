@@ -42,6 +42,7 @@ Les contrôles "suivent" le mouvement de la calculatrice :
 ### Captures
 
 Ecran d'accueil de `geeTetris` :
+
 ![Accueil](assets/welcome.png)
 
 Choix du nombre de ligne 'sales' à ajouter en début de partie :
@@ -53,4 +54,5 @@ Jeu en mode normal :
 ![Horz](assets/horz.png)
 
 ... la même partie continue en affichage vertical :
+
 ![Vertical](assets/vert.png)
