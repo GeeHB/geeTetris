@@ -2,7 +2,7 @@
 
 ### Présentation
 
-`geeTetris` est un jeu de tetris pour la calculatrice Casio Graph90+E développé en C++. Il ne nécessite aucune libraire spécifique (exceptée la lib lstdc++).
+`geeTetris` est un jeu de tetris pour la calculatrice Casio Graph90+E développé en C++ sur `gint`. Il ne nécessite aucune librairie spécifique supplémentaires à l'exception de -lstdc++.
 
 Il offre différentes options : affichage de l'ombre de la pièce, démarrage avec un handicap de lignes 'sales', démarrage sur un niveau plus rapide. Et il permet de jouer avec la calculatrice en mode horizontal (position standard) ou en mode vertical.
 
@@ -41,4 +41,16 @@ Les contrôles "suivent" le mouvement de la calculatrice :
 
 ### Captures
 
-shift 7 => accès au menu capture
+Ecran d'accueil de `geeTetris` :
+![Accueil](assets/welcome.png)
+
+Choix du nombre de ligne 'sales' à ajouter en début de partie :
+
+![Dirty lines](assets/dirty.png)
+
+Jeu en mode normal :
+
+![Horz](assets/horz.png)
+
+... la même partie continue en affichage vertical :
+![Vertical](assets/vert.png)

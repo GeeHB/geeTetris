@@ -19,11 +19,30 @@
 
 #ifdef DEST_CASIO_FXCG50
 #include <gint/gint.h>
+
+#ifdef CAPTURE_MODE
+#include <gint/usb.h>
+#include <gint/usb-ff-bulk.h>
+#endif // CAPTURE_MODE
+
 #endif // #ifdef DEST_CASIO_FXCG50
 
 // Program entry point
 //
 int main(){
+
+#ifdef CAPTURE_MODE
+    // Liste des interfaces à ouvrir
+    usb_interface_t const *intf[] = { &usb_ff_bulk, NULL };
+
+    // On ouvre et on attend que la connexion soit établie
+    usb_open((usb_interface_t const **)&intf, GINT_CALL_NULL);
+    usb_open_wait();
+
+    // Mise en place du hook au niveau de dupdate
+    dupdate_set_hook(GINT_CALL(usb_fxlink_videocapture, 0));
+#endif // #ifdef CAPTURE_MODE
+
     tetrisParameters params;
     TAB_VALUE value;
 
@@ -154,6 +173,11 @@ int main(){
 
     // Return to default state
     tmanager.select(0);
+
+    // End of capture
+#ifdef CAPTURE_MODE
+    dupdate_set_hook(GINT_CALL_NULL);
+#endif // #ifdef CAPTURE_MODE
 
     // Free memory
 #ifdef DEST_CASIO_FXCG50

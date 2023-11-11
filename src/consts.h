@@ -22,6 +22,10 @@
 #endif // #ifndef LINX_VER
 
 #ifdef DEST_CASIO_FXCG50
+
+// Mode capture pour les copies d'écrans
+//#define CAPTURE_MODE            1
+
 // Specific includes for calculators
 #include <gint/display.h>
 #include <gint/keyboard.h>

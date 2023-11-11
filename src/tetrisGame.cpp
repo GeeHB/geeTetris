@@ -220,6 +220,7 @@ bool tetrisGame::start() {
     }
 
     // Game is Over
+    casioParams_.rotatedDisplay(false); // Return to default font
     return true;
 }
 
