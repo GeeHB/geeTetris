@@ -99,7 +99,7 @@ int main(){
         }
 
         if (car >= KEY_CODE_F1 && car <= KEY_CODE_F6){
-            sel = car - KEY_CODE_F1;    // "F" key index
+            sel = car - KEY_CODE_F1;    // "F" key index - 1
 
             // Update drawings
             if (NULL != (currentTab = tmanager.select(sel))){
@@ -108,7 +108,7 @@ int main(){
 
                 // Retreive parameters
                 switch (sel){
-                    // Level
+                    // Level (IDTab = 1)
                     case 1:
                         tabLevel.value(value);
                         params.startLevel_ = value.uVal;

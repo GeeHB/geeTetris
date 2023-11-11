@@ -48,6 +48,7 @@ extern font_t font_horz;
 tab::tab(const char* tname, int action){
 
     action_ = action;
+    selected_ = false;
 
     // Copy (and truncate) name
     size_t len(strlen(tname));
@@ -266,7 +267,7 @@ void tabRangedValue::_drawRange(){
 
 #ifdef DEST_CASIO_FXCG50
     if (comment_){
-        dtext(TAB_RANGE_COMMENT_X, yPos_ - 15, COLOUR_BLACK, comment_);
+        dtext(TAB_RANGE_COMMENT_X, yPos_ - 25, COLOUR_BLACK, comment_);
     }
 
     dupdate();
@@ -285,6 +286,11 @@ void tabRangedValue::_selectValue(int8_t value, bool select){
 #else
         x++;    // for compiler
 #endif // #ifdef DEST_CASIO_FXCG50
+    }
+
+    // Update the value (if selected)
+    if (select){
+        value_.uVal = (uint8_t)value;
     }
 }
 
