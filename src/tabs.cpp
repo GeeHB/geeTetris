@@ -257,10 +257,10 @@ void tabRangedValue::_drawRange(){
     uint8_t max(maxVal_ - minVal_);
     uint16_t x(xPos_);
 
-    for (uint8_t index=0; index<max; index++){
+    for (uint8_t index=0; index<=max; index++){
 #ifdef DEST_CASIO_FXCG50
         drect_border(x, yPos_, x + TAB_RANGE_BOX_WIDTH, yPos_ + TAB_RANGE_BOX_WIDTH, NO_COLOR, 1, COLOUR_BLACK);
-        dprint(x + 3, yPos_ + 2, COLOUR_BLACK, "%d", (index+minVal_));
+        dprint(x + 5, yPos_ + 3, COLOUR_BLACK, "%d", (index+minVal_));
 #endif // #ifdef DEST_CASIO_FXCG50
         x+=TAB_RANGE_BOX_WIDTH;
     }
@@ -278,11 +278,11 @@ void tabRangedValue::_drawRange(){
 //
 void tabRangedValue::_selectValue(int8_t value, bool select){
     if (value >= minVal_ && value <= maxVal_){
-        uint16_t x(xPos_ + (value - minVal_) * TAB_RANGE_BOX_WIDTH + 1);
+        uint16_t x(xPos_ + (value - minVal_) * TAB_RANGE_BOX_WIDTH);
 
 #ifdef DEST_CASIO_FXCG50
-        drect(x, yPos_ + 1 , x + TAB_RANGE_BOX_WIDTH - 1, yPos_ + TAB_RANGE_BOX_WIDTH - 1 , select?COLOUR_BK_HILITE:COLOUR_WHITE);
-        dprint(x + 3, yPos_ + 2, select?COLOUR_WHITE:COLOUR_BLACK, "%d", value);
+        drect(x + 1, yPos_ + 1 , x + TAB_RANGE_BOX_WIDTH - 1, yPos_ + TAB_RANGE_BOX_WIDTH - 1 , select?COLOUR_BK_HILITE:COLOUR_WHITE);
+        dprint(x + 5, yPos_ + 3, select?COLOUR_WHITE:COLOUR_BLACK, "%d", value);
 #else
         x++;    // for compiler
 #endif // #ifdef DEST_CASIO_FXCG50

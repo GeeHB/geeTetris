@@ -38,7 +38,7 @@ extern "C" {
 #define TAB_ROUNDED_DIM  4
 #define TAB_NAME_LEN    10      // max char
 
-#define TAB_RANGE_BOX_WIDTH     11      // width of a single box in pixels
+#define TAB_RANGE_BOX_WIDTH     15      // width of a single box in pixels
 
 #define TAB_RANGE_COMMENT_X     10
 
@@ -227,7 +227,7 @@ public:
 private:
     // Ensure value is in the range
     int8_t _inRange(int8_t val){
-        return ((val < minVal_)?minVal_:((value_.uVal > maxVal_)?maxVal_:val));
+        return ((val < minVal_)?minVal_:((val > maxVal_)?maxVal_:val));
     }
 
     // Draw the range
