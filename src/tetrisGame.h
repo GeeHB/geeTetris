@@ -19,7 +19,7 @@
 #include "consts.h"
 #include "piece.h"
 #include "templates.h"
-#include "casioFX-CG50.h"
+#include "casioCalc.h"
 
 #include <cstdlib>
 
@@ -93,9 +93,9 @@ class tetrisGame {
 
         // Update the display
         void updateDisplay(){
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
             dupdate();
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
         }
 
         // Current score
@@ -215,7 +215,7 @@ class tetrisGame {
 
         int32_t colours_[LAST_COLOUR_ID+1];     // Colours in rgb
 
-        casioFXCG50 casioParams_;
+        casioCalc casioParams_;
 
         // Current iece and next piece
         int8_t nextIndex_;  // -1 = None

@@ -23,9 +23,9 @@
 //---------------------------------------------------------------------------
 
 // Fonts
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
 extern font_t font_horz;
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
 //---------------------------------------------------------------------------
 //--
@@ -36,6 +36,28 @@ extern font_t font_horz;
 #define COLOUR_SELECTED     COLOUR_BLUE
 #define COLOUR_UNSELECTED   COLOUR_GREY
 #define COLOUR_BK_HILITE    COLOUR_LT_BLUE
+
+//---------------------------------------------------------------------------
+//--
+//-- tabKeyboard object - A keyboard handler fot tabs and tab management
+//--
+//--------------------------------------------------------------------------
+
+// Key event in the queue
+//
+uint16_t tabKeyboard::getKey(){
+    uint16_t key(key_);
+
+    if (KEY_CODE_NONE == key){
+        key = keyboard::getKey();
+    }
+    else{
+        key_ = KEY_CODE_NONE;   // Next key code
+    }
+
+    // return the pressed key code
+    return key;
+}
 
 //---------------------------------------------------------------------------
 //--
@@ -78,7 +100,7 @@ void tab::setRect(RECT& rect){
 // Draw a single tab
 //
 void tab::draw(const RECT* anchor, bool selected, const char* name){
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
     // Draw back ground
     drect(anchor->x, anchor->y, anchor->x + anchor->w - 1, anchor->y + anchor->h - 1, COLOUR_WHITE);
 
@@ -107,7 +129,7 @@ void tab::draw(const RECT* anchor, bool selected, const char* name){
     else{
         dline(anchor->x, anchor->y, anchor->x + anchor->w -1, anchor->y, COLOUR_BLACK);
     }
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 }
 
 //
@@ -146,13 +168,13 @@ void tabValue::select(TAB_STATUS& status){
     // update comment
     clearScreen();
 
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
     if (comment_){
         dtext(TAB_RANGE_COMMENT_X, int((CASIO_HEIGHT - TAB_HEIGHT) / 2), COLOUR_BLACK, value_.bVal?comment_:(ucomment_?ucomment_:comment_));
     }
 
     dupdate();
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
     // Nothing special to do
     tab::select(status);
@@ -161,6 +183,30 @@ void tabValue::select(TAB_STATUS& status){
 //
 // tabRangedValue: A tab with a value in a range
 //
+
+// Construction
+tabRangedValue::tabRangedValue(const char* tname, uint8_t minVal, uint8_t maxVal, const tabKeyboard* keys)
+:tabValue(tname, ACTION_NONE){
+    setRange(minVal, maxVal);
+
+    // A keyboard ?
+    if (keys){
+        keys_ = (tabKeyboard*)keys;
+        ownKeyboard_ = false;
+    }
+    else{
+        keys = new tabKeyboard();  // Create my own keyboard
+        ownKeyboard_ = true;
+    }
+}
+
+// Destruction
+tabRangedValue::~tabRangedValue(){
+    // free keyboard if owned by object
+    if (keys_ && ownKeyboard_){
+        delete keys_;
+    }
+}
 
 // Range
 //
@@ -187,9 +233,11 @@ void tabRangedValue::setRange(uint8_t minVal, uint8_t maxVal){
 //
 void tabRangedValue::select(TAB_STATUS& status){
 
-    int key(0);
-    int8_t oldVal(-1), newVal(value_.uVal);
-    bool stay(true);
+    // Ensure a keyboard is present
+    tab::select(status);
+    if (!keys_){
+        return;
+    }
 
     clearScreen();
 
@@ -197,28 +245,24 @@ void tabRangedValue::select(TAB_STATUS& status){
     _drawRange();
 
     // Select current val
+    int key(0);
+    int8_t oldVal(-1), newVal(value_.uVal);
+    bool stay(true);
     _selectValue(newVal);
 
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
     dupdate();
-    key_event_t evt;
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
+
+    // Value may change using the keyboard
     do{
-#ifdef DEST_CASIO_FXCG50
-        evt = pollevent();
-        if (evt.type == KEYEV_DOWN){
-            key = evt.key;
-        }
-        else{
-            key = 0;    // ie. no char ...
-        }
-#else
-        key = getchar();
-#endif // #ifdef DEST_CASIO_FXCG50
+        key = keys_->getKey();
 
         // Exit on "Exit" or F{n} key pressed
         if ((key >= KEY_CODE_F1 && key <= KEY_CODE_F6) || key == KEY_CODE_EXIT){
+            // Exit and pass key code to the tabmanager
             stay = false;
+            //keys_->addKey(key);
         }
         else{
             // Change selection
@@ -236,9 +280,9 @@ void tabRangedValue::select(TAB_STATUS& status){
                 _selectValue(oldVal, false);
                 _selectValue(newVal);
 
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
                 dupdate();
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
                 oldVal = newVal;
             }
@@ -247,7 +291,6 @@ void tabRangedValue::select(TAB_STATUS& status){
     while (stay);
 
     // "return" key pressed (or 0 if none)
-    tab::select(status);
     status.action = ACTION_NONE;
     status.exitKey = key;
 }
@@ -258,20 +301,20 @@ void tabRangedValue::_drawRange(){
     uint16_t x(xPos_);
 
     for (uint8_t index=0; index<=max; index++){
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
         drect_border(x, yPos_, x + TAB_RANGE_BOX_WIDTH, yPos_ + TAB_RANGE_BOX_WIDTH, NO_COLOR, 1, COLOUR_BLACK);
         dprint(x + 5, yPos_ + 3, COLOUR_BLACK, "%d", (index+minVal_));
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
         x+=TAB_RANGE_BOX_WIDTH;
     }
 
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
     if (comment_){
         dtext(TAB_RANGE_COMMENT_X, yPos_ - 25, COLOUR_BLACK, comment_);
     }
 
     dupdate();
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 }
 
 // Select a single value
@@ -280,12 +323,12 @@ void tabRangedValue::_selectValue(int8_t value, bool select){
     if (value >= minVal_ && value <= maxVal_){
         uint16_t x(xPos_ + (value - minVal_) * TAB_RANGE_BOX_WIDTH);
 
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
         drect(x + 1, yPos_ + 1 , x + TAB_RANGE_BOX_WIDTH - 1, yPos_ + TAB_RANGE_BOX_WIDTH - 1 , select?COLOUR_BK_HILITE:COLOUR_WHITE);
         dprint(x + 5, yPos_ + 3, select?COLOUR_WHITE:COLOUR_BLACK, "%d", value);
 #else
         x++;    // for compiler
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
     }
 
     // Update the value (if selected)
@@ -349,9 +392,9 @@ tab* tabManager::select(int8_t ID){
 
         active_ = ID;
 
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
         dupdate();
-#endif // DEST_CASIO_FXCG50
+#endif // DEST_CASIO_CALC
 
         return tabs_[ID];
     }
@@ -375,9 +418,9 @@ void tabManager::update(){
             tab::draw(&anchor, index==active_);
         }
     }
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
     dupdate();
-#endif // DEST_CASIO_FXCG50
+#endif // DEST_CASIO_CALC
 }
 
 // Set a tab position

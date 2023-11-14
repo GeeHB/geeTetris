@@ -10,7 +10,7 @@
 //--
 //--	Description:
 //--
-//--			Definition of casioFXCG50 object and consts for casio fx-CG50
+//--			Definition of casioCalc object and consts for casio fx-CG50
 //--
 //---------------------------------------------------------------------------
 
@@ -18,6 +18,10 @@
 #define __GEE_TETRIS_CASIO_FXCG50_h__    1
 
 #include "consts.h"
+
+#ifdef DEST_CASIO_CALC
+#include "shared/scrCapture.h"
+#endif // #ifdef DEST_CASIO_CALC
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,13 +35,13 @@ extern "C" {
 
 // Screen dimensions in pixels
 //
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
 #define CASIO_WIDTH     DWIDTH
 #define CASIO_HEIGHT    DHEIGHT
 #else
 #define CASIO_WIDTH     384
 #define CASIO_HEIGHT    192
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
 // Box dimensions in pixels
 //
@@ -63,19 +67,27 @@ extern "C" {
 
 //---------------------------------------------------------------------------
 //--
-//-- casioFX-CG50 object
+//-- casioCalc object
 //--
-//--    Coordinates, dimensions for the casio fx-CG50 calculator
+//--    methods, constants (coordinates, dimensions) for the casio calculators
 //--
 //---------------------------------------------------------------------------
 
-class casioFXCG50{
+class casioCalc{
 
     // Public methods
     //
     public:
         // Construction
-        casioFXCG50();
+        casioCalc();
+
+        // capture()
+        //      Set/unset screen capture
+        //
+        //      @activate : set (=true) or remove (=false) screen capture
+        //
+        //      return the status
+        bool capture(bool activate);
 
         // Update members on rotation
         void rotatedDisplay(bool doRotate);
@@ -122,9 +134,10 @@ class casioFXCG50{
         char        keyPause_, keyRotateDisplay_;
         char        keyQuit_;
 
-#ifdef DEST_CASIO_FXCG50
-        font_t     *hFont_, *vFont_;     // Fonts
-#endif //#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
+        scrCapture  capture_;           // Screen capture
+        font_t     *hFont_, *vFont_;    // Fonts
+#endif //#ifdef DEST_CASIO_CALC
 };
 
 #ifdef __cplusplus

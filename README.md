@@ -6,21 +6,19 @@
 
 Il offre différentes options : affichage de l'ombre de la pièce, démarrage avec un handicap de lignes 'sales', démarrage sur un niveau plus rapide. Et il permet de jouer avec la calculatrice en mode horizontal (position standard) ou en mode vertical.
 
-
 ### Utilisation du clavier
 
 Quel que soit le mode d'affichage choisi, vertical ou horizontal, les touches suivantes fonctionneront à l'identique à tout moment de la partie :
 
-| Touche | Action |  
-| --------------- |----------------|
-| ![Rotation](assets/key_xot.png) | Changement de mode d'affichage. Par défaut l'affichage est en mode horizontal (calculatrice en mode normal), un appui transformera instantanément les affichages du jeu vers le mode vertical. Et réciproquement suite à un second appui.|
+| Touche | Action |
+|--------|--------|
+| ![Rotation](assets/key_xot.png) | Changement de mode d'affichage. Par défaut l'affichage est en mode horizontal (calculatrice en mode normal), un appui transformera instantanément les affichages du jeu vers le mode vertical. Et réciproquement suite à un second appui. |
 | ![Exit](assets/key_exit.png) | Sortie du jeu |
-
 
 #### Contrôles en mode horizontal
 
-| Touche | Action |  
-| --------------- |----------------|
+| Touche | Action |
+|--------|--------|
 | ![Gauche](assets/key_left.png) | Déplacement de la pièce vers la gauche |
 | ![Droite](assets/key_right.png) | Déplacement de la pièce vers la droite |
 | ![Bas](assets/key_down.png) | Descente de la pièce d'un rang |
@@ -31,8 +29,8 @@ Quel que soit le mode d'affichage choisi, vertical ou horizontal, les touches su
 
 Les contrôles "suivent" le mouvement de la calculatrice :
 
-| Touche | Action |  
-| --------------- |----------------|
+| Touche | Action |
+|--------|--------|
 | ![Gauche](assets/key_down.png) | Déplacement de la pièce vers la gauche |
 | ![Droite](assets/key_up.png) | Déplacement de la pièce vers la droite |
 | ![Bas](assets/key_right.png) | Descente de la pièce d'un rang |

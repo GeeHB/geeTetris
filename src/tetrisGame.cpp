@@ -16,11 +16,11 @@
 
 #include "tetrisGame.h"
 
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
 #include <gint/clock.h>
 #else
 #include <unistd.h>
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
 #include <cstdio>
 #include <cmath>
@@ -172,13 +172,13 @@ bool tetrisGame::start() {
     uint32_t seqCount(0);
     long diff, seqDuration(_updateSpeed(INITIAL_SPEED * 1000000, parameters_.startLevel_, parameters_.startLevel_ - 1));
 
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
     clock_t ts, now;
     now = clock();
 #else
     struct timespec ts, now;
     clock_gettime(CLOCK_MONOTONIC, &now);
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
     // Game main loop
     while (isRunning()){
@@ -188,7 +188,7 @@ bool tetrisGame::start() {
         // During this short period, the piece can be moved or rotated
         while (isRunning() && diff < seqDuration){
             _handleGameKeys();
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
             sleep_us(SLEEP_DURATION);
             now = clock();
             diff = (now - ts) / CLOCKS_PER_SEC * 1000000000;
@@ -196,7 +196,7 @@ bool tetrisGame::start() {
             usleep(SLEEP_DURATION);
             clock_gettime(CLOCK_MONOTONIC, &now);
             diff = (now.tv_sec - ts.tv_sec) * 1000000000 + (now.tv_nsec - ts.tv_nsec);
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
         }
 
         // One line down ...
@@ -238,9 +238,9 @@ void tetrisGame::_rotateDisplay(bool first){
     casioParams_.rotatedDisplay(first?parameters_.rotatedDisplay_:!casioParams_.rotatedDisplay_);
 
     // Clear the screen
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
     dclear(colours_[COLOUR_ID_BOARD]);
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
     _drawBackGround();
     _drawTetrisGame();
@@ -421,7 +421,7 @@ long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLe
 //
 void tetrisGame::_handleGameKeys() {
     char car(0);
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
     key_event_t evt = pollevent();
     if (evt.type == KEYEV_DOWN){
         // A key has been pressed
@@ -432,7 +432,7 @@ void tetrisGame::_handleGameKeys() {
     }
 #else
 	car = getchar();
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
 	if(car != EOF) {
         if (casioParams_.keyQuit_ == car){
@@ -847,9 +847,9 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
     }
 
     // Draw the rect
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
     drect_border(xFrom, yFrom, xTo, yTo, fillColour, 1, borderColour);
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 }
 
 // _drawNumValue() : Draw a value and its name
@@ -863,27 +863,27 @@ void tetrisGame::_drawNumValue(uint8_t index){
     if (-1 != values_[index].previous){
         __valtoa(values_[index].previous, values_[index].name, valStr);
 
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
         if (casioParams_.rotatedDisplay_){
             _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
         }
         else{
             dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
         }
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
     }
 
     // print new value
     __valtoa(values_[index].value, values_[index].name, valStr);
 
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
     if (casioParams_.rotatedDisplay_){
         _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
     }
     else{
         dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
     }
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
     values_[index].previous = values_[index].value;
 }
@@ -901,11 +901,11 @@ void tetrisGame::_dtextV(int x, int y, int fg, const char* text){
         // dimensions of the first char.
         char* current = (char*)text;
         int w, h;
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
         dnsize(current, 1, casioParams_.vFont_, &w, &h);
 #else
         w = h = 10; // for debug tests
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
         // Get new coordinates of the anchor
         xTo = xFrom + w;
@@ -914,10 +914,10 @@ void tetrisGame::_dtextV(int x, int y, int fg, const char* text){
 
         // Draw the string (char. by char.)
         while (*current){
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
             dtext_opt(xFrom, yFrom,  fg, C_NONE, DTEXT_RIGHT, DTEXT_BOTTOM, current, 1);
             dnsize(current, 1, casioParams_.vFont_, &w, &h);
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
             // Update anchor pos.
             yFrom-=h;

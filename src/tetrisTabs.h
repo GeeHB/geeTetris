@@ -17,7 +17,7 @@
 #ifndef __GEE_TETRIS_CASIO_TETRIS_TABS_h__
 #define __GEE_TETRIS_CASIO_TETRIS_TABS_h__    1
 
-#include "tabs.h"
+#include "shared/tabs.h"
 
 #ifdef __cplusplus
 extern "C" {

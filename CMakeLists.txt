@@ -10,11 +10,13 @@ find_package(Gint 2.9 REQUIRED)
 
 set(SOURCES
   src/geeTetris.cpp
-  src/tabs.cpp
+  src/shared/scrCapture.cpp
+  src/shared/keyboard.cpp
+  src/shared/tabs.cpp
   src/tetrisTabs.cpp
   src/tetrisGame.cpp
   src/piece.cpp
-  src/casioFX-CG50.cpp
+  src/casioCalc.cpp
 )
 # Shared assets, fx-9860G-only assets and fx-CG-50-only assets
 set(ASSETS

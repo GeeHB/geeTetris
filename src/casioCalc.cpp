@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //--
-//--	File	: casioFX-CG50.cpp
+//--	File	: casioCalc.cpp
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
@@ -10,37 +10,37 @@
 //--
 //--	Description:
 //--
-//--			Implementation of casioFXCG50 object
+//--			Implementation of casioCalc object
 //--
 //---------------------------------------------------------------------------
 
-#include "casioFX-CG50.h"
+#include "casioCalc.h"
 
 // Fonts
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
 extern font_t font_horz;
 extern font_t font_vert;
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
 //---------------------------------------------------------------------------
 //--
-//-- casioFX-CG50 object
+//-- casioCalc object
 //--
-//--    coordinates, dimensions for the casio fx-CG50 calculator
+//--    methods, constants (coordinates, dimensions) for the casio calculators
 //--
 //---------------------------------------------------------------------------
 
 // Construction
 //
-casioFXCG50::casioFXCG50(){
+casioCalc::casioCalc(){
 
     rotatedDisplay_ = false;
 
     // Fonts
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
     hFont_ = &font_horz;
     vFont_ = &font_vert;
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
     // Default keys
     keyFall_ = KEY_CODE_FALL;
@@ -52,11 +52,31 @@ casioFXCG50::casioFXCG50(){
     rotatedDisplay(rotatedDisplay_);
 }
 
+// capture() : Set/unset screen capture
+//
+//  @activate : set (=true) or remove (=false) screen capture
+//
+//  return the status
+bool casioCalc::capture(bool activate){
+#ifdef DEST_CASIO_CALC
+    if (activate){
+        capture_.install();
+    }
+    else{
+        capture_.remove();
+    }
+
+    return capture_.isSet();
+#else
+    return false;
+#endif // #ifdef DEST_CASIO_CALC
+}
+
 // rotatedDisplay() : Update members on rotation
 //
 //  @doRotate : indicates wether display must rotate or not
 //
-void casioFXCG50::rotatedDisplay(bool doRotate){
+void casioCalc::rotatedDisplay(bool doRotate){
     if (false == (rotatedDisplay_ = doRotate)){
         boxWidth_ = CASIO_BOX_WIDTH;
 
@@ -83,9 +103,9 @@ void casioFXCG50::rotatedDisplay(bool doRotate){
         keyDown_ = KEY_CODE_DOWN;
 
         // Use "default" font
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
         dfont((font_t*)&font_horz);
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
     }
     else {
         // "rotated" mode
@@ -111,9 +131,9 @@ void casioFXCG50::rotatedDisplay(bool doRotate){
         keyDown_ = KEY_CODE_RIGHT;
 
         // Install my font
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
         dfont((font_t*)&font_vert);
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
     }
 
     // Values indicators

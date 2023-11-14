@@ -18,13 +18,10 @@
 #define __GEE_TETRIS_CONSTS_h__    1
 
 #ifndef LINUX_VER
-#define DEST_CASIO_FXCG50        1   // Compile for Casio FX CG50 calculator
+#define DEST_CASIO_CALC        1   // Compile for Casio FX CG50 calculator
 #endif // #ifndef LINX_VER
 
-#ifdef DEST_CASIO_FXCG50
-
-// Mode capture pour les copies d'écrans
-//#define CAPTURE_MODE            1
+#ifdef DEST_CASIO_CALC
 
 // Specific includes for calculators
 #include <gint/display.h>
@@ -34,7 +31,7 @@
 #include <malloc.h>
 #include <cstdint> // <stdint.h>
 #include <cstdio>
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
 #include <cstring>
 #include <cstdlib>
@@ -113,10 +110,10 @@ enum COLOUR_ID{
 // A few basic colours
 //
 
-#ifndef DEST_CASIO_FXCG50
+#ifndef DEST_CASIO_CALC
 // 24 bits RGB (for tests only)
 #define C_RGB(r,g,b)      ((uint32_t)(((uint8_t)(r)|((uint16_t)((uint8_t)(g))<<8))|(((uint32_t)(uint8_t)(b))<<16)))
-#endif // #ifndef DEST_CASIO_FXCG50
+#endif // #ifndef DEST_CASIO_CALC
 
 enum DEF_COLOUR{
     COLOUR_BLACK   = C_RGB(0, 0, 0),
@@ -137,7 +134,7 @@ enum DEF_COLOUR{
 
 // Key codes
 //
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
 enum GAME_KEY{
     KEY_CODE_F1 = KEY_F1,     // !!!
     KEY_CODE_F6 = KEY_F6,
@@ -165,11 +162,7 @@ enum GAME_KEY{
     KEY_CODE_EXIT = 'q',
     KEY_CODE_ENTER = '\13'
 };
-#endif // #ifdef DEST_CASIO_FXCG50
-
-#ifndef KEY_NONE
-#define KEY_NONE        0       // No key pressed
-#endif // #ifndef KEY_NONE
+#endif // #ifdef DEST_CASIO_CALC
 
 // Tab names
 //

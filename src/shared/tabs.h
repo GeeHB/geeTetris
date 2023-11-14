@@ -10,14 +10,22 @@
 //--
 //--	Description:
 //--
-//--			Definition of tabManager and tab objects
+//--			Definition of objects used for tab managment :
+//--                     - tabManager : tools that manages a list à tabs
+//--                     - tab : A basic tab
+//--                     - tabValue : A tab holding a value
+//--                     - tabRangedValue : A tab handling a numeric value
+//--                       in a range
+//--
+//--                     - tabKeyboard : An object for handling keyboard events
 //--
 //---------------------------------------------------------------------------
 
 #ifndef __GEE_TETRIS_CASIO_TABS_h__
 #define __GEE_TETRIS_CASIO_TABS_h__    1
 
-#include "casioFX-CG50.h"
+#include "../casioCalc.h"
+#include "keyboard.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,12 +82,43 @@ typedef struct __tabStatus{
     // Construction
     __tabStatus(){
         action = ACTION_NONE;
-        exitKey = KEY_NONE;
+        exitKey = KEY_CODE_NONE;
     }
 
     int action;         // Action to perform
-    int exitKey;        // Code of last keyboard event or KEY_NONE
+    int exitKey;        // Code of last keyboard event or KEY_CODE_NONE
 }TAB_STATUS;
+
+//---------------------------------------------------------------------------
+//--
+//-- tabKeyboard object - A keyboard handler fot tabs and tab management
+//--
+//--------------------------------------------------------------------------
+
+class tabKeyboard : public keyboard{
+public:
+
+    // Construction
+    tabKeyboard():
+    keyboard(){
+        key_ = KEY_CODE_NONE;
+    }
+
+    // Destruction
+    virtual ~tabKeyboard(){}
+
+    // Key event in the queue
+    virtual uint16_t getKey();
+
+    // Add a key event
+    void addKey(uint16_t code, uint16_t mod = MOD_NONE){
+        key_ = code;
+        mod_ = mod;
+    }
+
+private:
+    uint16_t key_;   // "injected" key
+};
 
 //---------------------------------------------------------------------------
 //--
@@ -103,7 +142,7 @@ public:
 
         // Nothing todo
         status.action = action_;
-        status.exitKey = KEY_NONE;
+        status.exitKey = KEY_CODE_NONE;
     }
     void select(){
         selected_ = true;
@@ -140,9 +179,9 @@ public:
 
     // clear the whole screen (except tab lane)
     static void clearScreen(){
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
         drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - TAB_HEIGHT - 1, C_WHITE);
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
     }
 
 protected:
@@ -208,15 +247,10 @@ protected:
 class tabRangedValue : public tabValue{
 public:
     // Construction
-    tabRangedValue(const char* tname, uint8_t minVal, uint8_t maxVal)
-    :tabValue(tname, ACTION_NONE){
-        setRange(minVal, maxVal);
-    }
+    tabRangedValue(const char* tname, uint8_t minVal, uint8_t maxVal, const tabKeyboard* keys = NULL);
 
     // Destruction
-    ~tabRangedValue(){
-        setComment(NULL);   // should be useless with virtual methods ...
-    }
+    ~tabRangedValue();
 
     // Range
     void setRange(uint8_t minVal, uint8_t maxVal);
@@ -230,7 +264,7 @@ private:
         return ((val < minVal_)?minVal_:((val > maxVal_)?maxVal_:val));
     }
 
-    // Draw the range
+    // Draw the whole range
     void _drawRange();
 
     // Select a single value
@@ -239,6 +273,9 @@ private:
 protected:
     uint8_t minVal_, maxVal_;   // Range
     uint16_t xPos_, yPos_;      // Origin for range
+
+    tabKeyboard* keys_;            // Keyboard handler
+    bool      ownKeyboard_;
 };
 
 //

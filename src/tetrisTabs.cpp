@@ -18,9 +18,9 @@
 #include "tetrisGame.h"
 
 // Background image
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
 extern bopti_image_t img_geeTetris;
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
 //
 // aboutTab
@@ -30,7 +30,7 @@ extern bopti_image_t img_geeTetris;
 //
 void aboutTab::select(TAB_STATUS& status){
     // Draw the image and text
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
     clearScreen();
     dimage(0, 0, &img_geeTetris);
 
@@ -46,7 +46,7 @@ void aboutTab::select(TAB_STATUS& status){
     dtext(CASIO_WIDTH - w - 5, CASIO_HEIGHT - TAB_HEIGHT - h - 5, COLOUR_BLACK, copyright);
 
     dupdate();
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
     // Nothing special
     tab::select(status);
@@ -63,9 +63,9 @@ void tetrisTab::select(TAB_STATUS& status){
     tab::select(status);
 
     if (params_){
-#ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
         clearScreen();
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
         tetrisGame game(params_);
         if (game.start()){
@@ -74,7 +74,7 @@ void tetrisTab::select(TAB_STATUS& status){
 
         // Ready for a new game !
         status.action = ACTION_REDRAW_TABS;
-        status.exitKey = KEY_NONE;
+        status.exitKey = KEY_CODE_NONE;
     }
     else{
         // No parameters => no game

@@ -14,34 +14,18 @@
 //--
 //---------------------------------------------------------------------------
 
-#include "tabs.h"
+#include "shared/tabs.h"
 #include "tetrisTabs.h"
 
-#ifdef DEST_CASIO_FXCG50
+#include "shared/keyboard.h"
+
+#ifdef DEST_CASIO_CALC
 #include <gint/gint.h>
-
-#ifdef CAPTURE_MODE
-#include <gint/usb.h>
-#include <gint/usb-ff-bulk.h>
-#endif // CAPTURE_MODE
-
-#endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_CALC
 
 // Program entry point
 //
 int main(){
-
-#ifdef CAPTURE_MODE
-    // Liste des interfaces à ouvrir
-    usb_interface_t const *intf[] = { &usb_ff_bulk, NULL };
-
-    // On ouvre et on attend que la connexion soit établie
-    usb_open((usb_interface_t const **)&intf, GINT_CALL_NULL);
-    usb_open_wait();
-
-    // Mise en place du hook au niveau de dupdate
-    dupdate_set_hook(GINT_CALL(usb_fxlink_videocapture, 0));
-#endif // #ifdef CAPTURE_MODE
 
     tetrisParameters params;
     TAB_VALUE value;
@@ -87,35 +71,20 @@ int main(){
     tmanager.add(&tabTetris, 4);
     tmanager.add(&tabExit, 5);
 
-    // Select the first
-    tmanager.select(0)->select(tStatus);
-
-    // Handle options
-    bool quitApp(false), getNextKey(true);
+    // Handle keyboard
+    tabKeyboard keys;
+    bool quitApp(false);
     uint car(0);
     int8_t sel(0);
-    tab* currentTab;
 
-#ifdef DEST_CASIO_FXCG50
-    key_event_t evt;
-#endif // #ifdef DEST_CASIO_FXCG50
+    tab* currentTab(tmanager.select(0));    // Select first tab
+    if (currentTab){
+        currentTab->select(tStatus);
+    }
+
     do{
-        if (getNextKey){
-#ifdef DEST_CASIO_FXCG50
-            evt = pollevent();
-            if (evt.type == KEYEV_DOWN){
-                car = evt.key;
-            }
-            else{
-                car = 0;    // ie. no char ...
-            }
-#else
-            car = getchar();
-#endif // #ifdef DEST_CASIO_FXCG50
-        }
-        else{
-            getNextKey = true; // Next time, read the keyboard state
-        }
+        // Wait for a key
+        car = keys.getKey();
 
         if (car >= KEY_CODE_F1 && car <= KEY_CODE_F6){
             sel = car - KEY_CODE_F1;    // "F" key index - 1
@@ -147,8 +116,7 @@ int main(){
                 }
 
                 // An (exit) char ?
-                car = tStatus.exitKey;
-                getNextKey = (car == KEY_NONE); // no char. from previous tab => read keyboard
+                keys.addKey(tStatus.exitKey);
 
                 // What's next ?
                 //
@@ -169,20 +137,17 @@ int main(){
                 quitApp = true;
             }
         }
-    } while (!quitApp);
+
+    }while(!quitApp);
 
     // Return to default state
     tmanager.select(0);
 
-    // End of capture
-#ifdef CAPTURE_MODE
-    dupdate_set_hook(GINT_CALL_NULL);
-#endif // #ifdef CAPTURE_MODE
-
     // Free memory
-#ifdef DEST_CASIO_FXCG50
-    gint_setrestart(1);
-#endif // #ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_CALC
+    //gint_setrestart(1);
+    gint_osmenu();
+#endif // #ifdef DEST_CASIO_CALC
 
     // Finished
     return 1;
