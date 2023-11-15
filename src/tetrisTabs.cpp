@@ -28,7 +28,7 @@ extern bopti_image_t img_geeTetris;
 
 // The current tab is selected => show splash screen
 //
-void aboutTab::select(TAB_STATUS& status){
+uint8_t aboutTab::select(){
     // Draw the image and text
 #ifdef DEST_CASIO_CALC
     clearScreen();
@@ -49,7 +49,7 @@ void aboutTab::select(TAB_STATUS& status){
 #endif // #ifdef DEST_CASIO_CALC
 
     // Nothing special
-    tab::select(status);
+    return tab::select();
 }
 
 //
@@ -58,9 +58,9 @@ void aboutTab::select(TAB_STATUS& status){
 
 // The current tab is selected => let's play
 //
-void tetrisTab::select(TAB_STATUS& status){
+uint8_t tetrisTab::select(){
 
-    tab::select(status);
+    uint8_t action(tab::select());
 
     if (params_){
 #ifdef DEST_CASIO_CALC
@@ -73,14 +73,14 @@ void tetrisTab::select(TAB_STATUS& status){
         }
 
         // Ready for a new game !
-        status.action = ACTION_REDRAW_TABS;
-        status.exitKey = KEY_CODE_NONE;
+        action = ACTION_REDRAW_TABS;
     }
     else{
         // No parameters => no game
-        status.action = ACTION_NONE;
-        status.exitKey = KEY_CODE_F1;       // return to main screen
+        action = ACTION_NONE;
     }
+
+    return action;
 }
 
 // EOF

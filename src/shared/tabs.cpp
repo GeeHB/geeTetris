@@ -157,10 +157,10 @@ char* tabValue::_dup(char* source, const char* val){
 
 // The current tab is selected (and can take control of the keyboard)
 //
-void tabValue::select(TAB_STATUS& status){
+uint8_t tabValue::select(){
 
     // Avoid to change the value when F key is first pressed
-    if (selected()){
+    if (isSelected()){
         // Change the value
         value_.bVal = !value_.bVal;
     }
@@ -177,7 +177,7 @@ void tabValue::select(TAB_STATUS& status){
 #endif // #ifdef DEST_CASIO_CALC
 
     // Nothing special to do
-    tab::select(status);
+    return tab::select();
 }
 
 //
@@ -231,14 +231,14 @@ void tabRangedValue::setRange(uint8_t minVal, uint8_t maxVal){
 
 // Change the value
 //
-void tabRangedValue::select(TAB_STATUS& status){
+uint8_t tabRangedValue::select(){
 
     // Ensure a keyboard is present
-    tab::select(status);
     if (!keys_){
-        return;
+        return ACTION_NONE;
     }
 
+    tab::select();
     clearScreen();
 
     // Draw all possible numbers
@@ -291,8 +291,8 @@ void tabRangedValue::select(TAB_STATUS& status){
     while (stay);
 
     // "return" key pressed (or 0 if none)
-    status.action = ACTION_NONE;
-    status.exitKey = key;
+    keys_->addKey(key);
+    return ACTION_NONE;
 }
 
 // Draw the range

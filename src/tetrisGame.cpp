@@ -420,19 +420,7 @@ long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLe
 //  This methods ends even if no event is in the queue
 //
 void tetrisGame::_handleGameKeys() {
-    char car(0);
-#ifdef DEST_CASIO_CALC
-    key_event_t evt = pollevent();
-    if (evt.type == KEYEV_DOWN){
-        // A key has been pressed
-        car = evt.key;
-    }
-    else{
-        return;
-    }
-#else
-	car = getchar();
-#endif // #ifdef DEST_CASIO_CALC
+    char car(keyboard_.getKey());
 
 	if(car != EOF) {
         if (casioParams_.keyQuit_ == car){

@@ -61,7 +61,6 @@ int main(){
     // Add tabs ...
     //
     tabManager tmanager;
-    TAB_STATUS tStatus;
     tab::clearScreen();
 
     tmanager.add(&tabAbout, 0);
@@ -75,11 +74,11 @@ int main(){
     tabKeyboard keys;
     bool quitApp(false);
     uint car(0);
-    int8_t sel(0);
+    int8_t sel(0), action(ACTION_NONE);
 
     tab* currentTab(tmanager.select(0));    // Select first tab
     if (currentTab){
-        currentTab->select(tStatus);
+        currentTab->select();
     }
 
     do{
@@ -92,7 +91,7 @@ int main(){
             // Update drawings
             if (NULL != (currentTab = tmanager.select(sel))){
                 // Give control to the tab
-                currentTab->select(tStatus);
+                action = currentTab->select();
 
                 // Retreive parameters
                 switch (sel){
@@ -115,12 +114,8 @@ int main(){
                         break;
                 }
 
-                // An (exit) char ?
-                keys.addKey(tStatus.exitKey);
-
                 // What's next ?
-                //
-                switch (tStatus.action){
+                switch (action){
                     case ACTION_REDRAW_TABS:
                         tmanager.update();
                         break;

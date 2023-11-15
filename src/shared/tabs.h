@@ -76,22 +76,9 @@ enum TAB_ACTIONS{
     // Other possible actions ???
 };
 
-// Status of a tab
-//
-typedef struct __tabStatus{
-    // Construction
-    __tabStatus(){
-        action = ACTION_NONE;
-        exitKey = KEY_CODE_NONE;
-    }
-
-    int action;         // Action to perform
-    int exitKey;        // Code of last keyboard event or KEY_CODE_NONE
-}TAB_STATUS;
-
 //---------------------------------------------------------------------------
 //--
-//-- tabKeyboard object - A keyboard handler fot tabs and tab management
+//-- tabKeyboard object - A keyboard handler for tabs and tab manager
 //--
 //--------------------------------------------------------------------------
 
@@ -136,16 +123,9 @@ public:
 
     // The current tab is selected (and can take control of the keyboard)
     // this method could/should be overloaded
-    virtual void select(TAB_STATUS& status){
-
-        select();
-
-        // Nothing todo
-        status.action = action_;
-        status.exitKey = KEY_CODE_NONE;
-    }
-    void select(){
+    virtual uint8_t select(){
         selected_ = true;
+        return action_;
     }
 
     // The current tab is unselected
@@ -153,7 +133,7 @@ public:
         selected_ = false;
     }
 
-    bool selected(){
+    bool isSelected(){
         return selected_;
     }
 
@@ -188,8 +168,8 @@ protected:
     // Members
     char        name_[TAB_NAME_LEN + 1];
     bool        selected_;
-    int         action_;        // What todo when pressed ?
     RECT        rect_;
+    int         action_;        // What todo when pressed ?
 };
 
 //---------------------------------------------------------------------------
@@ -227,7 +207,7 @@ public:
     void setComment(const char* comment, const char* ucomment = NULL);
 
     // The current tab is selected (and can take control of the keyboard)
-    void select(TAB_STATUS& status);
+    uint8_t select();
 
 protected :
     char* _dup(char* source, const char* value);
@@ -256,7 +236,7 @@ public:
     void setRange(uint8_t minVal, uint8_t maxVal);
 
     // The current tab is selected (and can take control of the keyboard)
-    void select(TAB_STATUS& status);
+    uint8_t select();
 
 private:
     // Ensure value is in the range

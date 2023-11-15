@@ -21,6 +21,8 @@
 #include "templates.h"
 #include "casioCalc.h"
 
+#include "shared/keyboard.h"
+
 #include <cstdlib>
 
 #ifdef __cplusplus
@@ -223,6 +225,8 @@ class tetrisGame {
 
         // Indicators (and associated names)
         UVALUE  values_[VAL_COUNT];
+
+        keyboard    keyboard_;      // Keyboard handler
 };
 
 #ifdef __cplusplus

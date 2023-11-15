@@ -38,7 +38,7 @@ public:
     }
 
     // The current tab is selected => show splash screen
-    void select(TAB_STATUS& status);
+    uint8_t select();
 };
 
 //---------------------------------------------------------------------------
@@ -61,7 +61,7 @@ public:
     }
 
     // The current tab is selected => let's play
-    void select(TAB_STATUS& status);
+    uint8_t select();
 
     // Show best scores
     static void showScores(){
