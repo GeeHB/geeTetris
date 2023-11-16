@@ -4,20 +4,19 @@
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: geeTetris - cpp version
+//--	Project	:
 //--
 //---------------------------------------------------------------------------
 //--
 //--	Description:
 //--
-//--			Definition of objects used for tab managment :
-//--                     - tabManager : tools that manages a list à tabs
-//--                     - tab : A basic tab
-//--                     - tabValue : A tab holding a value
-//--                     - tabRangedValue : A tab handling a numeric value
-//--                       in a range
+//--        Definition of objects used for tab managment :
+//--            - tabManager : tools that manages a list à tabs
+//--            - tab : A basic tab
+//--            - tabValue : A tab holding a value
+//--            - tabRangedValue : A tab handling a numeric value in a range
 //--
-//--                     - tabKeyboard : An object for handling keyboard events
+//--            - tabKeyboard : An object for handling keyboard events
 //--
 //---------------------------------------------------------------------------
 
@@ -44,24 +43,14 @@ extern "C" {
 #define TAB_WIDTH       (CASIO_WIDTH / TAB_COUNT)
 
 #define TAB_ROUNDED_DIM  4
-#define TAB_NAME_LEN    10      // max char
+#define TAB_NAME_LEN    10      // max char var the tab name
 
 #define TAB_RANGE_BOX_WIDTH     15      // width of a single box in pixels
 
 #define TAB_RANGE_COMMENT_X     10
 
-// Data handled by a tabValue object
-//
-union TAB_VALUE{
-    bool        bVal;
-    uint8_t     uVal;
-    int         iVal;
-    /*
-    void*       pVal;
-    */
-};
-
 // Position of a tab
+//
 typedef struct __rect{
     uint16_t    x,y;    // top left
     uint16_t    w, h;   // width and height
@@ -94,10 +83,21 @@ public:
     // Destruction
     virtual ~tabKeyboard(){}
 
-    // Key event in the queue
+    // getKey() : Key event in the queue
+    //
+    //  @return : Key code or KEY_NONE (0) if no key pressed
+    //
     virtual uint16_t getKey();
 
-    // Add a key event
+    // addkey() : Add a key event
+    //
+    //  Add a key in the queue.
+    //  The key code is not formelly added. But the code will
+    //  be returned by the next call to getKey() method
+    //
+    //  @code : key code to add in the queue
+    //  @mod : modifier value
+    //
     void addKey(uint16_t code, uint16_t mod = MOD_NONE){
         key_ = code;
         mod_ = mod;
@@ -183,17 +183,18 @@ protected:
 class tabValue : public tab{
 public:
     // Construction
-    tabValue(const char* tname, int action = ACTION_NONE)
+    tabValue(const char* tname, int* value, int action = ACTION_NONE)
     :tab(tname, action){
-        value_.iVal = 0;
+        value_ = value;
         comment_ = ucomment_ = NULL;
     }
 
     // Destruction
     virtual ~tabValue(){
-        setComment(NULL, NULL);   // Free the resource
+        setComment(NULL, NULL);   // Free the resources
     }
 
+    /*
     // Value
     void setValue(TAB_VALUE& val){
         // Any ...
@@ -202,6 +203,7 @@ public:
     void value(TAB_VALUE& val){
         val.iVal = value_.iVal;
     }
+    */
 
     // Comment
     void setComment(const char* comment, const char* ucomment = NULL);
@@ -214,8 +216,8 @@ protected :
 
 protected:
     // Members
-    TAB_VALUE   value_;
-    char       *comment_, *ucomment_;
+    char   *comment_, *ucomment_;
+    int    *value_;
 };
 
 //---------------------------------------------------------------------------
@@ -227,7 +229,7 @@ protected:
 class tabRangedValue : public tabValue{
 public:
     // Construction
-    tabRangedValue(const char* tname, uint8_t minVal, uint8_t maxVal, const tabKeyboard* keys = NULL);
+    tabRangedValue(const char* tname, int* val, uint8_t minVal, uint8_t maxVal, const tabKeyboard* keys = NULL);
 
     // Destruction
     ~tabRangedValue();

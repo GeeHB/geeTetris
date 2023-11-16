@@ -22,6 +22,12 @@ DEST_FILE = "../assets-cg/coloured.png"
 DEST_W = 396
 DEST_H = 202    # Hauteur casio - barre de menu
 
+# Largeur d'un cube
+CUBE_W  = 6
+
+# Offset sur la source
+SRC_STEP = int(CUBE_W * SRC_W / DEST_W) + 1
+
 DEST_OFFSET_X = 0
 DEST_OFFSET_Y = 30
 
@@ -80,17 +86,17 @@ if __name__ == "__main__":
     src = Image.open(SRC_FILE)
     dst = Image.new('RGB', (DEST_W, DEST_H), COLOUR_BKGROUND)
     
-    width = int(SRC_W / 2)
-    height = int(SRC_H / 2)
+    width = int(SRC_W / SRC_STEP)
+    height = int(SRC_H / SRC_STEP)
 
     for x in range(width):
         for y in range(height):
-            r,g,b,_ = src.getpixel((x*2, y*2))
+            r,g,b,_ = src.getpixel((x*SRC_STEP, y*SRC_STEP))
 
             colourID = int(x / 9) % 7   # for the pixel
 
             if COLOUR_WHITE != (r,g,b):
-                draw_rectangle(dst, x * 5 + DEST_OFFSET_X,  y * 5  + DEST_OFFSET_Y, 5, 5, colours[colourID])
+                draw_rectangle(dst, x * CUBE_W + DEST_OFFSET_X,  y * CUBE_W  + DEST_OFFSET_Y, CUBE_W, CUBE_W, colours[colourID])
     
     # Enregistrement
     dst.save(DEST_FILE, 'png')

@@ -4,13 +4,19 @@
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: geeTetris - cpp version
+//--	Project	:
 //--
 //---------------------------------------------------------------------------
 //--
 //--	Description:
 //--
-//--			Implementation of tabManager and tab objects
+//--        Implementation of objects used for tab managment :
+//--            - tabManager : tools that manages a list à tabs
+//--            - tab : A basic tab
+//--            - tabValue : A tab holding a value
+//--            - tabRangedValue : A tab handling a numeric value in a range
+//--
+//--            - tabKeyboard : An object for handling keyboard events
 //--
 //---------------------------------------------------------------------------
 
@@ -143,6 +149,31 @@ void tabValue::setComment(const char* comment, const char* ucomment){
     ucomment_ = _dup(ucomment_, ucomment);
 }
 
+// The current tab is selected (and can take control of the keyboard)
+//
+uint8_t tabValue::select(){
+
+    // Avoid to change the value when F key is first pressed
+    if (isSelected()){
+        // Change the value
+        (*value_) = (int)(!(bool)(*value_));
+    }
+
+    // update comment
+    clearScreen();
+
+#ifdef DEST_CASIO_CALC
+    if (comment_){
+        dtext(TAB_RANGE_COMMENT_X, int((CASIO_HEIGHT - TAB_HEIGHT) / 2), COLOUR_BLACK, (bool)(*value_)?comment_:(ucomment_?ucomment_:comment_));
+    }
+
+    dupdate();
+#endif // #ifdef DEST_CASIO_CALC
+
+    // Nothing special to do
+    return tab::select();
+}
+
 // Duplicate a comment
 //
 char* tabValue::_dup(char* source, const char* val){
@@ -155,38 +186,13 @@ char* tabValue::_dup(char* source, const char* val){
     return (val?strdup(val):NULL);
 }
 
-// The current tab is selected (and can take control of the keyboard)
-//
-uint8_t tabValue::select(){
-
-    // Avoid to change the value when F key is first pressed
-    if (isSelected()){
-        // Change the value
-        value_.bVal = !value_.bVal;
-    }
-
-    // update comment
-    clearScreen();
-
-#ifdef DEST_CASIO_CALC
-    if (comment_){
-        dtext(TAB_RANGE_COMMENT_X, int((CASIO_HEIGHT - TAB_HEIGHT) / 2), COLOUR_BLACK, value_.bVal?comment_:(ucomment_?ucomment_:comment_));
-    }
-
-    dupdate();
-#endif // #ifdef DEST_CASIO_CALC
-
-    // Nothing special to do
-    return tab::select();
-}
-
 //
 // tabRangedValue: A tab with a value in a range
 //
 
 // Construction
-tabRangedValue::tabRangedValue(const char* tname, uint8_t minVal, uint8_t maxVal, const tabKeyboard* keys)
-:tabValue(tname, ACTION_NONE){
+tabRangedValue::tabRangedValue(const char* tname, int* val, uint8_t minVal, uint8_t maxVal, const tabKeyboard* keys)
+:tabValue(tname, val, ACTION_NONE){
     setRange(minVal, maxVal);
 
     // A keyboard ?
@@ -226,7 +232,7 @@ void tabRangedValue::setRange(uint8_t minVal, uint8_t maxVal){
     yPos_ = int((CASIO_HEIGHT - TAB_HEIGHT) / 2);
 
     // Current value must be in the range
-    value_.uVal = (uint8_t)_inRange(value_.iVal);
+    (*value_) = (uint8_t)_inRange((int8_t)(*value_));
 }
 
 // Change the value
@@ -246,7 +252,7 @@ uint8_t tabRangedValue::select(){
 
     // Select current val
     int key(0);
-    int8_t oldVal(-1), newVal(value_.uVal);
+    int8_t oldVal(-1), newVal((int8_t)(*value_));
     bool stay(true);
     _selectValue(newVal);
 
@@ -333,7 +339,7 @@ void tabRangedValue::_selectValue(int8_t value, bool select){
 
     // Update the value (if selected)
     if (select){
-        value_.uVal = (uint8_t)value;
+        *value_ = (uint8_t)value;
     }
 }
 

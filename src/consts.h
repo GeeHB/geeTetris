@@ -17,16 +17,10 @@
 #ifndef __GEE_TETRIS_CONSTS_h__
 #define __GEE_TETRIS_CONSTS_h__    1
 
-#ifndef LINUX_VER
-#define DEST_CASIO_CALC        1   // Compile for Casio FX CG50 calculator
-#endif // #ifndef LINX_VER
+#include "shared/casioCalcs.h"  // Choose dest. format
 
 #ifdef DEST_CASIO_CALC
-
-// Specific includes for calculators
-#include <gint/display.h>
 #include <gint/keyboard.h>
-#include <gint/kmalloc.h>
 #else
 #include <malloc.h>
 #include <cstdint> // <stdint.h>

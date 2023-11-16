@@ -112,8 +112,8 @@ tetrisGame::tetrisGame() {
 
 // setParameters() : Set game's parameters
 //
-//  @params : Struct. continaining parameters for the game
-//  These parameters are choosen by the user
+//  @params : Struct. containining parameters for the game
+//    These parameters are choosen by the user
 //
 void tetrisGame::setParameters(tetrisParameters* params) {
     // Copy (and init) parameters
@@ -151,7 +151,7 @@ void tetrisGame::setParameters(tetrisParameters* params) {
 //  The entore game is handled by this method.
 //  It retuns on error or when the game is over
 //
-//  returns false on error(s)
+//  @return :  false on error(s)
 //
 bool tetrisGame::start() {
     // Check the object state
@@ -270,6 +270,8 @@ void tetrisGame::_rotateDisplay(bool first){
 
 // _left() : Move left
 //
+//  @return : done ?
+//
 bool tetrisGame::_left(){
     // Test position
     if (_canMove(nextPos_.leftPos_ - 1, nextPos_.topPos_)) {
@@ -284,6 +286,8 @@ bool tetrisGame::_left(){
 }
 
 // _right() : Move right
+//
+//  @return : done ?
 //
 bool tetrisGame::_right(){
     // Test position
@@ -306,7 +310,7 @@ bool tetrisGame::_right(){
 //
 //  @newPiece : The piece has just been added ?
 //
-//  Return true if the piece canmoive one row down
+//  @return : true if the piece can move one row down
 //
 bool tetrisGame::_down(bool newPiece) {
     // Test position
@@ -337,6 +341,8 @@ void tetrisGame::_fall(){
 }
 
 // _rotateLeft() : anti-clockwise rotation
+//
+//  @return : done ?
 //
 bool tetrisGame::_rotateLeft() {
 
@@ -403,7 +409,7 @@ void tetrisGame::_piecePosChanged() {
 //  @level : current level in the game
 //  @incLevel : value of current increment for the level (1 by default)
 //
-//  Return the new duration in ns.
+//  @return : new duration in ns.
 //
 long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLevel){
         if (level >= MAX_LEVEL_ACCELERATION){
@@ -417,7 +423,7 @@ long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLe
 
 // _handleGameKeys() : Handle keyboard events
 //
-//  This methods ends even if no event is in the queue
+//  This methods returns even if no event is in the queue
 //
 void tetrisGame::_handleGameKeys() {
     char car(keyboard_.getKey());
@@ -467,7 +473,7 @@ void tetrisGame::_handleGameKeys() {
 //
 //  @leftPos, @topPos : Position to test
 //
-//  Return true if the position is free and can be used by the tetramino
+//  @return : true if the position is free and can be used by the tetramino
 //
 bool tetrisGame::_canMove(int8_t leftPos, uint8_t  topPos) {
     // Piece's datas (in its current state)
@@ -504,7 +510,7 @@ bool tetrisGame::_canMove(int8_t leftPos, uint8_t  topPos) {
 
 // _minTopPosition() : Get a piece min.pos.index(vertical value)
 //
-//  Return the index of the lowest possible position foir the current piece
+//  @return : index of the lowest possible position foir the current piece
 //
 uint8_t tetrisGame::_minTopPosition(){
     uint8_t currentTop(nextPos_.topPos_);
@@ -552,7 +558,7 @@ void tetrisGame::_newPiece() {
 //  When a line is completed (ie. all horizontal boxes are colored)
 //  it disapperas from the game. All lines "below" will move down.
 //
-//  @index : index of the line to clear  in [0 , PLAYFIELD_HEIGHT[
+//  @index : index of the line to clear in range [0 , PLAYFIELD_HEIGHT[
 //
 void tetrisGame::_clearLine(uint8_t index) {
     if (/*index >= 0 && */index < PLAYFIELD_HEIGHT) {
@@ -572,7 +578,7 @@ void tetrisGame::_clearLine(uint8_t index) {
 
 // _addDirtyLine() : Add a randomly generated dirty line in the gameplay
 //
-//  @lineID : Index of the line to fill in [0 , PLAYFIELD_HEIGHT[
+//  @lineID : Index of the line to fill in range [0 , PLAYFIELD_HEIGHT[
 //
 void tetrisGame::_addDirtyLine(uint8_t lineID) {
     uint16_t cubes(1 + rand() % int(pow(2, PLAYFIELD_WIDTH) - 1));
@@ -614,7 +620,7 @@ void tetrisGame::_putPiece() {
     }
 }
 
-// _reachLowerPos() : Update the datas when a tetramino is down
+// _reachLowerPos() : Update the datas when a tetramino ended its fall
 //
 //  @downRowCount : count of down'rows
 //
@@ -701,8 +707,8 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 //
 //  @inTetrisGame : if true coordinates are changed to playfield area.
 //   if false, coordinates are changed to the preview area
-//  @x, @y : coordinates to change
-//  @width, @height : Dimensions in pixels of a single block in the choosen area
+//  @x, @y [i/o] : coordinates to change
+//  @width, @height : (new) dimensions in pixels of a single block in the choosen area
 //
 void tetrisGame::_changeOrigin(bool inTetrisGame,uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height) {
     if (inTetrisGame){
@@ -751,12 +757,12 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
     }
 }
 
-// _drawTetrisGame() : Display the next piece
+// _drawNextPiece() : Display the next piece
 //
 //  The next piece will be drawn in the preview box.
 //  This zone, prior to drawinings, will be erased
 //
-//  @pieceIndex is the index of the piece
+//  @pieceIndex : index of the piece
 //
 void tetrisGame::_drawNextPiece(int8_t pieceIndex) {
     // Erase the previous piece
@@ -923,22 +929,22 @@ void tetrisGame::_dtextV(int x, int y, int fg, const char* text){
 //
 //  The base can't be changed it is always equal to 10
 //
-//  This method assumes the output buffer - ie. the str - is large enough to contain
+//  This method assumes the output buffer - ie. str - is large enough to contain
 //  the name and the formated value.
 //
 //  @num : Numeric value to transform
 //  @name : Name of the value (can be NULL)
 //  @str : Pointer to output string
 //
-//  Return the formated string
+//  @return : pointer to formated string
 //
 char* tetrisGame::__valtoa(int num, const char* name, char* str){
-    char* strVal(str); // Num. part starts here
+    char* strVal(str);
 
     // Insert name
 	if (name){
 	    strcpy(str, name);
-	    strVal+=strlen(str);
+	    strVal+=strlen(str);    // num. value starts here
 	}
 
 	// Add num. value

@@ -14,48 +14,40 @@
 //--
 //---------------------------------------------------------------------------
 
+#include "consts.h"
+
 #include "shared/tabs.h"
 #include "tetrisTabs.h"
 
 #include "shared/keyboard.h"
-
-#ifdef DEST_CASIO_CALC
-#include <gint/gint.h>
-#endif // #ifdef DEST_CASIO_CALC
 
 // Program entry point
 //
 int main(){
 
     tetrisParameters params;
-    TAB_VALUE value;
 
     // Create tabs
     //
     aboutTab tabAbout(TAB_ABOUT);
-    tabValue tabShadow(TAB_SHADOW);
 
     // starting level
-    tabRangedValue tabLevel(TAB_LEVEL, MIN_LEVEL, MAX_LEVEL);
-    value.uVal = params.startLevel_;
-    tabLevel.setValue(value);
+    tabRangedValue tabLevel(TAB_LEVEL, (int*)&params.startLevel_, MIN_LEVEL, MAX_LEVEL);
     tabLevel.setComment(TAB_LEVEL_STR);
 
     // # of dirty lines
-    tabRangedValue tabLines(TAB_LINES, MIN_DIRTY_LINES, MAX_DIRTY_LINES);
-    value.uVal = params.dirtyLines_;
-    tabLines.setValue(value);
+    tabRangedValue tabLines(TAB_LINES, (int*)&params.dirtyLines_, MIN_DIRTY_LINES, MAX_DIRTY_LINES);
     tabLines.setComment(TAB_DIRTY_LINES_STR);
 
     // display shadows ?
-    value.bVal = params.shadow_;
-    tabShadow.setValue(value);
+    tabValue tabShadow(TAB_SHADOW, (int*)&params.shadow_);
     tabShadow.setComment(TAB_SHADOW_ON_STR, TAB_SHADOW_OFF_STR);
 
     // the game
     tetrisTab tabTetris(TAB_PLAY);
     tabTetris.setParameters(&params);
 
+    // exit
     tab tabExit(TAB_QUIT, ACTION_QUIT);
 
     // Add tabs ...
@@ -92,27 +84,6 @@ int main(){
             if (NULL != (currentTab = tmanager.select(sel))){
                 // Give control to the tab
                 action = currentTab->select();
-
-                // Retreive parameters
-                switch (sel){
-                    // Level (IDTab = 1)
-                    case 1:
-                        tabLevel.value(value);
-                        params.startLevel_ = value.uVal;
-                        break;
-
-                    // Dirty lines
-                    case 2:
-                        tabLines.value(value);
-                        params.dirtyLines_ = value.uVal;
-                        break;
-
-                    // A shadow ?
-                    case 3:
-                        tabShadow.value(value);
-                        params.shadow_ = value.bVal;
-                        break;
-                }
 
                 // What's next ?
                 switch (action){

@@ -33,15 +33,6 @@ extern "C" {
 //--
 //---------------------------------------------------------------------------
 
-// Screen dimensions in pixels
-//
-#ifdef DEST_CASIO_CALC
-#define CASIO_WIDTH     DWIDTH
-#define CASIO_HEIGHT    DHEIGHT
-#else
-#define CASIO_WIDTH     384
-#define CASIO_HEIGHT    192
-#endif // #ifdef DEST_CASIO_CALC
 
 // Box dimensions in pixels
 //

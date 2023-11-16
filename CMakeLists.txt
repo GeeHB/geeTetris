@@ -12,6 +12,7 @@ set(SOURCES
   src/geeTetris.cpp
   src/shared/scrCapture.cpp
   src/shared/keyboard.cpp
+  src/shared/bFile.cpp
   src/shared/tabs.cpp
   src/tetrisTabs.cpp
   src/tetrisGame.cpp
