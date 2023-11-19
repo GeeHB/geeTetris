@@ -220,7 +220,7 @@ bool tetrisGame::start() {
     }
 
     // Game is Over
-    casioParams_.rotatedDisplay(false); // Return to default font
+    casioDisplay_.rotatedDisplay(false); // Return to default font
     return true;
 }
 
@@ -235,7 +235,7 @@ bool tetrisGame::start() {
 void tetrisGame::_rotateDisplay(bool first){
 
     // (new) rotation mode
-    casioParams_.rotatedDisplay(first?parameters_.rotatedDisplay_:!casioParams_.rotatedDisplay_);
+    casioDisplay_.rotatedDisplay(first?parameters_.rotatedDisplay_:!casioDisplay_.isRotated());
 
     // Clear the screen
 #ifdef DEST_CASIO_CALC
@@ -429,37 +429,37 @@ void tetrisGame::_handleGameKeys() {
     char car(keyboard_.getKey());
 
 	if(car != EOF) {
-        if (casioParams_.keyQuit_ == car){
+        if (casioDisplay_.keyQuit_ == car){
             end();
             return;
         }
 
-        if (casioParams_.keyRotateDisplay_ == car){
+        if (casioDisplay_.keyRotateDisplay_ == car){
             _rotateDisplay();
             return;
         }
 
-        if (casioParams_.keyLeft_ == car){
+        if (casioDisplay_.keyLeft_ == car){
             _left();
             return;
         }
 
-        if (casioParams_.keyRight_ == car){
+        if (casioDisplay_.keyRight_ == car){
             _right();
             return;
         }
 
-        if (casioParams_.keyRotatePiece_ == car){
+        if (casioDisplay_.keyRotatePiece_ == car){
             _rotateLeft();
             return;
         }
 
-        if (casioParams_.keyDown_ == car){
+        if (casioDisplay_.keyDown_ == car){
             _down();
             return;
         }
 
-        if (casioParams_.keyFall_ == car){
+        if (casioDisplay_.keyFall_ == car){
             _fall();
             return;
         }
@@ -620,7 +620,7 @@ void tetrisGame::_putPiece() {
     }
 }
 
-// _reachLowerPos() : Update the datas when a tetramino ended its fall
+// _reachLowerPos() : Update the datas when a tetramino has just ended its fall
 //
 //  @downRowCount : count of down'rows
 //
@@ -650,7 +650,7 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
             }
         }
 
-        // The line is complete
+        // is the line complete ?
         if (!foundEmpty){
             completedLines[completedCount++] = line;
         }
@@ -703,27 +703,6 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
     updateDisplay();
 }
 
-// _changeOrigin() : Change the origin and the coordinate system
-//
-//  @inTetrisGame : if true coordinates are changed to playfield area.
-//   if false, coordinates are changed to the preview area
-//  @x, @y [i/o] : coordinates to change
-//  @width, @height : (new) dimensions in pixels of a single block in the choosen area
-//
-void tetrisGame::_changeOrigin(bool inTetrisGame,uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height) {
-    if (inTetrisGame){
-        x = casioParams_.playfield_pos_.x + x * casioParams_.boxWidth_;
-        y = casioParams_.playfield_pos_.y + (PLAYFIELD_HEIGHT - 1 - y) * casioParams_.boxWidth_;
-        width = height = casioParams_.boxWidth_;
-    }
-    else{
-        // Draw next piece
-        x = casioParams_.NP_pos_.x + CASIO_INFO_GAP;
-        y = casioParams_.NP_pos_.y + CASIO_INFO_GAP;
-        width = height = casioParams_.NP_boxWidth_;
-    }
-}
-
 // _drawTetrisGame() : Draw a whole tetramino using the given colour
 //
 //  @datas is the piece'datas in its current rotation state
@@ -741,7 +720,7 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
     }
 
     uint16_t x, xFirst(cornerX), y(cornerY - rowFirst), w, h;
-    _changeOrigin(inTetrisGame, xFirst, y, w, h);
+    casioDisplay_.shitfToZone(ZONE_GAME, xFirst, y, w, h);
 
     uint8_t colourID;
     for (uint8_t row = rowFirst; row < PIECE_HEIGHT; row++) {
@@ -749,7 +728,7 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
         for (uint8_t col = 0; col < PIECE_WIDTH; col++) {
             colourID = datas[row * PIECE_WIDTH + col];
             if (colourID != COLOUR_ID_BOARD) {
-                _drawRectangle(x, y, w, h, colours_[(COLOUR_ID_NONE != specialColourID) ? specialColourID : colourID]);
+                casioDisplay_.drawRectangle(x, y, w, h, colours_[(COLOUR_ID_NONE != specialColourID) ? specialColourID : colourID]);
             }
             x += w;
         }
@@ -765,7 +744,7 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
 //  @pieceIndex : index of the piece
 //
 void tetrisGame::_drawNextPiece(int8_t pieceIndex) {
-    // Erase the previous piece
+    // Erase the "previous" next piece
     _eraseNextPiece();
 
     // ... and then draw the new one
@@ -779,14 +758,13 @@ void tetrisGame::_drawNextPiece(int8_t pieceIndex) {
 //
 void tetrisGame::_drawTetrisGame() {
     uint16_t left, leftFirst(0), top(0), w, h;
-    _changeOrigin(true, leftFirst, top, w, h);
+    casioDisplay_.shitfToZone(ZONE_GAME, leftFirst, top, w, h);
 
     // Draw all the blocks (coloured or not)
     for (uint8_t y = 0; y < PLAYFIELD_HEIGHT; y++) {
         left = leftFirst;
         for (uint8_t x = 0; x < PLAYFIELD_WIDTH; x++) {
-            //_drawSingleBlock(left, top, w, h, playField_[y][x]);
-            _drawRectangle(left, top, w, h, colours_[playField_[y][x]]);
+            casioDisplay_.drawRectangle(left, top, w, h, colours_[playField_[y][x]]);
             left += w;
         }
         top -= h;
@@ -801,8 +779,8 @@ void tetrisGame::_drawTetrisGame() {
 //
 void tetrisGame::_eraseNextPiece(){
     uint16_t x(0), y(0), w, h;
-    _changeOrigin(false, x, y, w, h);
-    _drawRectangle(x, y, w * PIECE_WIDTH, h * PIECE_HEIGHT, colours_[COLOUR_ID_BOARD], colours_[COLOUR_ID_BOARD]);
+    casioDisplay_.shitfToZone(ZONE_PREVIEW, x, y, w, h);
+    casioDisplay_.drawRectangle(x, y, w * PIECE_WIDTH, h * PIECE_HEIGHT, colours_[COLOUR_ID_BOARD], colours_[COLOUR_ID_BOARD]);
 }
 
 // _drawBackGround() : Draw entire background
@@ -812,38 +790,16 @@ void tetrisGame::_eraseNextPiece(){
 //
 void tetrisGame::_drawBackGround(){
     // Border around the playfield
-    _drawRectangle(casioParams_.playfield_pos_.x - CASIO_BORDER_GAP,
-        casioParams_.playfield_pos_.y - CASIO_BORDER_GAP,
-        casioParams_.playfield_width, casioParams_.playfield_height,
+    casioDisplay_.drawRectangle(casioDisplay_.playfield()->pos.x - CASIO_BORDER_GAP,
+        casioDisplay_.playfield()->pos.y - CASIO_BORDER_GAP,
+        casioDisplay_.playfield()->pos.w, casioDisplay_.playfield()->pos.h,
         NO_COLOR, colours_[COLOUR_ID_BORDER]);
 
     // Border for 'Next piece'
-    _drawRectangle(casioParams_.NP_pos_.x + CASIO_BORDER_GAP,
-                casioParams_.NP_pos_.y + CASIO_BORDER_GAP,
-                casioParams_.NP_width_, casioParams_.NP_width_,
+    casioDisplay_.drawRectangle(casioDisplay_.nextPiece()->pos.x + CASIO_BORDER_GAP,
+                casioDisplay_.nextPiece()->pos.y + CASIO_BORDER_GAP,
+                casioDisplay_.nextPiece()->pos.w, casioDisplay_.nextPiece()->pos.h,
                 NO_COLOR, colours_[COLOUR_ID_BORDER]);
-}
-
-// _drawRectangle() : Draw a single coloured rectangle
-//
-//   @x,@y : top left starting point
-//   @width, @height : dimensions
-//   @borderColour : Colour of the border in RGB format or -1 (if no border)
-//   @fillColour : Filling colour in RGB format or -1 (if empty)
-//
-void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int32_t fillColour, int32_t borderColour){
-    int16_t xFrom(x), yFrom(y);
-    int16_t xTo(xFrom + width - 1), yTo(yFrom + height - 1);
-
-    // Horizontal display ?
-    if (casioParams_.rotatedDisplay_){
-        casioParams_.rotate(xFrom, yFrom, xTo, yTo);
-    }
-
-    // Draw the rect
-#ifdef DEST_CASIO_CALC
-    drect_border(xFrom, yFrom, xTo, yTo, fillColour, 1, borderColour);
-#endif // #ifdef DEST_CASIO_CALC
 }
 
 // _drawNumValue() : Draw a value and its name
@@ -857,69 +813,14 @@ void tetrisGame::_drawNumValue(uint8_t index){
     if (-1 != values_[index].previous){
         __valtoa(values_[index].previous, values_[index].name, valStr);
 
-#ifdef DEST_CASIO_CALC
-        if (casioParams_.rotatedDisplay_){
-            _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
-        }
-        else{
-            dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
-        }
-#endif // #ifdef DEST_CASIO_CALC
+        casioDisplay_.dtext(casioDisplay_.textsPos_[index].x, casioDisplay_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
     }
 
     // print new value
     __valtoa(values_[index].value, values_[index].name, valStr);
-
-#ifdef DEST_CASIO_CALC
-    if (casioParams_.rotatedDisplay_){
-        _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
-    }
-    else{
-        dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
-    }
-#endif // #ifdef DEST_CASIO_CALC
+    casioDisplay_.dtext(casioDisplay_.textsPos_[index].x, casioDisplay_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
 
     values_[index].previous = values_[index].value;
-}
-
-// _dtextV() : Draw a line of text vertically
-//
-//  @x, @y : Anchor point coordinates
-//  @fg : font colour
-//  @test : string to draw
-//
-void tetrisGame::_dtextV(int x, int y, int fg, const char* text){
-    if (strlen(text) > 0){
-        int16_t xFrom(x), yFrom(y), xTo, yTo;
-
-        // dimensions of the first char.
-        char* current = (char*)text;
-        int w, h;
-#ifdef DEST_CASIO_CALC
-        dnsize(current, 1, casioParams_.vFont_, &w, &h);
-#else
-        w = h = 10; // for debug tests
-#endif // #ifdef DEST_CASIO_CALC
-
-        // Get new coordinates of the anchor
-        xTo = xFrom + w;
-        yTo = yFrom + h;
-        casioParams_.rotate(xFrom, yFrom, xTo, yTo);
-
-        // Draw the string (char. by char.)
-        while (*current){
-#ifdef DEST_CASIO_CALC
-            dtext_opt(xFrom, yFrom,  fg, C_NONE, DTEXT_RIGHT, DTEXT_BOTTOM, current, 1);
-            dnsize(current, 1, casioParams_.vFont_, &w, &h);
-#endif // #ifdef DEST_CASIO_CALC
-
-            // Update anchor pos.
-            yFrom-=h;
-
-            // Next char
-            current++;
-        }
-    }
 }
 
 // __valtoa() : Transform a numeric value into a string

@@ -17,7 +17,8 @@ set(SOURCES
   src/tetrisTabs.cpp
   src/tetrisGame.cpp
   src/piece.cpp
-  src/casioCalc.cpp
+  src/playArea.cpp
+  src/sList.cpp
 )
 # Shared assets, fx-9860G-only assets and fx-CG-50-only assets
 set(ASSETS

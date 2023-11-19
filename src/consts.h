@@ -223,21 +223,6 @@ class tetrisParameters {
         bool rotatedDisplay_;
 };
 
-// For lisibility ...
-//
-
-// Point coordinates
-//
-typedef struct __point {
-    // Construction
-    __point(){
-        x = y = 0;
-    }
-
-    uint16_t    x;
-    uint16_t    y;
-} POINT;
-
 // A single unsigned value (and its previous val if exists)
 //
 #define MAX_VALUE_NAME  20

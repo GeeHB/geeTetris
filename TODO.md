@@ -1,5 +1,4 @@
 #### Ajouts
-
 - [ ] ***src/playArea*** :
   - [ ] classe à instancier avec le type de calculatrice
   - [ ] intègre les spécificités de chaque terminal
@@ -11,14 +10,16 @@
   - [x] \- Gestion abstraite du clavier (Casio / Linux)
   - [x] \- ***tabKeyboard*** : classe héritée pour le "transfert" des touches entre un onglet et le gestionnaire d'onglets
 - [x] ***src/shared/scrCapture*** : Objet / interface pour la mise en place et le retrait auto de la capture via fxlink ( intégration du src de Lephenixnoir)
+- [ ] ***src/sList*** : Liste simplement chaînée pour la gestion des scores
 - [ ] ***src/shared/bFile*** : Un objet basique pour gérer les fichiers (interface // gint::bfile.h)
   - [x] FX-CG50
-  - [ ] other calcs ...
+  - [ ] otherautres calcs ...
   - [x] Linux (avec std, filesystem et fstream)
 - [ ] Gestion des scores
   - [ ] Utilisation de ***shared/bFile***
+  - [ ] Mini-liste pour gérer le tableau des scores : ***sList***
   - [ ] Enregistrement / lecture du tuple (score, #level, #lines)
-
+- [ ] Mode pause (dde de blackium)
 #### Corrections
 
 - [ ] Ajouter / modifier les icones
@@ -28,3 +29,4 @@
   - [ ] Ajout de getters et setters plus lisibles
   - [x] Quid du comportement par défaut (gestion d'un booléen) <- inchangé
 - [x] Fin de l'app - ancien écran tjrs en mémoire
+- [ ] Certaines lignes pleines ne disparaissent pas

@@ -19,7 +19,7 @@
 #include "consts.h"
 #include "piece.h"
 #include "templates.h"
-#include "casioCalc.h"
+#include "playArea.h"
 
 #include "shared/keyboard.h"
 
@@ -117,9 +117,6 @@ class tetrisGame {
         // Change the game speed
         long _updateSpeed(long currentDuration, uint8_t level, uint8_t incLevel = 1);
 
-       // Change origin for drawing
-        void _changeOrigin(bool inTetrisGame, uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height);
-
         // Handle keyboard events
         void _handleGameKeys();
 
@@ -147,7 +144,7 @@ class tetrisGame {
         }
 
         //
-        // Mouvements
+        // Movements
         //
         bool _rotateLeft();
         bool _left();
@@ -194,12 +191,6 @@ class tetrisGame {
         // Draw the tetrisGame
         void _drawTetrisGame();
 
-        // Draw a coloured rectangle
-        void _drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int32_t fillColour = NO_COLOR, int32_t borderColour = NO_COLOR);
-
-        // Draw a line of text vertically
-        void _dtextV(int x, int y, int fg, const char* text);
-
         // Strings manipulations
         char* __valtoa(int num, const char* name, char* str);
         void __strrev(char *str);
@@ -217,7 +208,7 @@ class tetrisGame {
 
         int32_t colours_[LAST_COLOUR_ID+1];     // Colours in rgb
 
-        casioCalc casioParams_;
+        playArea casioDisplay_;
 
         // Current iece and next piece
         int8_t nextIndex_;  // -1 = None

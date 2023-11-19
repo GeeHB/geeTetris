@@ -23,7 +23,7 @@
 #ifndef __GEE_TETRIS_CASIO_TABS_h__
 #define __GEE_TETRIS_CASIO_TABS_h__    1
 
-#include "../casioCalc.h"
+#include "../playArea.h"
 #include "keyboard.h"
 
 #ifdef __cplusplus
@@ -48,13 +48,6 @@ extern "C" {
 #define TAB_RANGE_BOX_WIDTH     15      // width of a single box in pixels
 
 #define TAB_RANGE_COMMENT_X     10
-
-// Position of a tab
-//
-typedef struct __rect{
-    uint16_t    x,y;    // top left
-    uint16_t    w, h;   // width and height
-} RECT;
 
 // Actions
 //

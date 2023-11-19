@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //--
-//--	File	: casioFX-CG50.h
+//--	File	: playArea.h
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
@@ -10,7 +10,7 @@
 //--
 //--	Description:
 //--
-//--			Definition of casioCalc object and consts for casio fx-CG50
+//--			Definition of playArea object and consts for casio fx-CG50
 //--
 //---------------------------------------------------------------------------
 
@@ -56,29 +56,48 @@ extern "C" {
 
 #define CASIO_VERT_TEXT_OFFSET  15
 
+// During games draings appends in 2 zones :
+//      game zone and next-piece (ie. preview) zone
+//
+typedef struct __zone{
+    uint8_t    boxWidth;    // Single box width in pixels
+    RECT       pos;         // Position and dimensions
+} ZONE;
+
+// Prefined zones
+enum ZONE_ID{
+    ZONE_GAME = 0,
+    ZONE_NEXTPIECE = 1,
+    ZONE_PREVIEW = 1
+};
+
 //---------------------------------------------------------------------------
 //--
-//-- casioCalc object
+//-- playArea object
 //--
 //--    methods, constants (coordinates, dimensions) for the casio calculators
 //--
 //---------------------------------------------------------------------------
 
-class casioCalc{
+class playArea{
 
     // Public methods
     //
     public:
         // Construction
-        casioCalc();
+        playArea();
 
-        // capture()
-        //      Set/unset screen capture
+        // capture() : Set/unset screen capture
         //
-        //      @activate : set (=true) or remove (=false) screen capture
+        //  @activate : set (=true) or remove (=false) screen capture
         //
-        //      return the status
+        //  @return the capture status
+        //
         bool capture(bool activate);
+
+        //
+        // Displays orientations
+        //
 
         // Update members on rotation
         void rotatedDisplay(bool doRotate);
@@ -103,19 +122,55 @@ class casioCalc{
             xTo = oFrom;
         }
 
+        bool isRotated(){
+            return rotatedDisplay_;
+        }
+
+        //
+        // Drawings methods
+        //
+
+        // Draw a line of text
+        void dtext(int x, int y, int fg, const char* text);
+
+        // drawRectangle() : Draw a single coloured rectangle
+        //
+        //   @x,@y : top left starting point
+        //   @width, @height : dimensions
+        //   @borderColour : Colour of the border in RGB format or -1 (if no border)
+        //   @fillColour : Filling colour in RGB format or -1 (if empty)
+        //
+        void drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int32_t fillColour = NO_COLOR, int32_t borderColour = NO_COLOR);;
+
+        // _shitfToZone() : Change the origin and the coordinate system
+        //          according to a selected drawing zone
+        //
+        //  @zoneID  : ID of the desintation zone
+        //  @x, @y [i/o] : coordinates to change
+        //  @width, @height : (new) dimensions in pixels of a single block in the choosen area
+        //
+        void shitfToZone(uint8_t zoneID, uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height);
+
+        // Zones
+        //
+        ZONE* playfield(){
+            return &playfield_;
+        }
+        ZONE* nextPiece(){
+            return &nextPiece_;
+        }
+
+        // Fonts
+        //
+#ifdef DEST_CASIO_CALC
+        font_t* font(bool horz = true){
+            return (horz?hFont_:vFont_);
+        }
+#endif // #ifdef DEST_CASIO_CALC
+
         //
         // Members
         //
-
-        // Screen & display parameters
-        bool        rotatedDisplay_;    // Rotate all displays (default = False) ?
-        uint8_t     boxWidth_;
-        POINT       playfield_pos_;
-        uint16_t    playfield_width, playfield_height;
-
-        // Next piece
-        POINT       NP_pos_;
-        uint16_t    NP_width_, NP_boxWidth_;
 
         // Texts
         POINT       textsPos_[VAL_COUNT];      // Positions of texts
@@ -124,6 +179,20 @@ class casioCalc{
         char        keyLeft_, keyRight_, keyRotatePiece_, keyDown_, keyFall_;
         char        keyPause_, keyRotateDisplay_;
         char        keyQuit_;
+
+        // Private methods
+    private:
+
+        // Draw a line of text vertically
+        void _dtextV(int x, int y, int fg, const char* text);
+
+
+    protected:
+        // Screen & display parameters
+        bool        rotatedDisplay_;    // Rotate all displays (default = False) ?
+
+        ZONE        playfield_;
+        ZONE        nextPiece_;
 
 #ifdef DEST_CASIO_CALC
         scrCapture  capture_;           // Screen capture
