@@ -63,15 +63,6 @@ public:
     // The current tab is selected => let's play
     uint8_t select();
 
-    // Show best scores
-    static void showScores(){
-        _showScores();
-    }
-
-private:
-    // Show best scores and current one (if in the list)
-    static void _showScores(int32_t current = -1){}
-
 private:
     // Members
     tetrisParameters* params_;

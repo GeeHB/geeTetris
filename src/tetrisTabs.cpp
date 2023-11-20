@@ -65,11 +65,13 @@ uint8_t tetrisTab::select(){
     if (params_){
 #ifdef DEST_CASIO_CALC
         clearScreen();
+#else
+    tetrisGame::showScores(2563,45,9);
 #endif // #ifdef DEST_CASIO_CALC
 
         tetrisGame game(params_);
         if (game.start()){
-            _showScores(game.score());  // Show final score
+            game.showScores();  // Show final score
         }
 
         // Ready for a new game !

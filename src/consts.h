@@ -46,17 +46,6 @@ extern "C" {
 #define PLAYFIELD_WIDTH     10
 #define PLAYFIELD_HEIGHT    20
 
-// Game status
-//
-enum GAME_STATUS{
-    STATUS_INIT		 = 0,
-    STATUS_READY	 = 1,
-    STATUS_RUNNING	 = 2,
-    STATUS_PAUSED    = 4,
-    STATUS_STOPPED	 = 8,
-    STATUS_CANCELED  = 16
-};
-
 // Scores valorisation (in %)
 //
 #define SCORE_NO_SHADOW         10.0    // +10% if no pieces'shadowing

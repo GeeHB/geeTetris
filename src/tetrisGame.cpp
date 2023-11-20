@@ -26,6 +26,8 @@
 #include <cmath>
 #include <time.h>
 
+#include "shared/bFile.h"
+
 //---------------------------------------------------------------------------
 //--
 //-- tetrisGame object
@@ -222,6 +224,45 @@ bool tetrisGame::start() {
     // Game is Over
     casioDisplay_.rotatedDisplay(false); // Return to default font
     return true;
+}
+
+// _showScores() : Show best scores and current one (if in the list)
+//
+//  @score : new score. If equal to -1, the bests scores are shown.
+//  @lines : # completed lines
+//  @level : end level
+//
+void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
+
+    // scores list is empty
+    sList scores;
+    char data[SIZE_SCORES_FILE];
+    memset(data, 0, SIZE_SCORES_FILE);
+
+    // Load scores
+    bFile scoresFile;
+    if (scoresFile.open(SCORES_FILENAME, BFile_ReadWrite)){
+        if (scoresFile.read((void*)data, SIZE_SCORES_FILE, -1)){
+            _scores2List(data, scores);
+        }
+    }
+
+    // Add the current score
+    if (score != -1 && scores.add(score, lines, level)){
+        if (!scoresFile.isOpen()){
+            // Try to create the file
+            int size(SIZE_SCORES_FILE);
+            scoresFile.create(SCORES_FILENAME, BFile_File, &size);
+        }
+
+        // Save new list
+        if (scoresFile.getLastError() == 0){
+            _list2Scores(scores, data);
+            scoresFile.write(data, SIZE_SCORES_FILE);
+        }
+    }
+
+    // Display scores
 }
 
 //
@@ -889,6 +930,47 @@ void tetrisGame::__strrev(char *str){
 		str[i] = str[j];
 		str[j] = a;
 	}
+}
+
+// _scores2List() : Transfer file content to the list os scores
+//
+//  @data : Buffer read from scores file
+//  @scores : List
+//
+void tetrisGame::_scores2List(char* data, sList& scores){
+    scores.clear();
+
+    if (data){
+        sList::RECORD record;
+        char* pos(data);
+        for (uint8_t i=0; i<MAX_SCORES; i++){
+            memcpy(pos, &record, SIZE_SCORE);
+
+            // append to list (no need to add, values are already ordered)
+            scores.append(record.score, record.lines, record.level);
+
+            pos+=SIZE_SCORE;    // next record
+        }
+    }
+}
+
+// _scores2List() : Transfer file content to the list os scores
+//
+//  @scores : List
+//  @data : Destination buffer
+//
+void tetrisGame::_list2Scores(sList& scores, char* data){
+    memset(data, 0, SIZE_SCORES_FILE);  // dest. buffer is empty
+
+    sList::PNODE item(scores.head());
+    uint8_t index(0);
+    char* pos(data);
+    while (item && index < MAX_SCORES){
+        memcpy(pos, &item->record, SIZE_SCORE);
+        item = item->next;  // Next score
+        pos+=SIZE_SCORE;
+        index++;        // only transfer MAX_SCORES records
+    }
 }
 
 // EOF

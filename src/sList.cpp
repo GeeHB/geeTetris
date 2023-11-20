@@ -21,10 +21,17 @@
 
 // Construction
 //
-sList::_node::_node(uint16_t escore, uint16_t elines, uint16_t elevel){
-    score = escore;
-    lines = elines;
-    level = elevel;
+sList::_node::_node(uint32_t escore, uint16_t elines, uint16_t elevel){
+    record.score = escore;
+    record.lines = elines;
+    record.level = elevel;
+    next = nullptr;
+}
+
+sList::_node::_node(RECORD& score){
+    record.score = score.score;
+    record.lines = score.lines;
+    record.level = score.level;
     next = nullptr;
 }
 
@@ -39,13 +46,15 @@ int8_t sList::_node::compare(_node* other){
         return -2;
     }
 
-    if (other->score < score ||
-        (other->score == score && other->lines < lines)){
+    if (other->record.score < record.score ||
+        (other->record.score == record.score && other->record.lines < record.lines) ||
+        (other->record.score == record.score && other->record.lines == record.lines && record.level < other->record.level)){
         return -1;
     }
 
-    if (other->score > score ||
-        (other->score == score && other->lines > lines)){
+    if (other->record.score > record.score ||
+        (other->record.score == record.score && other->record.lines > record.lines) ||
+        (other->record.score == record.score && other->record.lines == record.lines && record.level > other->record.level)){
         return 1;
     }
 
@@ -63,7 +72,7 @@ int8_t sList::_node::compare(_node* other){
 
 // Add a score
 //
-bool sList::add(uint16_t score, uint16_t lines, uint16_t level){
+bool sList::add(uint32_t score, uint16_t lines, uint16_t level){
 	sList::PNODE current(head_), prev(nullptr), node(nullptr);
 
 	node = new sList::NODE(score, lines, level);
@@ -93,6 +102,10 @@ bool sList::add(uint16_t score, uint16_t lines, uint16_t level){
 	else{
 
         // Deep equal ???
+        if (!c){
+            delete node;
+            return false;   // already stored
+        }
 
         // Insert
         if (prev){
@@ -113,7 +126,7 @@ bool sList::add(uint16_t score, uint16_t lines, uint16_t level){
 
 // Append a score
 //
-bool sList::append(uint16_t score, uint16_t lines, uint16_t level){
+bool sList::append(uint32_t score, uint16_t lines, uint16_t level){
     sList::PNODE node = new sList::NODE(score, lines, level);
     if (nullptr == node){
         return false;   // Memory error

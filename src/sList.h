@@ -26,6 +26,25 @@
 extern "C" {
 #endif // #ifdef __cplusplus
 
+// Scores
+//
+
+// Filename
+#ifdef DEST_CASIO_CALC
+#define SCORES_FILENAME u"\\\\fls0\\.geeTetris.scores"
+#else
+#define SCORES_FILENAME "~/.geeTetris.scores"
+#endif // #ifdef DEST_CASIO_CALC
+
+// # of scores in file
+#define MAX_SCORES      10
+
+// Size in bytes of a score
+#define SIZE_SCORE      8   // (sizeof(int32_t) + 2*sizeof(int16_t))
+
+// Size of the file
+#define SIZE_SCORES_FILE    (SIZE_SCORE*MAX_SCORES)
+
 //---------------------------------------------------------------------------
 //--
 //-- sList
@@ -36,25 +55,37 @@ extern "C" {
 class sList{
     public:
 
+    // a score
+    typedef struct _record{
+
+        // Score and other informations
+        uint32_t score;
+        uint16_t lines;
+        uint16_t level;
+    }RECORD;
+
     // Internal node
     typedef struct _node{
         // Construction
-        _node(uint16_t escore = 0, uint16_t elines = 0, uint16_t elevel = 0);
+        _node(uint32_t escore = 0, uint16_t elines = 0, uint16_t elevel = 0);
+        _node(RECORD& score);
 
-        // Comparison
-        //  -2 : error
-        //  -1 : *other < *this
-        //   0 : deep equal
-        //   1 : *other > *this
+        // compare() : Comparison between current node and other node
+        //
+        //  @other : pointer to a _node object
+        //
+        //  @return comparaison status :
+        //      -2 : error
+        //      -1 : *other < *this
+        //       0 : deep equal
+        //       1 : *other > *this
         //
         int8_t compare(_node* other);
 
-        // Score and other informations
-        uint16_t score;
-        uint16_t lines;
-        uint16_t level;
+        // The score
+        _record record;
 
-        // Nzxt node
+        // Next node
         _node* next;
     }NODE,* PNODE;
 
@@ -73,8 +104,8 @@ class sList{
         }
 
         // Add a score
-        bool add(uint16_t score, uint16_t lines = 0, uint16_t level = 0);
-        bool append(uint16_t score, uint16_t lines = 0, uint16_t level = 0);
+        bool add(uint32_t score, uint16_t lines = 0, uint16_t level = 0);
+        bool append(uint32_t score, uint16_t lines = 0, uint16_t level = 0);
 
         // Access
         PNODE head(){

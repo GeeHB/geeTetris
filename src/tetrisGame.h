@@ -20,7 +20,7 @@
 #include "piece.h"
 #include "templates.h"
 #include "playArea.h"
-
+#include "sList.h"
 #include "shared/keyboard.h"
 
 #include <cstdlib>
@@ -28,6 +28,17 @@
 #ifdef __cplusplus
 extern "C" {
 #endif // #ifdef __cpluscplus
+
+// Game status
+//
+enum GAME_STATUS{
+    STATUS_INIT		 = 0,
+    STATUS_READY	 = 1,
+    STATUS_RUNNING	 = 2,
+    STATUS_PAUSED    = 4,
+    STATUS_STOPPED	 = 8,
+    STATUS_CANCELED  = 16
+};
 
 //---------------------------------------------------------------------------
 //--
@@ -60,6 +71,12 @@ class tetrisGame {
 
         // Start the game
         bool start();
+
+        // Pause
+        void pause(){}
+
+        // Resume
+        void resume(){}
 
         // Status
         //
@@ -105,9 +122,12 @@ class tetrisGame {
             return values_[SCORE_ID].value;
         }
 
+        // Show best scores and current one (if in the list)
+        static void showScores(int32_t score = -1, uint32_t lines = 0, uint32_t level = 0);
+
     // Internal methods
     //
-    protected:
+    private:
 
         // The tetrisGame is empty ...
         void _emptyTetrisGame() {
@@ -194,6 +214,9 @@ class tetrisGame {
         // Strings manipulations
         char* __valtoa(int num, const char* name, char* str);
         void __strrev(char *str);
+
+        static void _scores2List(char* data, sList& scores);
+        static void _list2Scores(sList& scores, char* data);
 
     // Members
     //
