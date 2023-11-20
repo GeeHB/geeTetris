@@ -142,6 +142,14 @@ void tab::draw(const RECT* anchor, bool selected, const char* name){
 // tabValue: a tab holding a value (a parameter)
 //
 
+// Construction
+//
+tabValue::tabValue(const char* tname, int* value, int action)
+:tab(tname, action){
+    value_ = value;
+    comment_ = ucomment_ = NULL;
+}
+
 // Set or change comment
 //
 void tabValue::setComment(const char* comment, const char* ucomment){
@@ -156,7 +164,7 @@ uint8_t tabValue::select(){
     // Avoid to change the value when F key is first pressed
     if (isSelected()){
         // Change the value
-        (*value_) = (int)(!(bool)(*value_));
+        (*value_) = ! (*value_);
     }
 
     // update comment
@@ -201,8 +209,8 @@ tabRangedValue::tabRangedValue(const char* tname, int* val, uint8_t minVal, uint
         ownKeyboard_ = false;
     }
     else{
-        keys = new tabKeyboard();  // Create my own keyboard
-        ownKeyboard_ = true;
+        keys_ = new tabKeyboard();  // Create my own keyboard
+        ownKeyboard_ = (keys_ != nullptr);
     }
 }
 

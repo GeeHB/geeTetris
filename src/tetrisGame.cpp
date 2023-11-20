@@ -561,7 +561,7 @@ void tetrisGame::_newPiece() {
 //  @index : index of the line to clear in range [0 , PLAYFIELD_HEIGHT[
 //
 void tetrisGame::_clearLine(uint8_t index) {
-    if (/*index >= 0 && */index < PLAYFIELD_HEIGHT) {
+    if (index < PLAYFIELD_HEIGHT) {
         // Remove the line from the screen
         for (uint8_t line = index; line < (PLAYFIELD_HEIGHT - 1); line++) {
             for (uint8_t col = 0; col < PLAYFIELD_WIDTH; col++) {
@@ -644,13 +644,13 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
     bool foundEmpty(false);
     for (uint8_t line = nextPos_.topPos_ - PIECE_HEIGHT + 1; line < maxY; line++){
         foundEmpty = false;
-        for (uint8_t col = 0; col <PLAYFIELD_WIDTH && !foundEmpty; col++){
-            if (!playField_[line][col]){
+        for (uint8_t col = 0; col < PLAYFIELD_WIDTH && !foundEmpty; col++){
+            if (COLOUR_ID_BOARD == playField_[line][col]){
                 foundEmpty = true;
             }
         }
 
-        // is the line complete ?
+        // Is the line complete ?
         if (!foundEmpty){
             completedLines[completedCount++] = line;
         }
@@ -691,7 +691,12 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 
         // Updates
         values_[SCORE_ID].value+=uint32_t(delta * mult / 100.0);
+
+#ifdef TEST_MODE
+        values_[COMPLETED_LINES_ID].value=completedCount;   // Display # of completed lines
+#else
         values_[COMPLETED_LINES_ID].value+=completedCount;
+#endif // TEST_MODE
 
         _drawNumValue(SCORE_ID);
         _drawNumValue(COMPLETED_LINES_ID);
@@ -709,7 +714,7 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 //  @cornerX, @cornerY are the coordinates of the upper left corner in blocks coordinates
 //  @inTetrisGame : True = > draw in the tetrisGame, False = > draw "next" piece
 //  @specialColourID is the colour to use for the tetramino.
-//   If set to COLOUR_ID_NONE the tetramini's colour will be used
+//   If set to COLOUR_ID_NONE the tetramino's colour will be used
 //
 void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool inTetrisGame, uint8_t specialColourID) {
     // First visible row ID
@@ -749,8 +754,7 @@ void tetrisGame::_drawNextPiece(int8_t pieceIndex) {
 
     // ... and then draw the new one
     if (-1 != pieceIndex) {
-        uint8_t* datas = _nextPieceDatas();
-        _drawSinglePiece(datas, 0, 0, false);
+        _drawSinglePiece(_nextPieceDatas(), 0, 0, false);
     }
 }
 

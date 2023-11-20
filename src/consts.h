@@ -19,6 +19,8 @@
 
 #include "shared/casioCalcs.h"  // Choose dest. format
 
+#define TEST_MODE       1       // Only for tests
+
 #ifdef DEST_CASIO_CALC
 #include <gint/keyboard.h>
 #else
@@ -183,6 +185,11 @@ enum GAME_KEY{
 #define MIN_DIRTY_LINES   0
 #define MAX_DIRTY_LINES   8
 
+#ifndef FALSE
+#define FALSE   0
+#define TRUE    !FALSE
+#endif // #ifndef FALSE
+
 //---------------------------------------------------------------------------
 //--
 //-- tetrisParameters object
@@ -200,8 +207,8 @@ class tetrisParameters {
             // Set default parameters
             startLevel_ = MIN_LEVEL;
             dirtyLines_ = MIN_DIRTY_LINES;
-            shadow_ = true;
-            rotatedDisplay_ = false;        // by default, no screen rotation
+            shadow_ = TRUE;
+            rotatedDisplay_ = FALSE;        // by default, no screen rotation
         }
 
         // recopy
@@ -217,10 +224,10 @@ class tetrisParameters {
     // Members
     //
     public:
-        uint8_t startLevel_;
-        uint8_t dirtyLines_;
-        bool shadow_;
-        bool rotatedDisplay_;
+        int startLevel_;
+        int dirtyLines_;
+        int shadow_;
+        int rotatedDisplay_;
 };
 
 // A single unsigned value (and its previous val if exists)

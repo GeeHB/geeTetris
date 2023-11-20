@@ -26,22 +26,22 @@
 int main(){
 
     tetrisParameters params;
+    tabKeyboard keys;
 
     // Create tabs
     //
     aboutTab tabAbout(TAB_ABOUT);
 
+    tabValue tabShadow(TAB_SHADOW, &params.shadow_);
+    tabShadow.setComment(TAB_SHADOW_ON_STR, TAB_SHADOW_OFF_STR);
+
     // starting level
-    tabRangedValue tabLevel(TAB_LEVEL, (int*)&params.startLevel_, MIN_LEVEL, MAX_LEVEL);
+    tabRangedValue tabLevel(TAB_LEVEL, &params.startLevel_, MIN_LEVEL, MAX_LEVEL, &keys);
     tabLevel.setComment(TAB_LEVEL_STR);
 
     // # of dirty lines
-    tabRangedValue tabLines(TAB_LINES, (int*)&params.dirtyLines_, MIN_DIRTY_LINES, MAX_DIRTY_LINES);
+    tabRangedValue tabLines(TAB_LINES, &params.dirtyLines_, MIN_DIRTY_LINES, MAX_DIRTY_LINES, &keys);
     tabLines.setComment(TAB_DIRTY_LINES_STR);
-
-    // display shadows ?
-    tabValue tabShadow(TAB_SHADOW, (int*)&params.shadow_);
-    tabShadow.setComment(TAB_SHADOW_ON_STR, TAB_SHADOW_OFF_STR);
 
     // the game
     tetrisTab tabTetris(TAB_PLAY);
@@ -62,8 +62,7 @@ int main(){
     tmanager.add(&tabTetris, 4);
     tmanager.add(&tabExit, 5);
 
-    // Handle keyboard
-    tabKeyboard keys;
+    // Handle keyboard events
     bool quitApp(false);
     uint car(0);
     int8_t sel(0), action(ACTION_NONE);

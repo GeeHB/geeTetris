@@ -176,11 +176,7 @@ protected:
 class tabValue : public tab{
 public:
     // Construction
-    tabValue(const char* tname, int* value, int action = ACTION_NONE)
-    :tab(tname, action){
-        value_ = value;
-        comment_ = ucomment_ = NULL;
-    }
+    tabValue(const char* tname, int* value, int action = ACTION_NONE);
 
     // Destruction
     virtual ~tabValue(){
@@ -209,8 +205,8 @@ protected :
 
 protected:
     // Members
-    char   *comment_, *ucomment_;
-    int    *value_;
+    char    *comment_, *ucomment_;
+    int* value_;
 };
 
 //---------------------------------------------------------------------------

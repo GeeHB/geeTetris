@@ -1,6 +1,6 @@
 #### Ajouts
 - [ ] ***src/playArea*** :
-  - [ ] classe à instancier avec le type de calculatrice
+  - ~~classe à instancier avec le type de calculatrice~~
   - [ ] intègre les spécificités de chaque terminal
   - [ ] intègre l'appel de toutes les api de gint
   - [ ] mode LINUX / Windows (non Casio) pour le DEBUG
@@ -10,10 +10,10 @@
   - [x] \- Gestion abstraite du clavier (Casio / Linux)
   - [x] \- ***tabKeyboard*** : classe héritée pour le "transfert" des touches entre un onglet et le gestionnaire d'onglets
 - [x] ***src/shared/scrCapture*** : Objet / interface pour la mise en place et le retrait auto de la capture via fxlink ( intégration du src de Lephenixnoir)
-- [ ] ***src/sList*** : Liste simplement chaînée pour la gestion des scores
+- [x] ***src/sList*** : Liste simplement chaînée pour la gestion des scores
 - [ ] ***src/shared/bFile*** : Un objet basique pour gérer les fichiers (interface // gint::bfile.h)
   - [x] FX-CG50
-  - [ ] otherautres calcs ...
+  - [ ] autres calcs ...
   - [x] Linux (avec std, filesystem et fstream)
 - [ ] Gestion des scores
   - [ ] Utilisation de ***shared/bFile***
@@ -29,4 +29,4 @@
   - [ ] Ajout de getters et setters plus lisibles
   - [x] Quid du comportement par défaut (gestion d'un booléen) <- inchangé
 - [x] Fin de l'app - ancien écran tjrs en mémoire
-- [ ] Certaines lignes pleines ne disparaissent pas
+- [ ] BUG : Certaines lignes pleines ne disparaissent pas
