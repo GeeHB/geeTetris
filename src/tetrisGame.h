@@ -117,12 +117,27 @@ class tetrisGame {
 #endif // #ifdef DEST_CASIO_CALC
         }
 
+        //
+        // Access
+        //
+
         // Current score
         int32_t score(){
             return values_[SCORE_ID].value;
         }
 
+        // Completed lines
+        int32_t lines(){
+            return values_[COMPLETED_LINES_ID].value;
+        }
+
+        // Current level
+        int32_t level(){
+            return values_[LEVEL_ID].value;
+        }
+
         // Show best scores and current one (if in the list)
+        //
         static void showScores(int32_t score = -1, uint32_t lines = 0, uint32_t level = 0);
 
     // Internal methods

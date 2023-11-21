@@ -359,7 +359,7 @@ void tabRangedValue::_selectValue(int8_t value, bool select){
 //
 tabManager::tabManager(){
     // Initialize members
-    memset(tabs_, 0, sizeof(tabs_));
+    memset(tabs_, 0x00, sizeof(tabs_));
     active_ = -1;
 }
 

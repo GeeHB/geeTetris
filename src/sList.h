@@ -33,7 +33,7 @@ extern "C" {
 #ifdef DEST_CASIO_CALC
 #define SCORES_FILENAME u"\\\\fls0\\.geeTetris.scores"
 #else
-#define SCORES_FILENAME "~/.geeTetris.scores"
+#define SCORES_FILENAME "/home/jhb/.geeTetris.scores"
 #endif // #ifdef DEST_CASIO_CALC
 
 // # of scores in file

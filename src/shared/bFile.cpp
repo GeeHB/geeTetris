@@ -23,7 +23,6 @@
 #include <gint/gint.h>
 #include <gint/bfile.h>
 #else
-#include <filesystem>
 #include <cstdio>
 #endif // #ifdef DEST_CASIO_CALC
 
@@ -50,7 +49,7 @@ bFile::~bFile(){
 //  Check wether file (or folder) exists
 //  and last access error
 //
-// @return : true if the object is valid
+//  @return : true if the object is valid
 //
 bool bFile::isOpen(){
 #ifdef DEST_CASIO_CALC
@@ -69,7 +68,8 @@ int bFile::size(){
 #ifdef DEST_CASIO_CALC
         return gint_world_switch(GINT_CALL(BFile_Size, fd_));
 #else
-        return (fileName_.size()?std::filesystem::file_size(fileName_):0);
+        file_.seekg (0, file_.end);
+        return file_.tellg();
 #endif // #ifdef DEST_CASIO_CALC
     }
 
@@ -96,13 +96,13 @@ bool bFile::open(FONTCHARACTER filename, int access){
             error_ = 0;     // The file is open
         }
 #else
-        std::ios::openmode mode;
-        if (access && BFile_ReadOnly){
-            mode |= std::ios::in;
+        std::ios_base::openmode mode;
+        if (access & BFile_ReadOnly){
+            mode = std::fstream::in | std::ifstream::binary;
         }
-
-        if (access && BFile_WriteOnly){
-            mode |= std::ios::out;
+        else {
+        //if (access & BFile_WriteOnly){
+            mode = std::fstream::out | std::fstream::trunc;
         }
 
         file_.open(filename, mode);
@@ -157,7 +157,7 @@ bool bFile::write(void const *data, int even_size){
         error_ = gint_world_switch(GINT_CALL(BFile_Write, fd_, data, even_size));
         return (error_ == 0);	// data written ?
 #else
-	file_.write((const char*)data, even_size);
+    file_.write((const char*)data, even_size);
 
 	// done ?
 	return file_.good();
@@ -170,15 +170,15 @@ bool bFile::write(void const *data, int even_size){
 // read() : Read data from the current file
 //
 // @data : Pointer to the destination buffer
-// @size : Size in byte to read
+// @lg : Size in byte to read
 // @whence :
 //
 // @return : # bytes read
 //
-int bFile::read(void *data, int size, int whence){
-    if (data && size && isOpen()){
+int bFile::read(void *data, int lg, int whence){
+    if (data && lg && isOpen()){
 #ifdef DEST_CASIO_CALC
-        int read = gint_world_switch(GINT_CALL(BFile_Read, fd_, data, size, whence));
+        int read = gint_world_switch(GINT_CALL(BFile_Read, fd_, data, lg, whence));
         if (read < 0){
         	error_ = read;
         	return 0;
@@ -187,14 +187,15 @@ int bFile::read(void *data, int size, int whence){
         error_ = 0;
         return read;	// #bytes read
 #else
-	file_.read((char*)data, size);
+    file_.read((char*)data, lg);
+    int red = file_.gcount();
 
-	// done ?
-	return file_.good();
-#endif // #ifdef DEST_CASIO_CALC
+    // # bytes read
+    return red;
     }
+#endif // #ifdef DEST_CASIO_CALC
 
-    return 0;
+    return 0;   // read nothing
 }
 
 // remove() : Remove a file

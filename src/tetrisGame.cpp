@@ -20,6 +20,7 @@
 #include <gint/clock.h>
 #else
 #include <unistd.h>
+#include <iostream>
 #endif // #ifdef DEST_CASIO_CALC
 
 #include <cstdio>
@@ -234,22 +235,22 @@ bool tetrisGame::start() {
 //
 void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 
-    // scores list is empty
     sList scores;
     char data[SIZE_SCORES_FILE];
-    memset(data, 0, SIZE_SCORES_FILE);
+    memset(data, 0x00, SIZE_SCORES_FILE);  // scores list is empty
 
     // Load scores
     bFile scoresFile;
-    if (scoresFile.open(SCORES_FILENAME, BFile_ReadWrite)){
-        if (scoresFile.read((void*)data, SIZE_SCORES_FILE, -1)){
+    if (scoresFile.open(SCORES_FILENAME, BFile_ReadOnly)){
+        if (SIZE_SCORES_FILE == scoresFile.read((void*)data, SIZE_SCORES_FILE, -1)){
             _scores2List(data, scores);
         }
+        scoresFile.close();
     }
 
     // Add the current score
     if (score != -1 && scores.add(score, lines, level)){
-        if (!scoresFile.isOpen()){
+        if (!scoresFile.open(SCORES_FILENAME, BFile_WriteOnly)){
             // Try to create the file
             int size(SIZE_SCORES_FILE);
             scoresFile.create(SCORES_FILENAME, BFile_File, &size);
@@ -260,9 +261,35 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
             _list2Scores(scores, data);
             scoresFile.write(data, SIZE_SCORES_FILE);
         }
+
+        scoresFile.close();
     }
 
     // Display scores
+#ifdef DEST_CASIO_CALC
+#else
+    sList::PNODE current(scores.head());
+    if (nullptr == current){
+        std::cout << "La liste est vide" << std::endl;
+        return;
+    }
+
+    std::cout << "------------------" << std::endl;
+
+    uint8_t count(0);
+    while (current){
+
+        if (score == (int32_t)current->record.score){
+            std::cout << "\t- " << int(++count) << " *" << current->record.score << " - " << current->record.lines << " lignes - Niveau " << current->record.level << std::endl;
+        }
+        else{
+            std::cout << "\t- " << int(++count) << "  " << current->record.score << " - " << current->record.lines << " lignes - Niveau " << current->record.level << std::endl;
+        }
+
+        // next ...
+        current = current->next;
+    }
+#endif // DEST_CASIO_CALC
 }
 
 //
@@ -944,29 +971,33 @@ void tetrisGame::_scores2List(char* data, sList& scores){
         sList::RECORD record;
         char* pos(data);
         for (uint8_t i=0; i<MAX_SCORES; i++){
-            memcpy(pos, &record, SIZE_SCORE);
+            memcpy(&record, pos, SIZE_SCORE);
 
             // append to list (no need to add, values are already ordered)
-            scores.append(record.score, record.lines, record.level);
+            if (record.score){
+                scores.append(record.score, record.lines, record.level);
+            }
 
             pos+=SIZE_SCORE;    // next record
         }
     }
 }
 
-// _scores2List() : Transfer file content to the list os scores
+// _scores2List() : Transfer list of scores to a buffer
 //
 //  @scores : List
 //  @data : Destination buffer
 //
 void tetrisGame::_list2Scores(sList& scores, char* data){
-    memset(data, 0, SIZE_SCORES_FILE);  // dest. buffer is empty
+    memset(data, 0x00, SIZE_SCORES_FILE);  // dest. buffer is empty
 
     sList::PNODE item(scores.head());
     uint8_t index(0);
     char* pos(data);
+    sList::RECORD* prec;
     while (item && index < MAX_SCORES){
-        memcpy(pos, &item->record, SIZE_SCORE);
+        prec = &item->record;
+        memcpy(pos, (char*)prec, SIZE_SCORE);
         item = item->next;  // Next score
         pos+=SIZE_SCORE;
         index++;        // only transfer MAX_SCORES records
