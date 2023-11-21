@@ -72,11 +72,8 @@ class tetrisGame {
         // Start the game
         bool start();
 
-        // Pause
-        void pause(){}
-
-        // Resume
-        void resume(){}
+        // Pause or resume the game
+        void pause();
 
         // Status
         //
@@ -207,6 +204,9 @@ class tetrisGame {
 
         // The piece is at the lowest possible level
         void _reachLowerPos(uint8_t downRowcount = 0);
+
+        // redraw the whole screen
+        void _redraw();
 
         // Display the next piece
         void _drawNextPiece(int8_t pieceIndex);

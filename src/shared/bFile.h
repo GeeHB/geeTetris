@@ -20,8 +20,12 @@
 #include "casioCalcs.h"     // Define dest. format
 
 #ifdef DEST_CASIO_CALC
+#include <gint/gint.h>
+#include <gint/bfile.h>
+
 typedef uint16_t const * FONTCHARACTER;
 #else
+#include <cstdio>
 #include <fstream>
 #include <iostream>
 

@@ -19,13 +19,6 @@
 
 #include "bFile.h"
 
-#ifdef DEST_CASIO_CALC
-#include <gint/gint.h>
-#include <gint/bfile.h>
-#else
-#include <cstdio>
-#endif // #ifdef DEST_CASIO_CALC
-
 // Construction
 //
 bFile::bFile(){
@@ -192,8 +185,8 @@ int bFile::read(void *data, int lg, int whence){
 
     // # bytes read
     return red;
-    }
 #endif // #ifdef DEST_CASIO_CALC
+    }
 
     return 0;   // read nothing
 }

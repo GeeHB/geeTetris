@@ -227,6 +227,21 @@ bool tetrisGame::start() {
     return true;
 }
 
+// pause() : Pause or resume the game
+//
+void tetrisGame::pause(){
+    if (STATUS_PAUSED == status_){
+        _redraw();
+        updateDisplay();
+
+        status_ = STATUS_RUNNING;    // resume the game
+    }
+    else{
+        // draw the picture
+        status_ = STATUS_PAUSED;
+    }
+}
+
 // _showScores() : Show best scores and current one (if in the list)
 //
 //  @score : new score. If equal to -1, the bests scores are shown.
@@ -241,7 +256,7 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 
     // Load scores
     bFile scoresFile;
-    if (scoresFile.open(SCORES_FILENAME, BFile_ReadOnly)){
+    if (scoresFile.open((FONTCHARACTER)SCORES_FILENAME, BFile_ReadOnly)){
         if (SIZE_SCORES_FILE == scoresFile.read((void*)data, SIZE_SCORES_FILE, -1)){
             _scores2List(data, scores);
         }
@@ -250,10 +265,10 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 
     // Add the current score
     if (score != -1 && scores.add(score, lines, level)){
-        if (!scoresFile.open(SCORES_FILENAME, BFile_WriteOnly)){
+        if (!scoresFile.open((FONTCHARACTER)SCORES_FILENAME, BFile_WriteOnly)){
             // Try to create the file
             int size(SIZE_SCORES_FILE);
-            scoresFile.create(SCORES_FILENAME, BFile_File, &size);
+            scoresFile.create((FONTCHARACTER)SCORES_FILENAME, BFile_File, &size);
         }
 
         // Save new list
@@ -305,17 +320,7 @@ void tetrisGame::_rotateDisplay(bool first){
     // (new) rotation mode
     casioDisplay_.rotatedDisplay(first?parameters_.rotatedDisplay_:!casioDisplay_.isRotated());
 
-    // Clear the screen
-#ifdef DEST_CASIO_CALC
-    dclear(colours_[COLOUR_ID_BOARD]);
-#endif // #ifdef DEST_CASIO_CALC
-
-    _drawBackGround();
-    _drawTetrisGame();
-
-    _drawNumValue(SCORE_ID);
-    _drawNumValue(LEVEL_ID);
-    _drawNumValue(COMPLETED_LINES_ID);
+    _redraw();
 
     if (!first){
         // Redraw the piece and it's shadow
@@ -671,18 +676,16 @@ void tetrisGame::_addDirtyLine(uint8_t lineID) {
 //  The tetramino is no longer mobile.
 //
 void tetrisGame::_putPiece() {
-    uint8_t vertPos(nextPos_.topPos_);
-
     uint8_t* datas = tetraminos_[nextPos_.index_].currentDatas();
     uint8_t bColour(0);
 
     // Copy all the colored blocks in the gameplay
-    uint8_t maxY = (PLAYFIELD_HEIGHT - vertPos >= 1) ? 0 : (vertPos - PLAYFIELD_HEIGHT + 1);
+    uint8_t maxY = (PLAYFIELD_HEIGHT - nextPos_.topPos_ >= 1) ? 0 : (nextPos_.topPos_ - PLAYFIELD_HEIGHT + 1);
     for (uint8_t y = maxY; y < PIECE_HEIGHT; y++) {
         for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
             bColour = datas[y * PIECE_WIDTH + x];
-            if (COLOUR_ID_BOARD != bColour && (vertPos - y) < PLAYFIELD_HEIGHT) {
-                playField_[vertPos - y][x + nextPos_.leftPos_] = bColour;
+            if (COLOUR_ID_BOARD != bColour && (nextPos_.topPos_ - y) < PLAYFIELD_HEIGHT) {
+                playField_[nextPos_.topPos_ - y][x + nextPos_.leftPos_] = bColour;
             }
         }
     }
@@ -776,7 +779,23 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
     updateDisplay();
 }
 
-// _drawTetrisGame() : Draw a whole tetramino using the given colour
+// _redraw() : redraw the whole screen
+//
+void tetrisGame::_redraw(){
+    // Clear the screen
+#ifdef DEST_CASIO_CALC
+    dclear(colours_[COLOUR_ID_BOARD]);
+#endif // #ifdef DEST_CASIO_CALC
+
+    _drawBackGround();
+    _drawTetrisGame();
+
+    _drawNumValue(SCORE_ID);
+    _drawNumValue(LEVEL_ID);
+    _drawNumValue(COMPLETED_LINES_ID);
+}
+
+// _drawSinglePiece() : Draw a whole tetramino using the given colour
 //
 //  @datas is the piece'datas in its current rotation state
 //  @cornerX, @cornerY are the coordinates of the upper left corner in blocks coordinates
