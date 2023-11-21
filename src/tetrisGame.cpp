@@ -151,7 +151,7 @@ void tetrisGame::setParameters(tetrisParameters* params) {
 
 // start() : Start the tetris game
 //
-//  The entore game is handled by this method.
+//  The entire game is handled by this method.
 //  It retuns on error or when the game is over
 //
 //  @return :  false on error(s)
@@ -788,12 +788,11 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
     // First visible row ID
     int8_t rowFirst(0);
     if (inTetrisGame) {
-        rowFirst = PLAYFIELD_HEIGHT - 1 - cornerY;
-        rowFirst = (rowFirst < 0) ? rowFirst * -1 : 0;
+        rowFirst = (cornerY > (PLAYFIELD_HEIGHT - 1))?cornerY+1-PLAYFIELD_HEIGHT:0;
     }
 
     uint16_t x, xFirst(cornerX), y(cornerY - rowFirst), w, h;
-    casioDisplay_.shitfToZone(ZONE_GAME, xFirst, y, w, h);
+    casioDisplay_.shitfToZone(ZONE_GAME, xFirst, y, w, h);  // Get coords and dims. in the screen
 
     uint8_t colourID;
     for (uint8_t row = rowFirst; row < PIECE_HEIGHT; row++) {
