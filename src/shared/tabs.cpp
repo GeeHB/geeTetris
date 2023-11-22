@@ -51,14 +51,14 @@ extern font_t font_horz;
 
 // Key event in the queue
 //
-uint16_t tabKeyboard::getKey(){
-    uint16_t key(key_);
+uint tabKeyboard::getKey(){
+    uint key(key_);
 
     if (KEY_CODE_NONE == key){
         key = keyboard::getKey();
     }
     else{
-        key_ = KEY_CODE_NONE;   // Next key code
+        key_ = KEY_CODE_NONE;   // Next time read the keyboard
     }
 
     // return the pressed key code

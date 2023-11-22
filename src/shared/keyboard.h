@@ -17,6 +17,8 @@
 #ifndef __GEE_TOOLS_KEYBOARD_h__
 #define __GEE_TOOLS_KEYBOARD_h__    1
 
+#include "casioCalcs.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif // #ifdef __cplusplus
@@ -26,6 +28,7 @@ extern "C" {
 #else
 #include <cstdint>
 #include <cstdio>
+typedef unsigned int uint;  // !!!
 #endif // #ifdef DEST_CASIO_CALC
 
 #define KEY_CODE_NONE   0
@@ -54,15 +57,15 @@ public:
     virtual ~keyboard(){}
 
     // Key event in the queue
-    virtual uint16_t getKey();
+    virtual uint getKey();
 
     // Status of modifiers
-    bool isPressed(uint16_t mod){
+    bool isPressed(uint mod){
         return (mod != MOD_NONE && ((mod_ & mod) == mod));
     }
 
 protected:
-    uint16_t mod_;      // Keyboard modifier
+    uint mod_;      // Keyboard modifier
 };
 
 #ifdef __cplusplus

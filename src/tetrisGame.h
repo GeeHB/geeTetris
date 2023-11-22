@@ -137,6 +137,10 @@ class tetrisGame {
         //
         static void showScores(int32_t score = -1, uint32_t lines = 0, uint32_t level = 0);
 
+        // Strings manipulations
+        static char* __valtoa(int num, const char* name, char* str);
+        static void __strrev(char *str);
+
     // Internal methods
     //
     private:
@@ -225,10 +229,6 @@ class tetrisGame {
 
         // Draw the tetrisGame
         void _drawTetrisGame();
-
-        // Strings manipulations
-        char* __valtoa(int num, const char* name, char* str);
-        void __strrev(char *str);
 
         static void _scores2List(char* data, sList& scores);
         static void _list2Scores(sList& scores, char* data);

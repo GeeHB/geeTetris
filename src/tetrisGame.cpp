@@ -18,6 +18,8 @@
 
 #ifdef DEST_CASIO_CALC
 #include <gint/clock.h>
+
+extern bopti_image_t img_pause;
 #else
 #include <unistd.h>
 #include <iostream>
@@ -696,6 +698,12 @@ void tetrisGame::_putPiece() {
 //  @downRowCount : count of down'rows
 //
 void tetrisGame::_reachLowerPos(uint8_t downRowcount){
+#ifdef TRACE_MODE
+    char trace[100];
+    char* pos=trace;
+    pos[0] = 0;
+#endif // #ifdef TRACE_MODE
+
     // put it
     _putPiece();
 
@@ -729,9 +737,18 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 
     // Remove lines in reverse order (max -> min)
     for (int8_t lineID = (completedCount-1); lineID >=0; lineID--){
+#ifdef TRACE_MODE
+            __valtoa(completedLines[lineID], NULL, pos);
+            strcat(trace, " , ");
+            pos=trace + strlen(trace);
+#endif // TRACE_MODE
         // Update datas
         _clearLine(completedLines[lineID]);
     }
+
+#ifdef TRACE_MODE
+    TRACE(trace, colours_[COLOUR_ID_BKGRND]);
+#endif // TRACE_MODE
 
     // Update the score
     if (completedCount){
@@ -762,12 +779,7 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 
         // Updates
         values_[SCORE_ID].value+=uint32_t(delta * mult / 100.0);
-
-#ifdef TEST_MODE
-        values_[COMPLETED_LINES_ID].value=completedCount;   // Display # of completed lines
-#else
         values_[COMPLETED_LINES_ID].value+=completedCount;
-#endif // TEST_MODE
 
         _drawNumValue(SCORE_ID);
         _drawNumValue(COMPLETED_LINES_ID);
@@ -811,7 +823,7 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
     }
 
     uint16_t x, xFirst(cornerX), y(cornerY - rowFirst), w, h;
-    casioDisplay_.shitfToZone(ZONE_GAME, xFirst, y, w, h);  // Get coords and dims. in the screen
+    casioDisplay_.shitfToZone(inTetrisGame?ZONE_GAME:ZONE_PREVIEW, xFirst, y, w, h);  // Get coords and dims. in the screen
 
     uint8_t colourID;
     for (uint8_t row = rowFirst; row < PIECE_HEIGHT; row++) {
@@ -886,8 +898,8 @@ void tetrisGame::_drawBackGround(){
         NO_COLOR, colours_[COLOUR_ID_BORDER]);
 
     // Border for 'Next piece'
-    casioDisplay_.drawRectangle(casioDisplay_.nextPiece()->pos.x + CASIO_BORDER_GAP,
-                casioDisplay_.nextPiece()->pos.y + CASIO_BORDER_GAP,
+    casioDisplay_.drawRectangle(casioDisplay_.nextPiece()->pos.x - CASIO_BORDER_GAP,
+                casioDisplay_.nextPiece()->pos.y - CASIO_BORDER_GAP,
                 casioDisplay_.nextPiece()->pos.w, casioDisplay_.nextPiece()->pos.h,
                 NO_COLOR, colours_[COLOUR_ID_BORDER]);
 }
@@ -910,7 +922,7 @@ void tetrisGame::_drawNumValue(uint8_t index){
     __valtoa(values_[index].value, values_[index].name, valStr);
     casioDisplay_.dtext(casioDisplay_.textsPos_[index].x, casioDisplay_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
 
-    values_[index].previous = values_[index].value;
+    values_[index].previous = values_[index].value; // to erase the value next time
 }
 
 // __valtoa() : Transform a numeric value into a string

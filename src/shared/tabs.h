@@ -80,7 +80,7 @@ public:
     //
     //  @return : Key code or KEY_NONE (0) if no key pressed
     //
-    virtual uint16_t getKey();
+    virtual uint getKey();
 
     // addkey() : Add a key event
     //
@@ -91,13 +91,13 @@ public:
     //  @code : key code to add in the queue
     //  @mod : modifier value
     //
-    void addKey(uint16_t code, uint16_t mod = MOD_NONE){
+    void addKey(uint code, uint mod = MOD_NONE){
         key_ = code;
         mod_ = mod;
     }
 
 private:
-    uint16_t key_;   // "injected" key
+    uint key_;   // "injected" key
 };
 
 //---------------------------------------------------------------------------

@@ -18,8 +18,7 @@
 #define __GEE_TETRIS_CONSTS_h__    1
 
 #include "shared/casioCalcs.h"  // Choose dest. format
-
-#define TEST_MODE       1       // Only for tests
+#include "trace.h"      // "test" mode
 
 #ifdef DEST_CASIO_CALC
 #include <gint/keyboard.h>

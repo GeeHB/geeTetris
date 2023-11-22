@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //--
-//--	File	: jTetris.cpp
+//--	File	: geeTetris.cpp
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
@@ -20,6 +20,10 @@
 #include "tetrisTabs.h"
 
 #include "shared/keyboard.h"
+
+#ifdef TRACE_MODE
+#include "tetrisGame.h"
+#endif
 
 // Program entry point
 //
@@ -110,8 +114,8 @@ int main(){
 
     // Free memory
 #ifdef DEST_CASIO_CALC
-    //gint_setrestart(1);
-    gint_osmenu();
+    gint_setrestart(1);
+    //gint_osmenu();
 #endif // #ifdef DEST_CASIO_CALC
 
     // Finished

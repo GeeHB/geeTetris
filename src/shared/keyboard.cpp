@@ -18,16 +18,15 @@
 
 // Key event in the queue
 //
-uint16_t keyboard::getKey(){
-    uint16_t key(KEY_CODE_NONE);
-#ifdef DEST_CASIO_CALC
-    key_event_t evt;
-#endif // #ifdef DEST_CASIO_CALC
+uint keyboard::getKey(){
+    uint key(KEY_CODE_NONE);
 
 #ifdef DEST_CASIO_CALC
+    key_event_t evt;
     evt = pollevent();
     if (evt.type == KEYEV_DOWN){
         key = evt.key;
+        mod_ = MOD_TYPE::MOD_NONE;
 
         // ???
         // mod_  = (evt.mod?evt.shift + 2*evt.alpha:0);
@@ -41,9 +40,6 @@ uint16_t keyboard::getKey(){
             if (evt.alpha){
                 mod_+= MOD_TYPE::MOD_ALPHA;
             }
-        }
-        else{
-            mod_ = MOD_TYPE::MOD_NONE;
         }
     }
     else{

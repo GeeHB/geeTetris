@@ -138,11 +138,12 @@ void playArea::rotatedDisplay(bool doRotate){
     // Values indicators
     textsPos_[0].x = textsPos_[1].x = textsPos_[2].x = nextPiece_.pos.x;
     for (uint8_t id(0); id <VAL_COUNT; id++){
-        textsPos_[id].y = nextPiece_.pos.y + nextPiece_.boxWidth + playfield_.boxWidth * ( 2 * id + 1);
+        textsPos_[id].y = nextPiece_.pos.y + nextPiece_.pos.w + playfield_.boxWidth * ( 2 * id + 1);
     }
 }
 
-// _dtextV() : Draw a line of text vertically
+// dtext() : Draw a line of text horizontally or vertically
+//          according to the display orientation
 //
 //  @x, @y : Anchor point coordinates
 //  @fg : font colour
