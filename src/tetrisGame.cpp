@@ -160,7 +160,7 @@ void tetrisGame::setParameters(tetrisParameters* params) {
 //
 bool tetrisGame::start() {
     // Check the object state
-    if (STATUS_READY != status_ && STATUS_PAUSED != status_) {
+    if (STATUS_READY != status_) {
         return false;
     }
 
@@ -232,16 +232,34 @@ bool tetrisGame::start() {
 // pause() : Pause or resume the game
 //
 void tetrisGame::pause(){
-    if (STATUS_PAUSED == status_){
-        _redraw();
-        updateDisplay();
+    char car(KEY_CODE_NONE);
+    bool paused(true);
 
-        status_ = STATUS_RUNNING;    // resume the game
-    }
-    else{
-        // draw the picture
-        status_ = STATUS_PAUSED;
-    }
+    // draw the picture
+#ifdef DEST_CASIO_CALC
+    dimage(0, 0, &img_pause);
+    dupdate();
+#endif // #ifdef DEST_CASIO_CALC
+
+    // status_ = STATUS_PAUSED;
+    do{
+        car = keyboard_.getKey();
+
+        // Resume ?
+        if (casioDisplay_.keyPause_== car){
+            _redraw();
+            updateDisplay();
+            paused = false;
+        }
+        else{
+            // Exit ?
+            if (casioDisplay_.keyQuit_ == car){
+                end();
+                paused = false;
+            }
+        }
+
+    }while (paused);
 }
 
 // _showScores() : Show best scores and current one (if in the list)
@@ -503,9 +521,14 @@ long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLe
 void tetrisGame::_handleGameKeys() {
     char car(keyboard_.getKey());
 
-	if(car != EOF) {
+	if(car != KEY_CODE_NONE) {
         if (casioDisplay_.keyQuit_ == car){
             end();
+            return;
+        }
+
+        if (casioDisplay_.keyPause_ == car){
+            pause();
             return;
         }
 
@@ -585,7 +608,7 @@ bool tetrisGame::_canMove(int8_t leftPos, uint8_t  topPos) {
 
 // _minTopPosition() : Get a piece min.pos.index(vertical value)
 //
-//  @return : index of the lowest possible position foir the current piece
+//  @return : index of the lowest possible position for the current piece
 //
 uint8_t tetrisGame::_minTopPosition(){
     uint8_t currentTop(nextPos_.topPos_);
@@ -682,12 +705,15 @@ void tetrisGame::_putPiece() {
     uint8_t bColour(0);
 
     // Copy all the colored blocks in the gameplay
-    uint8_t maxY = (PLAYFIELD_HEIGHT - nextPos_.topPos_ >= 1) ? 0 : (nextPos_.topPos_ - PLAYFIELD_HEIGHT + 1);
-    for (uint8_t y = maxY; y < PIECE_HEIGHT; y++) {
-        for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
-            bColour = datas[y * PIECE_WIDTH + x];
-            if (COLOUR_ID_BOARD != bColour && (nextPos_.topPos_ - y) < PLAYFIELD_HEIGHT) {
-                playField_[nextPos_.topPos_ - y][x + nextPos_.leftPos_] = bColour;
+    int8_t y;
+    for (uint8_t row = 0; row < PIECE_HEIGHT; row++) {
+        y = nextPos_.topPos_ - row;
+        if (y>=0 && y < PLAYFIELD_HEIGHT){
+            for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
+                bColour = datas[row * PIECE_WIDTH + x];
+                if (COLOUR_ID_BOARD != bColour) {
+                    playField_[y][x + nextPos_.leftPos_] = bColour;
+                }
             }
         }
     }
@@ -715,13 +741,30 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
     uint8_t completedLines[4];
     uint8_t completedCount(0);       // # of completed lines
 
-    uint8_t maxY(nextPos_.topPos_ + 1);
+    int8_t minY(nextPos_.topPos_ - PIECE_HEIGHT + 1);
+    int8_t maxY(minY + PIECE_HEIGHT -1);
+
+    // Not too high
     if (maxY > PLAYFIELD_HEIGHT){
         maxY = PLAYFIELD_HEIGHT;
     }
+    else{
+        if (minY < 0){
+            minY = 0;   // Not too low
+        }
+    }
+
+#ifdef TRACE_MODE
+        __valtoa(minY, "De", pos);
+        pos=trace + strlen(trace);
+        __valtoa(maxY , " a ", pos);
+
+        TRACE(trace, colours_[COLOUR_ID_BKGRND]);
+#endif // TRACE_MODE
+
 
     bool foundEmpty(false);
-    for (uint8_t line = nextPos_.topPos_ - PIECE_HEIGHT + 1; line < maxY; line++){
+    for (uint8_t line = minY; line <= maxY; line++){
         foundEmpty = false;
         for (uint8_t col = 0; col < PLAYFIELD_WIDTH && !foundEmpty; col++){
             if (COLOUR_ID_BOARD == playField_[line][col]){
@@ -737,18 +780,9 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 
     // Remove lines in reverse order (max -> min)
     for (int8_t lineID = (completedCount-1); lineID >=0; lineID--){
-#ifdef TRACE_MODE
-            __valtoa(completedLines[lineID], NULL, pos);
-            strcat(trace, " , ");
-            pos=trace + strlen(trace);
-#endif // TRACE_MODE
         // Update datas
         _clearLine(completedLines[lineID]);
     }
-
-#ifdef TRACE_MODE
-    TRACE(trace, colours_[COLOUR_ID_BKGRND]);
-#endif // TRACE_MODE
 
     // Update the score
     if (completedCount){

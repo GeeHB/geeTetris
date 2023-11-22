@@ -93,7 +93,7 @@ bool piece::addRotation(const char* tempPiece) {
     // First piece => compute vertical offset
     if (1 == maxRotate_) {
         vertOffset_ = PIECE_HEIGHT - 1; // On line visible
-        while (_isLineEmpty(0, vertOffset_) && vertOffset_ >= 0) {
+        while (_isLineEmpty(0, vertOffset_) && vertOffset_ > 0) {
             vertOffset_ -= 1;
         }
     }

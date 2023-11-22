@@ -147,6 +147,7 @@ class piece{
         // Add from a template
         //
         bool addRotation(const char* tempPiece);
+
         // Clear the current piece
         //
         void clear();
@@ -154,10 +155,12 @@ class piece{
         // Access
         //
 
-        // Piece's datas in the any rotation state (index = rotate_)
+        // Piece's datas in  any rotation state
         uint8_t* datas(uint8_t index) {
             return (!points_ ||  index >= maxRotate_ ? NULL : points_[index]);
         }
+
+        // Piece's datas for the current state (index = rotate_)
         uint8_t* currentDatas() {
             return datas(rotate_);
         }

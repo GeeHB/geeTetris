@@ -22,8 +22,12 @@
 #include "shared/keyboard.h"
 
 #ifdef TRACE_MODE
-#include "tetrisGame.h"
+//#include "tetrisGame.h"
 #endif
+
+#ifdef TRACE_MODE
+scrCapture  gCapture;           // Screen capture
+#endif //#ifdef TRACE_MODE
 
 // Program entry point
 //
@@ -76,6 +80,8 @@ int main(){
         currentTab->select();
     }
 
+    TRACE("Mode test actif", C_NONE);
+
     do{
         // Wait for a key
         car = keys.getKey();
@@ -105,6 +111,18 @@ int main(){
             if (KEY_CODE_EXIT == car){
                 quitApp = true;
             }
+#ifdef TRACE_MODE
+            else{
+                if (KEY_CODE_CAPTURE == car && keys.isPressed(MOD_SHIFT)){
+                    if (!gCapture.isSet()){
+                        gCapture.install();
+                    }
+                    else{
+                        gCapture.remove();
+                    }
+                }
+            }
+#endif // #ifdef TRACE_MODE
         }
 
     }while(!quitApp);

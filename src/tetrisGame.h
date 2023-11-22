@@ -35,7 +35,7 @@ enum GAME_STATUS{
     STATUS_INIT		 = 0,
     STATUS_READY	 = 1,
     STATUS_RUNNING	 = 2,
-    STATUS_PAUSED    = 4,
+    // STATUS_PAUSED    = 4,
     STATUS_STOPPED	 = 8,
     STATUS_CANCELED  = 16
 };

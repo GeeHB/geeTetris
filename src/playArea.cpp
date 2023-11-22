@@ -52,26 +52,6 @@ playArea::playArea(){
     rotatedDisplay(rotatedDisplay_);
 }
 
-// capture() : Set/unset screen capture
-//
-//  @activate : set (=true) or remove (=false) screen capture
-//
-//  return the status
-bool playArea::capture(bool activate){
-#ifdef DEST_CASIO_CALC
-    if (activate){
-        capture_.install();
-    }
-    else{
-        capture_.remove();
-    }
-
-    return capture_.isSet();
-#else
-    return false;
-#endif // #ifdef DEST_CASIO_CALC
-}
-
 // rotatedDisplay() : Update members on rotation
 //
 //  @doRotate : indicates wether display must rotate or not

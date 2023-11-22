@@ -19,10 +19,6 @@
 
 #include "consts.h"
 
-#ifdef DEST_CASIO_CALC
-#include "shared/scrCapture.h"
-#endif // #ifdef DEST_CASIO_CALC
-
 #ifdef __cplusplus
 extern "C" {
 #endif // #ifdef __cplusplus
@@ -86,14 +82,6 @@ class playArea{
     public:
         // Construction
         playArea();
-
-        // capture() : Set/unset screen capture
-        //
-        //  @activate : set (=true) or remove (=false) screen capture
-        //
-        //  @return the capture status
-        //
-        bool capture(bool activate);
 
         //
         // Displays orientations
@@ -195,7 +183,6 @@ class playArea{
         ZONE        nextPiece_;
 
 #ifdef DEST_CASIO_CALC
-        scrCapture  capture_;           // Screen capture
         font_t     *hFont_, *vFont_;    // Fonts
 #endif //#ifdef DEST_CASIO_CALC
 };

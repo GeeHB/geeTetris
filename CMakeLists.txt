@@ -27,6 +27,7 @@ set(ASSETS
  )
 set(ASSETS_cg
   assets-cg/coloured.png
+  assets-cg/pause.png
 )
 
 fxconv_declare_assets(${ASSETS} ${ASSETS_cg} WITH_METADATA)
