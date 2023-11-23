@@ -759,7 +759,7 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
         pos=trace + strlen(trace);
         __valtoa(maxY , " a ", pos);
 
-        TRACE(trace, colours_[COLOUR_ID_BKGRND]);
+        TRACE(trace, C_BLACK, colours_[COLOUR_ID_BKGRND]);
 #endif // TRACE_MODE
 
 

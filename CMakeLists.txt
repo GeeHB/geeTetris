@@ -14,6 +14,7 @@ set(SOURCES
   src/shared/keyboard.cpp
   src/shared/bFile.cpp
   src/shared/tabs.cpp
+  src/shared/window.cpp
   src/tetrisTabs.cpp
   src/tetrisGame.cpp
   src/piece.cpp

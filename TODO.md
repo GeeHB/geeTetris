@@ -33,4 +33,5 @@
   - [ ] Ajout de getters et setters plus lisibles
   - [x] Quid du comportement par défaut (gestion d'un booléen) <- inchangé
 - [ ] Fin de l'app - ancien écran tjrs en mémoire
-- [x] BUG : Certaines lignes pleines ne disparaissent pas
+- [x] BUG (blackium) : Certaines lignes pleines ne disparaissent pas
+- [x] BUG (whitejo) : Le choix d'un niveau de départ n'influe pas la vitesse

@@ -37,7 +37,7 @@ extern "C" {
 
 // App. infos
 #define APP_NAME     "geeTetris"
-#define APP_VERSION  "0.3"
+#define APP_VERSION  "0.4"
 #define APP_AUTHOR   "GeeHB"
 
 // Playfield's dimensions (in box units)
@@ -90,31 +90,6 @@ enum COLOUR_ID{
     COLOUR_ID_NONE = 12
 };
 
-
-// A few basic colours
-//
-
-#ifndef DEST_CASIO_CALC
-// 24 bits RGB (for tests only)
-#define C_RGB(r,g,b)      ((uint32_t)(((uint8_t)(r)|((uint16_t)((uint8_t)(g))<<8))|(((uint32_t)(uint8_t)(b))<<16)))
-#endif // #ifndef DEST_CASIO_CALC
-
-enum DEF_COLOUR{
-    COLOUR_BLACK   = C_RGB(0, 0, 0),
-    COLOUR_WHITE   = C_RGB(31, 31, 31),
-    COLOUR_RED     = C_RGB(31, 0, 0),
-    COLOUR_GREEN   = C_RGB(0, 31, 0),
-    COLOUR_YELLOW  = C_RGB(31, 31, 0),
-    COLOUR_BLUE    = C_RGB(0, 0, 31),
-    COLOUR_LT_BLUE = C_RGB(6, 6, 31),
-    COLOUR_PURPLE  = C_RGB(31, 0, 31),
-    COLOUR_CYAN    = C_RGB(0, 31, 31),
-    COLOUR_ORANGE  = C_RGB(31, 16, 0),
-    COLOUR_LT_GREY = C_RGB(29, 29, 29),
-    COLOUR_GREY    = C_RGB(16, 16, 16),
-    COLOUR_DK_GREY = C_RGB(8, 8, 8),
-    NO_COLOR       = -1
-};
 
 // Key codes
 //

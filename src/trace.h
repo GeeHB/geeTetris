@@ -22,7 +22,7 @@
 #ifdef DEST_CASIO_CALC
 #include "shared/scrCapture.h"   // capture only on TRACE mode
 
-#define TRACE_MODE       1       // Only for tests
+//#define TRACE_MODE       1       // Only for tests
 #else
 #ifdef TRACE_MODE       // ???
 #undef TRACE_MODE
@@ -39,9 +39,15 @@ extern "C" {
 #define TRACE_WIDTH     100
 #define TRACE_HEIGHT    15
 
-#define TRACE(val, bk)      { if (C_NONE != bk) drect(TRACE_POS_X, TRACE_POS_Y, TRACE_POS_X + TRACE_WIDTH - 1, TRACE_POS_Y + TRACE_HEIGHT -1, bk);dtext(TRACE_POS_X, TRACE_POS_Y, C_BLACK, val);dupdate();}
+// TRACE : add a line a text in the screen
+//
+//  @val : text to display
+//  @tCol : text colour
+//  @bkCol : Background colour
+//
+#define TRACE(val, tCol, bkCol)      { if (C_NONE != bkCol) drect(TRACE_POS_X, TRACE_POS_Y, TRACE_POS_X + TRACE_WIDTH - 1, TRACE_POS_Y + TRACE_HEIGHT -1, bkCol);dtext(TRACE_POS_X, TRACE_POS_Y, tCol, val);dupdate();}
 #else
-#define TRACE(val, bk)      {}
+#define TRACE(val, tCol, tbk)      {}
 #endif // #ifdef TRACE_WIDTH
 
 #ifdef __cplusplus
