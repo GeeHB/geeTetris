@@ -57,7 +57,7 @@ extern "C" {
 #define SLEEP_DURATION          5000   // 5ms
 #define MAX_LEVEL_ACCELERATION  15      // No more acceleration when this level is reached
 #define ACCELERATION_STEP       0.19    // Growing speed % per level
-#define INITIAL_SPEED           200     // Level 1 speed (larger is slower)
+#define INITIAL_SPEED           1200    // Level 1 speed (larger is slower)
 #define MOVES_UPDATE_LEVEL      250     // Change level criterium (# of pieces going down one step)
 
 // Indicators
@@ -143,7 +143,7 @@ enum GAME_KEY{
 // Min / max values for parameters
 //
 
-#define MIN_LEVEL   1
+#define MIN_LEVEL   5
 #define MAX_LEVEL   7
 
 #define MIN_DIRTY_LINES   0

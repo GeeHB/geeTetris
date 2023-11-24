@@ -88,9 +88,11 @@ public:
 
     // Draw a line of text (in window coordinates)
     void drawText(const char* text, int x, int y, int tCol = -1, int bCol = -1){
+#ifdef DEST_CASIO_CALC
         if (text && text[0]){
             dtext_opt(x + client_.x, y + client_.y, (tCol==-1)?infos_.textColour:tCol, (bCol==-1)?infos_.bkColour:bCol, DTEXT_LEFT, DTEXT_TOP, text);
         }
+#endif // #ifdef DEST_CASIO_CALC
     }
 
     // Convert window (x, y) into screen (x,y)

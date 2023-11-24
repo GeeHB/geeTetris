@@ -511,7 +511,8 @@ long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLe
         }
 
         // duration = currentDuration * acc ^ incLevel
-        return currentDuration * ((incLevel == 1)? ACCELERATION_STEP : powl(ACCELERATION_STEP, incLevel));
+        float acc(1.0 - ACCELERATION_STEP);
+        return currentDuration * ((incLevel == 1)?  acc: powl(acc, incLevel));
 }
 
 // _handleGameKeys() : Handle keyboard events
