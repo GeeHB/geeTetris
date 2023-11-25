@@ -18,7 +18,7 @@
 #define __GEE_TETRIS_CONSTS_h__    1
 
 #include "shared/casioCalcs.h"  // Choose dest. format
-#include "trace.h"      // "test" mode
+#include "shared/trace.h"      // "test" mode
 
 #ifdef DEST_CASIO_CALC
 #include <gint/keyboard.h>
@@ -143,7 +143,7 @@ enum GAME_KEY{
 // Min / max values for parameters
 //
 
-#define MIN_LEVEL   5
+#define MIN_LEVEL   1
 #define MAX_LEVEL   7
 
 #define MIN_DIRTY_LINES   0

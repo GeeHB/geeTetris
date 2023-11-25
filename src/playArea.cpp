@@ -52,6 +52,15 @@ playArea::playArea(){
     rotatedDisplay(rotatedDisplay_);
 }
 
+// Destruction
+//
+playArea::~playArea(){
+    // Return to default font
+#ifdef DEST_CASIO_CALC
+    dfont(dfont_default());
+#endif // #ifdef DEST_CASIO_CALC
+}
+
 // rotatedDisplay() : Update members on rotation
 //
 //  @doRotate : indicates wether display must rotate or not

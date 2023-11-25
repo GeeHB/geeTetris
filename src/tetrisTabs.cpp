@@ -48,6 +48,8 @@ uint8_t aboutTab::select(){
     dupdate();
 #endif // #ifdef DEST_CASIO_CALC
 
+    TRACE("Mode test actif", COLOUR_RED, NO_COLOR);
+
     // Nothing special
     return tab::select();
 }

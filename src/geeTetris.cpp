@@ -80,8 +80,6 @@ int main(){
         currentTab->select();
     }
 
-    TRACE("Mode test actif", COLOUR_RED, NO_COLOR);
-
     do{
         // Wait for a key
         car = keys.getKey();

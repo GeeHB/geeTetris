@@ -83,6 +83,9 @@ class playArea{
         // Construction
         playArea();
 
+        // Destruction
+        ~playArea();
+
         //
         // Displays orientations
         //

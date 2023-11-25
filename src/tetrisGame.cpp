@@ -156,7 +156,7 @@ void tetrisGame::setParameters(tetrisParameters* params) {
 //  The entire game is handled by this method.
 //  It retuns on error or when the game is over
 //
-//  @return :  false on error(s)
+//  @return :  false on error(s) or cancel
 //
 bool tetrisGame::start() {
     // Check the object state
@@ -226,7 +226,7 @@ bool tetrisGame::start() {
 
     // Game is Over
     casioDisplay_.rotatedDisplay(false); // Return to default font
-    return true;
+    return (!isCancelled());
 }
 
 // pause() : Pause or resume the game
@@ -254,7 +254,7 @@ void tetrisGame::pause(){
         else{
             // Exit ?
             if (casioDisplay_.keyQuit_ == car){
-                end();
+                cancel();
                 paused = false;
             }
         }
@@ -316,8 +316,8 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
     window scWin;
     window::winInfo wInf;
     wInf.title = (char*)"Best scores";
-    wInf.position.w = 150;
-    wInf.position.h = 150;
+    wInf.position.w = 130;
+    wInf.position.h = 130;
     wInf.bkColour = COLOUR_LT_GREY;
     scWin.create(wInf);
 
@@ -327,7 +327,7 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
     }
     else{
         uint8_t count(0);
-        int px(15), py(20);
+        int px(15), py(8);
         char line[100];
         while (current && count < MAX_SCORES){
             line[0] = 0;
@@ -344,9 +344,11 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
             scWin.drawText(line, px, py, (score == (int32_t)current->record.score)?COLOUR_RED:COLOUR_BLUE);
 
             // next ...
-            py+=15;
+            py+=11;
             current = current->next;
         }
+
+        scWin.update();
 
 #ifdef DEST_CASIO_CALC
         // Wait for any key to be pressed
@@ -354,7 +356,7 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
         uint car(0);
         do{
             car = keyb.getKey();
-        } while (car == KEY_NONE);
+        } while (car == KEY_CODE_NONE);
 #endif // DEST_CASIO_CALC
 
         // Close the window
@@ -559,7 +561,7 @@ void tetrisGame::_handleGameKeys() {
 
 	if(car != KEY_CODE_NONE) {
         if (casioDisplay_.keyQuit_ == car){
-            end();
+            cancel();
             return;
         }
 
@@ -683,7 +685,7 @@ void tetrisGame::_newPiece() {
     // Can I go on line down ?
     if (!_down(true)) {
         // No = > the game is over
-        end(false);
+        end();
     }
 }
 

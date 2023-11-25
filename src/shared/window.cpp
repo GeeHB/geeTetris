@@ -74,7 +74,7 @@ bool window::create(winInfo& info){
             return false;
         }
 
-        infos_.position.y = (CASIO_HEIGHT - infos_.position.h);
+        infos_.position.y = (CASIO_HEIGHT - infos_.position.h) / 2;
     }
 
     if (infos_.style & WIN_STYLE_HCENTER){
@@ -82,13 +82,14 @@ bool window::create(winInfo& info){
             return false;
         }
 
-        infos_.position.x = (CASIO_WIDTH - infos_.position.w);
+        infos_.position.x = (CASIO_WIDTH - infos_.position.w) / 2;
     }
 
 #ifdef DEST_CASIO_CALC
     struct dwindow dest;
     _rect2Window(infos_.position, dest);
     dwindow_set(dest);
+
     dest.right--;   // included
     dest.bottom--;
 
@@ -105,8 +106,6 @@ bool window::create(winInfo& info){
             dest.bottom-=WIN_BORDER_WIDTH;
 
             _drawBorder(dest);
-
-
         }
     }
 
@@ -129,7 +128,7 @@ bool window::create(winInfo& info){
         }
 
         // Center the title (or part of the title that fit window size)
-        dtext_opt(client_.x + (client_.w - width)/2 + WIN_BORDER_WIDTH, WIN_BORDER_WIDTH, infos_.textColour, infos_.bkColour, DTEXT_LEFT, DTEXT_TOP, infos_.title, nLen);
+        dtext_opt(client_.x + (client_.w - width)/2 + WIN_BORDER_WIDTH, client_.y + WIN_BORDER_WIDTH, infos_.textColour, infos_.bkColour, DTEXT_LEFT, DTEXT_TOP, infos_.title, nLen);
 
         // New client dims with a title
         client_.y += height;

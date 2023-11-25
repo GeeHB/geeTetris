@@ -17,12 +17,10 @@
 #ifndef __GEE_TETRIS_TRACE_h__
 #define __GEE_TETRIS_TRACE_h__    1
 
-#include "shared/casioCalcs.h"
-
 #ifdef DEST_CASIO_CALC
-#include "shared/scrCapture.h"   // capture only on TRACE mode
+#include "scrCapture.h"   // capture only on TRACE mode
 
-//#define TRACE_MODE       1       // Only for tests
+#define TRACE_MODE       1       // Only for tests
 #else
 #ifdef TRACE_MODE       // ???
 #undef TRACE_MODE
@@ -45,7 +43,7 @@ extern "C" {
 //  @tCol : text colour
 //  @bkCol : Background colour
 //
-#define TRACE(val, tCol, bkCol)      { if (C_NONE != bkCol) drect(TRACE_POS_X, TRACE_POS_Y, TRACE_POS_X + TRACE_WIDTH - 1, TRACE_POS_Y + TRACE_HEIGHT -1, bkCol);dtext(TRACE_POS_X, TRACE_POS_Y, tCol, val);dupdate();}
+#define TRACE(val, tCol, bkCol)      { if (NO_COLOR != bkCol) drect(TRACE_POS_X, TRACE_POS_Y, TRACE_POS_X + TRACE_WIDTH - 1, TRACE_POS_Y + TRACE_HEIGHT -1, bkCol);dtext(TRACE_POS_X, TRACE_POS_Y, tCol, val);dupdate();}
 #else
 #define TRACE(val, tCol, tbk)      {}
 #endif // #ifdef TRACE_WIDTH

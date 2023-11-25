@@ -3,15 +3,18 @@
 * Ajouts
     * gestion des scores
         * `src/sList` : liste dynamique pour les scores
-    * mode TRACE via `src/trace.h`
+    * mode TRACE via `src/shared/trace.h`
         * messages sur l'écran
         * Accès à la capture d'écran (`shift` `7`)        
     * classes partagées:
         * `src/shared/bFile` : Accès au FS
         * `src/shared/window` : 'fenêtre' 
 * Corrections
-    * [x] : BUG : Mauvais calcul de l'accélération des pieces
-    * [ ] : BUG : La vitesse initiale ne tient pas compte du niveau de départ
+    * [x] BUG : Mauvais calcul de l'accélération des pieces
+    * [ ] BUG : La vitesse initiale ne tient pas compte du niveau de départ
+    * [x] BUG : score valide même si 'exit' 
+        - Simplification des statut des parties
+    * [x] BUG : Sortie du jeu => retour à la police par défaut
 
 #### v0.3 - version intermédiaire (test et validation des nouvelles classes)
 * 21 nov. 2023

@@ -35,7 +35,6 @@ enum GAME_STATUS{
     STATUS_INIT		 = 0,
     STATUS_READY	 = 1,
     STATUS_RUNNING	 = 2,
-    // STATUS_PAUSED    = 4,
     STATUS_STOPPED	 = 8,
     STATUS_CANCELED  = 16
 };
@@ -85,10 +84,8 @@ class tetrisGame {
         void cancel() {
             // Already escaped ?
             if (!isCancelled()) {
-                status_ += STATUS_CANCELED;
-
-                // stop the game
-                end(true);
+                status_ |= STATUS_CANCELED;
+                end(); // stop the game
             }
         }
 
@@ -98,13 +95,8 @@ class tetrisGame {
         }
 
         // Force the end of the game
-        void end(bool force = false) {
-            if (force) {
-                status_ |= STATUS_CANCELED;
-            }
-            else {
-                status_ = STATUS_STOPPED;
-            }
+        void end() {
+            status_ |= STATUS_STOPPED;
         }
 
         // Update the display
