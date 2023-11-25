@@ -20,10 +20,7 @@
 #include "tetrisTabs.h"
 
 #include "shared/keyboard.h"
-
-#ifdef TRACE_MODE
-//#include "tetrisGame.h"
-#endif
+#include "shared/trace.h"
 
 #ifdef TRACE_MODE
 scrCapture  gCapture;           // Screen capture
@@ -111,7 +108,14 @@ int main(){
             }
 #ifdef TRACE_MODE
             else{
-                if (KEY_CODE_CAPTURE == car && keys.isPressed(MOD_SHIFT)){
+                if (KEY_CODE_CAPTURE == car){
+
+                    TRACE_DEF("Pressed 7");
+
+                    if (keys.isPressed(MOD_SHIFT)){
+                        TRACE("Pressed 7 and shift", COLOUR_BLACK, NO_COLOUR);
+                    }
+
                     if (!gCapture.isSet()){
                         gCapture.install();
                     }

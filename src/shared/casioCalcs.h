@@ -59,6 +59,7 @@ enum DEF_COLOUR{
     COLOUR_LT_GREY = C_RGB(29, 29, 29),
     COLOUR_GREY    = C_RGB(16, 16, 16),
     COLOUR_DK_GREY = C_RGB(8, 8, 8),
+    NO_COLOUR      = -1,
     NO_COLOR       = -1
 };
 

@@ -18,7 +18,6 @@
 
 #ifdef DEST_CASIO_CALC
 #include <gint/clock.h>
-
 extern bopti_image_t img_pause;
 #else
 #include <unistd.h>

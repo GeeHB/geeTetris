@@ -38,7 +38,7 @@ typedef unsigned int uint;  // !!!
 enum MOD_TYPE{
     MOD_NONE = 0,
     MOD_SHIFT = 1,
-    MOD_ALPHA
+    MOD_ALPHA = 2
 };
 
 

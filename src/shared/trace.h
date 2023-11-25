@@ -43,9 +43,11 @@ extern "C" {
 //  @tCol : text colour
 //  @bkCol : Background colour
 //
-#define TRACE(val, tCol, bkCol)      { if (NO_COLOR != bkCol) drect(TRACE_POS_X, TRACE_POS_Y, TRACE_POS_X + TRACE_WIDTH - 1, TRACE_POS_Y + TRACE_HEIGHT -1, bkCol);dtext(TRACE_POS_X, TRACE_POS_Y, tCol, val);dupdate();}
+#define TRACE(val, tCol, bkCol)      { if (NO_COLOUR != bkCol) drect(TRACE_POS_X, TRACE_POS_Y, TRACE_POS_X + TRACE_WIDTH - 1, TRACE_POS_Y + TRACE_HEIGHT -1, bkCol);dtext(TRACE_POS_X, TRACE_POS_Y, tCol, val);dupdate();}
+#define TRACE_DEF(val)                   TRACE(val, COLOUR_BLACK, NO_COLOUR);
 #else
 #define TRACE(val, tCol, tbk)      {}
+#define TRACE_DEF(val) {}
 #endif // #ifdef TRACE_WIDTH
 
 #ifdef __cplusplus

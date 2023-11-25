@@ -62,7 +62,7 @@ L'appel suivant de la macro *TRACE* demande l'affichage en rouge du texte "Mode 
 
 Lorsque la constante **TRACE_MODE** est définie, la ligne est effectivement affichée :
 
-![TRACE on screen](assets/TRACE_screen.png) 
+![TRACE on screen](assets/TRACE_mainscreen.png) 
 
 ### Utilisation du clavier
 #### A partir du menu principal
