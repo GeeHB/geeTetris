@@ -70,6 +70,11 @@ typedef struct __point {
         x = y = 0;
     }
 
+    __point(int px, int py){
+        x = px;
+        y = py;
+    }
+
     uint16_t    x;
     uint16_t    y;
 } POINT;

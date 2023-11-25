@@ -20,6 +20,16 @@
 #include <cstring>
 #include <cstdlib>
 
+// Construction
+//
+window::_winInfo::_winInfo(){
+    title = nullptr;
+    style = WIN_STYLE_DEFAUlT;
+    position = {0, 0, CASIO_WIDTH, CASIO_HEIGHT};
+    bkColour = COLOUR_WHITE;
+    borderColour = textColour = COLOUR_BLACK;
+}
+
 // clear
 //
 void window::winInfo::clear(){
@@ -27,10 +37,6 @@ void window::winInfo::clear(){
         free(title);
         title = nullptr;
     }
-    style = WIN_STYLE_DEFAUlT;
-    position = {0, 0, CASIO_WIDTH, CASIO_HEIGHT};
-    bkColour = COLOUR_WHITE;
-    borderColour = textColour = COLOUR_BLACK;
 }
 
 // Copy
@@ -39,7 +45,7 @@ void window::winInfo::copy(_winInfo& src){
     clear();
 
     if (src.title){
-        title = strdup(title);
+        title = strdup(src.title);
     }
     style = src.style;
     position = src.position;
@@ -100,7 +106,7 @@ bool window::create(winInfo& info){
 
             _drawBorder(dest);
 
-            
+
         }
     }
 
@@ -116,12 +122,12 @@ bool window::create(winInfo& info){
         int len(strlen(infos_.title)), nLen(len);
         int maxWidth(client_.w - 2 * WIN_BORDER_WIDTH);
         dnsize(infos_.title, len, NULL, &width, &height);
-        
+
         // Adjust title length ?
         if (width > maxWidth){
             nLen = (int)((len * maxWidth) / width);
         }
-        
+
         // Center the title (or part of the title that fit window size)
         dtext_opt(client_.x + (client_.w - width)/2 + WIN_BORDER_WIDTH, WIN_BORDER_WIDTH, infos_.textColour, infos_.bkColour, DTEXT_LEFT, DTEXT_TOP, infos_.title, nLen);
 
@@ -129,11 +135,15 @@ bool window::create(winInfo& info){
         client_.y += height;
         client_.h -= height;
     }
+#else
+    std::cout << "--------------------------------" << std::endl;
+    std::cout << "\t\t" << infos_.title << std::endl << std::endl;
 #endif // #ifdef DEST_CASIO_CALC
 
     update();
 
     // done
+    activated_ = true;
     return true;
 }
 
@@ -161,8 +171,24 @@ void window::update(){
 #endif // #ifdef DEST_CASIO_CALC
 }
 
-#ifdef DEST_CASIO_CALC
 
+// Draw a line of text (in window coordinates)
+//
+void window::drawText(const char* text, int x, int y, int tCol, int bCol){
+    if (activated_){
+        POINT dest(x, y);
+        win2Screen(dest);   // Change origin
+        if (text && text[0]){
+#ifdef DEST_CASIO_CALC
+            dtext_opt(dest.x, dest.y, (tCol==-1)?infos_.textColour:tCol, (bCol==-1)?infos_.bkColour:bCol, DTEXT_LEFT, DTEXT_TOP, text);
+#else
+            std::cout << "\t- " << text << std::endl;
+#endif // #ifdef DEST_CASIO_CALC
+        }
+    } // if (activated_)
+}
+
+#ifdef DEST_CASIO_CALC
 // Draw a single border
 //
 void window::_drawBorder(struct dwindow& dest){

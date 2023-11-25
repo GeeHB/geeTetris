@@ -138,8 +138,9 @@ class tetrisGame {
         static void showScores(int32_t score = -1, uint32_t lines = 0, uint32_t level = 0);
 
         // Strings manipulations
-        static char* __valtoa(int num, const char* name, char* str);
+        static char* __valtoa(int num, const char* name, char* str, size_t rLength = 0);
         static void __strrev(char *str);
+        static char* __strdrag(char *str, size_t rightChars);
 
     // Internal methods
     //

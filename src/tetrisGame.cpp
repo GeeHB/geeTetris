@@ -22,13 +22,13 @@
 extern bopti_image_t img_pause;
 #else
 #include <unistd.h>
-#include <iostream>
 #endif // #ifdef DEST_CASIO_CALC
 
 #include <cstdio>
 #include <cmath>
 #include <time.h>
 
+#include "shared/window.h"
 #include "shared/bFile.h"
 
 //---------------------------------------------------------------------------
@@ -269,7 +269,18 @@ void tetrisGame::pause(){
 //  @level : end level
 //
 void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
+    /*
+    char one[100];
 
+    std::cout << "01234567890123456789012345678901234567890123456789" << std::endl;
+    __valtoa(32587, "Score", one, 20);
+    std::cout << one << std::endl;
+
+    __valtoa(12, "Lines", one + 20, 20);
+    std::cout << one << std::endl;
+
+    return;
+    */
     sList scores;
     char data[SIZE_SCORES_FILE];
     memset(data, 0x00, SIZE_SCORES_FILE);  // scores list is empty
@@ -301,30 +312,54 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
     }
 
     // Display scores
-#ifdef DEST_CASIO_CALC
-#else
+    //
+    window scWin;
+    window::winInfo wInf;
+    wInf.title = (char*)"Best scores";
+    wInf.position.w = 150;
+    wInf.position.h = 150;
+    wInf.bkColour = COLOUR_LT_GREY;
+    scWin.create(wInf);
+
     sList::PNODE current(scores.head());
     if (nullptr == current){
-        std::cout << "La liste est vide" << std::endl;
-        return;
+        scWin.drawText("La liste est vide", -1, -1, COLOUR_RED);
     }
+    else{
+        uint8_t count(0);
+        int px(15), py(20);
+        char line[100];
+        while (current && count < MAX_SCORES){
+            line[0] = 0;
+            __valtoa(++count, NULL, line, 3);
+            __valtoa(current->record.score, NULL, line + 3, 10); // score
+            __valtoa(current->record.lines, NULL, line + 13, 10); // lines
+            __valtoa(current->record.level, NULL, line + 23, 10); // level
+#ifndef DEST_CASIO_CALC
+            if (score == (int32_t)current->record.score){
+                line[0] = '>';
+            }
+#endif // #ifndef DEST_CASIO_CALC
 
-    std::cout << "------------------" << std::endl;
+            scWin.drawText(line, px, py, (score == (int32_t)current->record.score)?COLOUR_RED:COLOUR_BLUE);
 
-    uint8_t count(0);
-    while (current){
-
-        if (score == (int32_t)current->record.score){
-            std::cout << "\t- " << int(++count) << " *" << current->record.score << " - " << current->record.lines << " lignes - Niveau " << current->record.level << std::endl;
+            // next ...
+            py+=15;
+            current = current->next;
         }
-        else{
-            std::cout << "\t- " << int(++count) << "  " << current->record.score << " - " << current->record.lines << " lignes - Niveau " << current->record.level << std::endl;
-        }
 
-        // next ...
-        current = current->next;
-    }
+#ifdef DEST_CASIO_CALC
+        // Wait for any key to be pressed
+        keyboard keyb;
+        uint car(0);
+        do{
+            car = keyb.getKey();
+        } while (car == KEY_NONE);
 #endif // DEST_CASIO_CALC
+
+        // Close the window
+        scWin.close();
+    }
 }
 
 //
@@ -976,7 +1011,7 @@ void tetrisGame::_drawNumValue(uint8_t index){
 //
 //  @return : pointer to formated string
 //
-char* tetrisGame::__valtoa(int num, const char* name, char* str){
+char* tetrisGame::__valtoa(int num, const char* name, char* str, size_t rLength){
     char* strVal(str);
 
     // Insert name
@@ -1006,6 +1041,15 @@ char* tetrisGame::__valtoa(int num, const char* name, char* str){
 
 	// Reverse the string (just the num. part)
 	__strrev(strVal);
+
+	// Shift to the right ?
+    if (rLength){
+		size_t len(strlen(str));
+		if (rLength > len){
+		    __strdrag(strVal, rLength - len); // just drag the value
+        }
+	}
+
 	return str;
 }
 
@@ -1022,6 +1066,41 @@ void tetrisGame::__strrev(char *str){
 		str[i] = str[j];
 		str[j] = a;
 	}
+}
+
+// __strdrag() : Drag a string to the right
+//
+//	Drag the original string to the right.  Chars on the left will be fill
+//  with spaces.
+//
+//  This function assumes str is large enough to complete successfully
+//  with at least (strlen(str) + rightLen + 1) bytes
+//
+//  @str : String to slide
+//  @rightChars : Count à cchars str shoulb be dragged to
+//
+//  @return : pointer to the string
+//
+char* tetrisGame::__strdrag(char *str, size_t rightChars){
+	size_t len, i;
+	if (!str || 0 == (len = strlen(str)) || !rightChars){
+		return str;
+	}
+
+	str[len + rightChars] = 0;  // New string size
+
+	// Drag the string
+	for (i=len; i; i--){
+		str[i+rightChars - 1] = str[i-1];
+	}
+
+	// Put spaces on the left
+	for (i=0; i<rightChars; i++){
+		str[i] = ' ';
+	}
+
+	// Finish
+	return str;
 }
 
 // _scores2List() : Transfer file content to the list os scores

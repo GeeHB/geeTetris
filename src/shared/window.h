@@ -20,13 +20,15 @@
 
 #include "casioCalcs.h"
 
+#ifdef DEST_CASIO_CALC
+#include <gint/display.h>
+#else
+#include <iostream>
+#endif // #ifdef DEST_CASIO_CALC
+
 #ifdef __cplusplus
 extern "C" {
 #endif // #ifdef __cplusplus
-
-#ifdef DEST_CASIO_CALC
-#include <gint/display.h>
-#endif // #ifdef DEST_CASIO_CALC
 
 #define WIN_BORDER_WIDTH        2
 
@@ -47,9 +49,7 @@ public:
     typedef struct _winInfo{
 
         // Construction
-        _winInfo(){
-            clear();
-        }
+        _winInfo();
 
         // clear
         void clear();
@@ -87,13 +87,7 @@ public:
     //
 
     // Draw a line of text (in window coordinates)
-    void drawText(const char* text, int x, int y, int tCol = -1, int bCol = -1){
-#ifdef DEST_CASIO_CALC
-        if (text && text[0]){
-            dtext_opt(x + client_.x, y + client_.y, (tCol==-1)?infos_.textColour:tCol, (bCol==-1)?infos_.bkColour:bCol, DTEXT_LEFT, DTEXT_TOP, text);
-        }
-#endif // #ifdef DEST_CASIO_CALC
-    }
+    void drawText(const char* text, int x, int y, int tCol = -1, int bCol = -1);
 
     // Convert window (x, y) into screen (x,y)
     void win2Screen(POINT& coord){
