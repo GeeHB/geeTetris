@@ -145,7 +145,7 @@ enum GAME_KEY{
 //
 
 #define MIN_LEVEL   1
-#define MAX_LEVEL   7
+#define MAX_LEVEL   8
 
 #define MIN_DIRTY_LINES   0
 #define MAX_DIRTY_LINES   8
