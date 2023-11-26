@@ -18,7 +18,6 @@
 
 #ifdef DEST_CASIO_CALC
 #include <gint/clock.h>
-#include "shared/RTC.h"
 extern bopti_image_t img_pause;
 #else
 #include <unistd.h>
@@ -175,15 +174,12 @@ bool tetrisGame::start() {
 
     // Initial 'speed' (ie. duration of a 'sequence' before moving down the piece)
     uint32_t seqCount(0);
-    long diff, seqDuration(_updateSpeed(INITIAL_SPEED * 1000000, parameters_.startLevel_, parameters_.startLevel_ - 1));
+    uint8_t rLevel(parameters_.startLevel_);
+    int diff, seqDuration(parameters_.startLevel_==1? INITIAL_SPEED : _setSpeed(INITIAL_SPEED, parameters_.startLevel_, parameters_.startLevel_ - 1));
 
 #ifdef DEST_CASIO_CALC
     clock_t ts, now;
     now = clock();
-
-    int maintenant = RTC_getTicks();
-    char bidon[10];
-    TRACE(__valtoa(maintenant, NULL, bidon), COLOUR_RED, COLOUR_BLACK);
 #else
     struct timespec ts, now;
     clock_gettime(CLOCK_MONOTONIC, &now);
@@ -200,7 +196,7 @@ bool tetrisGame::start() {
 #ifdef DEST_CASIO_CALC
             sleep_us(SLEEP_DURATION);
             now = clock();
-            diff = (now - ts) / CLOCKS_PER_SEC * 1000000000;
+            diff = (now - ts) * 1000 / CLOCKS_PER_SEC;
 #else
             usleep(SLEEP_DURATION);
             clock_gettime(CLOCK_MONOTONIC, &now);   // in ns
@@ -211,21 +207,16 @@ bool tetrisGame::start() {
         // One line down ...
         _down();
 
-#ifdef DEST_CASIO_CALC
-        maintenant = RTC_getTicks();
-        TRACE(__valtoa(maintenant, NULL, bidon), COLOUR_RED, COLOUR_BLACK);
-#endif // #ifdef DEST_CASIO_CALC
-
         // Accelerate ?
         seqCount += 1;
         if (0 == (seqCount % MOVES_UPDATE_LEVEL)){
             // Real level (based on pieces movements)
-            uint8_t rLevel = (uint8_t)floor(seqCount / MOVES_UPDATE_LEVEL) + 1;
+            rLevel = (uint8_t)floor(seqCount / MOVES_UPDATE_LEVEL) + 1;
 
             // Change level (if necessary) & accelerate
             if (rLevel >= values_[LEVEL_ID].value){
                 values_[LEVEL_ID].value = rLevel;
-                seqDuration = _updateSpeed(seqDuration, rLevel, 1);
+                seqDuration = _setSpeed(seqDuration, rLevel, 1);
 
                 _drawNumValue(LEVEL_ID);
                 updateDisplay();
@@ -537,28 +528,32 @@ void tetrisGame::_piecePosChanged() {
     }
 }
 
-// _updateSpeed() : Change the game speed
+// _setSpeed() : Set or change the game speed in ms
 //
 //  Between each automatic down movement the system "waits" a given duration.
 //  The greater this value, the lower the 'speed' will be.
 //
 //  This 'speed' is linked to the level in the game
 //
-//  @currentDuration : current 'speed' in ns
+//  @currentDuration : current 'speed' in ms
 //  @level : current level in the game
 //  @incLevel : value of current increment for the level (1 by default)
 //
 //  @return : new duration in ns.
 //
-long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLevel){
-        if (level >= MAX_LEVEL_ACCELERATION){
-            // Already at the max speed
+int tetrisGame::_setSpeed(int currentDuration, uint8_t level, uint8_t incLevel){
+        if (!incLevel || level >= MAX_LEVEL_ACC){
             return currentDuration;
         }
 
         // duration = currentDuration * acc ^ incLevel
-        float acc(1.0 - ACCELERATION_STEP);
-        return currentDuration * ((incLevel == 1)?  acc: powl(acc, incLevel));
+        int duration(currentDuration);
+        int count(incLevel);
+        while (count--){
+            duration = duration * ELAPSE_STEP / 100;
+        }
+
+        return duration;
 }
 
 // _handleGameKeys() : Handle keyboard events

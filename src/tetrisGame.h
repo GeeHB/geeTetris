@@ -24,6 +24,7 @@
 #include "shared/keyboard.h"
 
 #include <cstdlib>
+#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -144,7 +145,7 @@ class tetrisGame {
         }
 
         // Change the game speed
-        long _updateSpeed(long currentDuration, uint8_t level, uint8_t incLevel = 1);
+        int _setSpeed(int currentDuration, uint8_t level, uint8_t incLevel = 1);
 
         // Handle keyboard events
         void _handleGameKeys();

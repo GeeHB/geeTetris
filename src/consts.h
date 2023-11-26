@@ -37,7 +37,7 @@ extern "C" {
 
 // App. infos
 #define APP_NAME     "geeTetris"
-#define APP_VERSION  "0.4"
+#define APP_VERSION  "0.4 - build 7"
 #define APP_AUTHOR   "GeeHB"
 
 // Playfield's dimensions (in box units)
@@ -54,10 +54,11 @@ extern "C" {
 
 // Timer & game's Levels
 //
-#define SLEEP_DURATION          5000   // 5ms
-#define MAX_LEVEL_ACCELERATION  15      // No more acceleration when this level is reached
-#define ACCELERATION_STEP       0.19    // Growing speed % per level
-#define INITIAL_SPEED           1200    // Level 1 speed (larger is slower)
+#define SLEEP_DURATION          5000    // 5ms
+#define MAX_LEVEL_ACC           15      // No more acceleration when this level is reached
+#define ACC_STEP                19      // Growing speed % per level
+#define ELAPSE_STEP             (100 - ACC_STEP)
+#define INITIAL_SPEED           1200    // Level 1 speed (larger is slower) in ms
 #define MOVES_UPDATE_LEVEL      250     // Change level criterium (# of pieces going down one step)
 
 // Indicators

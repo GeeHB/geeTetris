@@ -11,11 +11,11 @@
         * `src/shared/window` : 'fenêtre' 
 * Corrections
     * [x] BUG : Mauvais calcul de l'accélération des pieces
-    * [ ] BUG : La vitesse initiale ne tient pas compte du niveau de départ
+    * [x] BUG : La vitesse initiale ne tient pas compte du niveau de départ (=> travail en ms)
     * [x] BUG : score valide même si 'exit' 
         - Simplification des statut des parties
     * [x] BUG : Sortie du jeu => retour à la police par défaut
-    * [x] BUG : `src/shared/keyboard`` : Pas de gestion des "modifiers" du clavier
+    * [x] BUG : `src/shared/keyboard`` - Mauvaise de gestion des "modifiers"
 
 #### v0.3 - version intermédiaire (test et validation des nouvelles classes)
 * 21 nov. 2023
