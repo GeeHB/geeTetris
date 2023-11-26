@@ -26,29 +26,43 @@ uint keyboard::getKey(){
     evt = pollevent();
     if (evt.type == KEYEV_DOWN){
         key = evt.key;
-        mod_ = MOD_TYPE::MOD_NONE;
 
-        // ???
-        // mod_  = (evt.mod?evt.shift + 2*evt.alpha:0);
-
-        // A moodifier ?
-        if (evt.mod){
-            if (evt.shift){
-                mod_+= MOD_TYPE::MOD_SHIFT;
+        // Modifiers
+        //
+        if (key == KEY_SHIFT){
+            if (!_isSet(MOD_SHIFT)){
+                _set(MOD_SHIFT);
             }
-
-            if (evt.alpha){
-                mod_+= MOD_TYPE::MOD_ALPHA;
+        }
+        else{
+            if (key == KEY_ALPHA){
+                if (!_isSet(MOD_ALPHA)){
+                    _set(MOD_ALPHA);
+                }
             }
         }
     }
     else{
+        if (evt.type == KEYEV_UP){
+            key = evt.key;
+
+            // Modifiers
+            //
+            if (key == KEY_SHIFT){
+                _unSet(MOD_SHIFT);
+            }
+            else{
+                if (key == KEY_ALPHA){
+                    _unSet(MOD_ALPHA);
+                }
+            }
+        }
+
         key = KEY_CODE_NONE;
-        mod_ = MOD_TYPE::MOD_NONE;
     }
 #else
     key = getchar();
-    mod_ = MOD_TYPE::MOD_NONE;
+    mod_ = MOD_NONE;
 #endif // #ifdef DEST_CASIO_CALC
 
     // return the pressed key code

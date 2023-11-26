@@ -15,6 +15,7 @@
     * [x] BUG : score valide même si 'exit' 
         - Simplification des statut des parties
     * [x] BUG : Sortie du jeu => retour à la police par défaut
+    * [x] BUG : `src/shared/keyboard`` : Pas de gestion des "modifiers" du clavier
 
 #### v0.3 - version intermédiaire (test et validation des nouvelles classes)
 * 21 nov. 2023

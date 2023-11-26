@@ -18,6 +18,7 @@
 
 #ifdef DEST_CASIO_CALC
 #include <gint/clock.h>
+#include "shared/RTC.h"
 extern bopti_image_t img_pause;
 #else
 #include <unistd.h>
@@ -179,6 +180,10 @@ bool tetrisGame::start() {
 #ifdef DEST_CASIO_CALC
     clock_t ts, now;
     now = clock();
+
+    int maintenant = RTC_getTicks();
+    char bidon[10];
+    TRACE(__valtoa(maintenant, NULL, bidon), COLOUR_RED, COLOUR_BLACK);
 #else
     struct timespec ts, now;
     clock_gettime(CLOCK_MONOTONIC, &now);
@@ -198,13 +203,18 @@ bool tetrisGame::start() {
             diff = (now - ts) / CLOCKS_PER_SEC * 1000000000;
 #else
             usleep(SLEEP_DURATION);
-            clock_gettime(CLOCK_MONOTONIC, &now);
-            diff = (now.tv_sec - ts.tv_sec) * 1000000000 + (now.tv_nsec - ts.tv_nsec);
+            clock_gettime(CLOCK_MONOTONIC, &now);   // in ns
+            diff = (now.tv_sec - ts.tv_sec) * 1000000000 + (now.tv_nsec - ts.tv_nsec);  // convert in ns
 #endif // #ifdef DEST_CASIO_CALC
         }
 
         // One line down ...
         _down();
+
+#ifdef DEST_CASIO_CALC
+        maintenant = RTC_getTicks();
+        TRACE(__valtoa(maintenant, NULL, bidon), COLOUR_RED, COLOUR_BLACK);
+#endif // #ifdef DEST_CASIO_CALC
 
         // Accelerate ?
         seqCount += 1;
@@ -534,7 +544,7 @@ void tetrisGame::_piecePosChanged() {
 //
 //  This 'speed' is linked to the level in the game
 //
-//  @currentDuration : current 'speed'
+//  @currentDuration : current 'speed' in ns
 //  @level : current level in the game
 //  @incLevel : value of current increment for the level (1 by default)
 //

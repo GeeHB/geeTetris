@@ -23,7 +23,7 @@ extern "C" {
 
 //---------------------------------------------------------------------------
 //--
-//-- scrCapture object - Screen capture using fxlink
+//-- scrCapture object - Screen capture using fxlink command -[ fxlink -iw ]
 //--
 //---------------------------------------------------------------------------
 

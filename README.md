@@ -68,7 +68,7 @@ Lorsque la constante **TRACE_MODE** est définie, la ligne est effectivement aff
 #### A partir du menu principal
 L'application se présente sous la forme d'onglets associés aux touches de contrôle. Les différents onglets permettent soit de modifier les paramètres de l'application soit de lancer l'application :
 
-| Touche | Action |
+|  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Touches &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;  | Action |
 |--------|--------|
 | ![F1](assets/key_F1.png) | Affichage de l'**écran d'accueil**|
 | ![F2](assets/key_F2.png) | Choix du **niveau de départ**. Plus le niveau est important et plus les pièces tomberont rapidement mais plus les lignes complètes raporteront de points. Par défaut le jeu commence au niveau 1.|
@@ -76,17 +76,18 @@ L'application se présente sous la forme d'onglets associés aux touches de cont
 | ![F4](assets/key_F4.png) | Affichage de **l'ombre de la pièce**. En l'absence d'ombre les lignes complètes raporteront plus de points. Les ombres sont affichées par défaut.|
 | ![F5](assets/key_F5.png) | **Lancement** d'une partie avec les paramètres sélectionnés.|
 | ![F6](assets/key_F6.png) | **Sortie** de l'application.|
+| ![shift](assets/key_shift.png) ![7](assets/key_7.png)| Activation / désactivation du mode **capture**. |
 
+**Attention** L"activation du mode *capture* peut bloquer la calculatrice.
 
 #### Pendant la partie ...
 Quel que soit le mode d'affichage choisi, vertical ou horizontal, les touches suivantes fonctionneront à l'identique à tout moment de la partie :
 
 
-| &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Touches &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;| Action |
+| Touche | Action |
 |---------------|--------|
 | ![Rotation](assets/key_xot.png) | **Changement du mode d'affichage**. Par défaut l'affichage est en mode horizontal (calculatrice en mode normal), un appui transformera instantanément les affichages du jeu vers le mode vertical. Compte tenu des dimensions de l'écran, en mode vertical les pièces peuvent être plus  larges. Le jeu est assurément plus jouable. Réciproquement suite à un second appui, il retourna au mode normal. |
 | ![Pause](assets/key_optn.png) | Pause du jeu. En mode **pause**, une image d'écran factice est affichée. Lorsque l'on appuie à nouveau sur la touche, le jeu reprend son cours.|
-| ![shift](assets/key_shift.png) ![7](assets/key_7.png)| Activation / désactivation du mode **capture**. |
 | ![Exit](assets/key_exit.png) | **Sortie** du jeu et retour au menu principal. |
 
 #### Contrôles en mode horizontal

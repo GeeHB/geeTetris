@@ -61,11 +61,24 @@ public:
 
     // Status of modifiers
     bool isPressed(uint mod){
-        return (mod != MOD_NONE && ((mod_ & mod) == mod));
+        return (mod != MOD_NONE && _isSet(mod));
+    }
+
+private:
+    // bitwise ops for modifiers
+    bool _isSet(uint8_t bit){
+        return ((mod_& bit) == bit);
+    }
+    void _set(uint8_t bit){
+        mod_ |= bit;
+    }
+    void _unSet(uint8_t bit){
+        mod_ = (mod_ & (~bit));
     }
 
 protected:
-    uint mod_;      // Keyboard modifier
+    // Members
+    uint mod_;      // Keyboard modifiers
 };
 
 #ifdef __cplusplus
