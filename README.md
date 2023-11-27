@@ -1,8 +1,8 @@
-## *geeTetris* - Un jeu de *tetris* pour la Casio GRAPH90+E / FX-CG50
+## *geeTetris* - Un jeu de *Tetris* pour la Casio GRAPH90+E / FX-CG50
 
 ### Présentation
 
-`geeTetris` est un jeu de type *tetris* pour la calculatrice Casio Graph90+E développé en C++ en utilisant `gint`.
+`geeTetris` est un jeu de type *Tetris* pour la calculatrice Casio Graph90+E développé en C++ en utilisant `gint`.
 
 Il offre différentes options : affichage de l'ombre de la pièce, démarrage avec un handicap de lignes 'sales', démarrage sur un niveau plus rapide. 
 Et il permet de jouer avec la calculatrice en mode horizontal (position standard) ou en mode vertical.
@@ -77,6 +77,7 @@ L'application se présente sous la forme d'onglets associés aux touches de cont
 | ![F5](assets/key_F5.png) | **Lancement** d'une partie avec les paramètres sélectionnés.|
 | ![F6](assets/key_F6.png) | **Sortie** de l'application.|
 | ![shift](assets/key_shift.png) ![7](assets/key_7.png)| Activation / désactivation du mode **capture**. |
+| ![shift](assets/key_alpha.png) ![7](assets/key_mult.png)| Affichage du tableau des scores. |
 
 **Attention** L"activation du mode *capture* peut bloquer la calculatrice.
 
