@@ -133,7 +133,7 @@ class tetrisGame {
         // Strings manipulations
         static char* __valtoa(int num, const char* name, char* str, size_t rLength = 0);
         static void __strrev(char *str);
-        static char* __strdrag(char *str, size_t rightChars);
+        static char* __strdrag(char *str, int rightChars);
 
     // Internal methods
     //

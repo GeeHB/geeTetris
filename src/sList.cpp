@@ -48,13 +48,13 @@ int8_t sList::_node::compare(_node* other){
 
     if (other->record.score < record.score ||
         (other->record.score == record.score && other->record.lines < record.lines) ||
-        (other->record.score == record.score && other->record.lines == record.lines && record.level < other->record.level)){
+        (other->record.score == record.score && other->record.lines == record.lines && other->record.level < record.level )){
         return -1;
     }
 
     if (other->record.score > record.score ||
         (other->record.score == record.score && other->record.lines > record.lines) ||
-        (other->record.score == record.score && other->record.lines == record.lines && record.level > other->record.level)){
+        (other->record.score == record.score && other->record.lines == record.lines && other->record.level > record.level )){
         return 1;
     }
 

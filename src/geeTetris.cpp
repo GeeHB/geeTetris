@@ -18,6 +18,7 @@
 
 #include "shared/tabs.h"
 #include "tetrisTabs.h"
+#include "tetrisGame.h"
 
 #include "shared/keyboard.h"
 #include "shared/trace.h"
@@ -106,18 +107,24 @@ int main(){
             if (KEY_CODE_EXIT == car){
                 quitApp = true;
             }
-#ifdef TRACE_MODE
             else{
-                if (KEY_CODE_CAPTURE == car  && keys.isPressed(MOD_SHIFT)){
-                    if (!gCapture.isSet()){
-                        gCapture.install();
-                    }
-                    else{
-                        gCapture.remove();
+                if (KEY_CODE_SHOW_SCORES == car && keys.isPressed(MOD_ALPHA)){
+                    tetrisGame::showScores();
+                    currentTab->select();
+                }
+#ifdef TRACE_MODE
+                else{
+                    if (KEY_CODE_CAPTURE == car  && keys.isPressed(MOD_SHIFT)){
+                        if (!gCapture.isSet()){
+                            gCapture.install();
+                        }
+                        else{
+                            gCapture.remove();
+                        }
                     }
                 }
-            }
 #endif // #ifdef TRACE_MODE
+            }
         }
 
     }while(!quitApp);

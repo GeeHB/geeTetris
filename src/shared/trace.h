@@ -20,7 +20,7 @@
 #ifdef DEST_CASIO_CALC
 #include "scrCapture.h"   // capture only on TRACE mode
 
-#define TRACE_MODE       1      // Only for tests
+//#define TRACE_MODE       1      // Only for tests
 #else
 #ifdef TRACE_MODE       // ???
 #undef TRACE_MODE

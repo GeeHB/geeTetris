@@ -20,6 +20,14 @@
 #include <cstring>
 #include <cstdlib>
 
+//---------------------------------------------------------------------------
+//--
+//-- window::_winInfo structure
+//--
+//--    Informations concerning a window object
+//--
+//---------------------------------------------------------------------------
+
 // Construction
 //
 window::_winInfo::_winInfo(){
@@ -30,7 +38,7 @@ window::_winInfo::_winInfo(){
     borderColour = textColour = COLOUR_BLACK;
 }
 
-// clear
+// clear() : clear struct. content
 //
 void window::winInfo::clear(){
     if (title){
@@ -39,7 +47,12 @@ void window::winInfo::clear(){
     }
 }
 
-// Copy
+// copy() : recopy a strcut
+//
+//  All datas will be copied into the current struct.
+//  title member will be reallocated
+//
+//  @src : _winInfo struct source to recopy
 //
 void window::winInfo::copy(_winInfo& src){
     clear();
@@ -49,19 +62,33 @@ void window::winInfo::copy(_winInfo& src){
     }
     style = src.style;
     position = src.position;
-    bkColour = src.bkColour;
-    borderColour = src.borderColour;
-    textColour = src.textColour;
+    bkColour = (src.bkColour < 0?COLOUR_WHITE:src.bkColour);
+    borderColour = (src.borderColour < 0?COLOUR_BLACK:src.borderColour);
+    textColour = (src.textColour < 0?COLOUR_BLACK:src.textColour);
 }
+
+//---------------------------------------------------------------------------
+//--
+//-- window object
+//--
+//--    "window" displayed on top of the screen
+//--
+//---------------------------------------------------------------------------
 
 // Construction
 //
 window::window(){
+    // Initialize members
     activated_ = false;
     infos_.clear();         // useless ?
+    client_ = {0, 0, 0, 0};
 }
 
-// Creation
+// create() : Creation of a window
+//
+//  @info : Information concerning the new window
+//
+//  @return : true if created else false
 //
 bool window::create(winInfo& info){
     close(); // if previously opened
@@ -146,7 +173,7 @@ bool window::create(winInfo& info){
     return true;
 }
 
-// Close the window
+// close() : Close the current window
 //
 void window::close(){
     if (activated_){
@@ -162,7 +189,7 @@ void window::close(){
     }
 }
 
-// Update
+// update() : Update the screen
 //
 void window::update(){
 #ifdef DEST_CASIO_CALC
@@ -171,10 +198,31 @@ void window::update(){
 }
 
 
-// Draw a line of text (in window coordinates)
+// drawTExt() : Draw a line of text (in window coordinates)
+//
+//  @text : pointer to the text to draw
+//  @x, @y : coordinates of text relative to top left corer of the window
+//          if < 0, the text will be centered (horizontally for x  <0, vertically if y < 0)
+//  @tCol : text clour. If is equal to -1, the default text colour will be used
+//  @bCol : background clour. If is equal to -1, the default ground colour will be used
 //
 void window::drawText(const char* text, int x, int y, int tCol, int bCol){
     if (activated_){
+        /*
+        POINT dest;
+        if (x < 0 ){
+
+        }
+        else{
+            dest.x = x;
+        }
+
+        if (y < 0){
+        }
+        else{
+            dest.y = y;
+        }
+        */
         POINT dest(x, y);
         win2Screen(dest);   // Change origin
         if (text && text[0]){

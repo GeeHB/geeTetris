@@ -3,6 +3,7 @@
 * Ajouts
     * gestion des scores
         * `src/sList` : liste dynamique pour les scores
+        * 's' ('Alpha' + 'X') sur l'écran d'accueil
     * mode TRACE via `src/shared/trace.h`
         * messages sur l'écran
         * Accès à la capture d'écran (`shift` `7`)        
@@ -14,8 +15,9 @@
     * [x] BUG : La vitesse initiale ne tient pas compte du niveau de départ (=> travail en ms)
     * [x] BUG : score valide même si 'exit' 
         - Simplification des statut des parties
-    * [x] BUG : Sortie du jeu => retour à la police par défaut
+    * [x] BUG : Sortie du jeu => retour à la police par défaut (pour l'écran et pour les scores)
     * [x] BUG : `src/shared/keyboard`` - Mauvaise de gestion des "modifiers"
+    * [x] BUG : 'freeze' lors de l'ajout d'un high score (si déja 10)
 
 #### v0.3 - version intermédiaire (test et validation des nouvelles classes)
 * 21 nov. 2023

@@ -45,6 +45,11 @@ extern "C" {
 // Size of the file
 #define SIZE_SCORES_FILE    (SIZE_SCORE*MAX_SCORES)
 
+// Size of the Window
+#define WIN_X       20
+#define WIN_WIDTH   190
+#define WIN_HEIGHT  140
+
 //---------------------------------------------------------------------------
 //--
 //-- sList

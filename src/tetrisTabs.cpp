@@ -71,7 +71,7 @@ uint8_t tetrisTab::select(){
 
         tetrisGame game(params_);
         if (game.start()){
-            game.showScores(game.score(), game.lines(), game.level());  // Show final score
+            //game.showScores(game.score(), game.lines(), game.level());  // Show final score
         }
 
         // Ready for a new game !

@@ -177,13 +177,8 @@ bool tetrisGame::start() {
     uint8_t rLevel(parameters_.startLevel_);
     int diff, seqDuration(parameters_.startLevel_==1? INITIAL_SPEED : _setSpeed(INITIAL_SPEED, parameters_.startLevel_, parameters_.startLevel_ - 1));
 
-#ifdef DEST_CASIO_CALC
     clock_t ts, now;
     now = clock();
-#else
-    struct timespec ts, now;
-    clock_gettime(CLOCK_MONOTONIC, &now);
-#endif // #ifdef DEST_CASIO_CALC
 
     // Game main loop
     while (isRunning()){
@@ -193,15 +188,15 @@ bool tetrisGame::start() {
         // During this short period, the piece can be moved or rotated
         while (isRunning() && diff < seqDuration){
             _handleGameKeys();
+
 #ifdef DEST_CASIO_CALC
             sleep_us(SLEEP_DURATION);
-            now = clock();
-            diff = (now - ts) * 1000 / CLOCKS_PER_SEC;
 #else
             usleep(SLEEP_DURATION);
-            clock_gettime(CLOCK_MONOTONIC, &now);   // in ns
-            diff = (now.tv_sec - ts.tv_sec) * 1000000000 + (now.tv_nsec - ts.tv_nsec);  // convert in ns
 #endif // #ifdef DEST_CASIO_CALC
+
+            now = clock();
+            diff = (now - ts) * 1000 / CLOCKS_PER_SEC;
         }
 
         // One line down ...
@@ -269,18 +264,6 @@ void tetrisGame::pause(){
 //  @level : end level
 //
 void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
-    /*
-    char one[100];
-
-    std::cout << "01234567890123456789012345678901234567890123456789" << std::endl;
-    __valtoa(32587, "Score", one, 20);
-    std::cout << one << std::endl;
-
-    __valtoa(12, "Lines", one + 20, 20);
-    std::cout << one << std::endl;
-
-    return;
-    */
     sList scores;
     char data[SIZE_SCORES_FILE];
     memset(data, 0x00, SIZE_SCORES_FILE);  // scores list is empty
@@ -302,7 +285,7 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
             scoresFile.create((FONTCHARACTER)SCORES_FILENAME, BFile_File, &size);
         }
 
-        // Save new list
+        // Save the new list
         if (scoresFile.getLastError() == 0){
             _list2Scores(scores, data);
             scoresFile.write(data, SIZE_SCORES_FILE);
@@ -313,11 +296,18 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 
     // Display scores
     //
+
+#ifdef DEST_CASIO_CALC
+    dfont(dfont_default());     // return to default font
+#endif // #ifdef DEST_CASIO_CALC
+
     window scWin;
     window::winInfo wInf;
     wInf.title = (char*)"Best scores";
-    wInf.position.w = 130;
-    wInf.position.h = 130;
+    wInf.style = WIN_STYLE_DBORDER | WIN_STYLE_HCENTER;
+    wInf.position.y = WIN_X;
+    wInf.position.w = WIN_WIDTH;
+    wInf.position.h = WIN_HEIGHT;
     wInf.bkColour = COLOUR_LT_GREY;
     scWin.create(wInf);
 
@@ -328,13 +318,13 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
     else{
         uint8_t count(0);
         int px(15), py(8);
-        char line[100];
+        char line[25];
         while (current && count < MAX_SCORES){
             line[0] = 0;
             __valtoa(++count, NULL, line, 3);
-            __valtoa(current->record.score, NULL, line + 3, 10); // score
-            __valtoa(current->record.lines, NULL, line + 13, 10); // lines
-            __valtoa(current->record.level, NULL, line + 23, 10); // level
+            __valtoa(current->record.score, NULL, line + 3, 8); // score
+            __valtoa(current->record.lines, NULL, line + 11, 5); // lines
+            __valtoa(current->record.level, NULL, line + 16, 5); // level
 #ifndef DEST_CASIO_CALC
             if (score == (int32_t)current->record.score){
                 line[0] = '>';
@@ -342,13 +332,14 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 #endif // #ifndef DEST_CASIO_CALC
 
             scWin.drawText(line, px, py, (score == (int32_t)current->record.score)?COLOUR_RED:COLOUR_BLUE);
+            scWin.update();
 
             // next ...
             py+=11;
             current = current->next;
         }
 
-        scWin.update();
+        //scWin.update();
 
 #ifdef DEST_CASIO_CALC
         // Wait for any key to be pressed
@@ -1020,13 +1011,13 @@ void tetrisGame::_drawNumValue(uint8_t index){
 char* tetrisGame::__valtoa(int num, const char* name, char* str, size_t rLength){
     char* strVal(str);
 
-    // Insert name
+    // Add name
 	if (name){
 	    strcpy(str, name);
 	    strVal+=strlen(str);    // num. value starts here
 	}
 
-	// Add num. value
+	// Append num. value
 	int sum ((num < 0)?-1*num:num);
 	uint8_t i(0), digit, dCount(0);
 	do{
@@ -1080,16 +1071,16 @@ void tetrisGame::__strrev(char *str){
 //  with spaces.
 //
 //  This function assumes str is large enough to complete successfully
-//  with at least (strlen(str) + rightLen + 1) bytes
+//  with at least (strlen(str) + rightChars + 1) bytes
 //
 //  @str : String to slide
-//  @rightChars : Count à cchars str shoulb be dragged to
+//  @rightChars : Count of chars str should be dragged to
 //
 //  @return : pointer to the string
 //
-char* tetrisGame::__strdrag(char *str, size_t rightChars){
+char* tetrisGame::__strdrag(char *str, int rightChars){
 	size_t len, i;
-	if (!str || 0 == (len = strlen(str)) || !rightChars){
+	if (!str || 0 == (len = strlen(str)) || rightChars <= 0){
 		return str;
 	}
 
@@ -1101,11 +1092,11 @@ char* tetrisGame::__strdrag(char *str, size_t rightChars){
 	}
 
 	// Put spaces on the left
-	for (i=0; i<rightChars; i++){
+	for (i=0; i<(size_t)rightChars; i++){
 		str[i] = ' ';
 	}
 
-	// Finish
+	// Finished
 	return str;
 }
 
@@ -1127,7 +1118,6 @@ void tetrisGame::_scores2List(char* data, sList& scores){
             if (record.score){
                 scores.append(record.score, record.lines, record.level);
             }
-
             pos+=SIZE_SCORE;    // next record
         }
     }
@@ -1145,12 +1135,11 @@ void tetrisGame::_list2Scores(sList& scores, char* data){
     uint8_t index(0);
     char* pos(data);
     sList::RECORD* prec;
-    while (item && index < MAX_SCORES){
+    while (item && index++ < MAX_SCORES){
         prec = &item->record;
         memcpy(pos, (char*)prec, SIZE_SCORE);
         item = item->next;  // Next score
-        pos+=SIZE_SCORE;
-        index++;        // only transfer MAX_SCORES records
+        pos+=SIZE_SCORE;    // forward
     }
 }
 

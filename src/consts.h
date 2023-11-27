@@ -37,7 +37,7 @@ extern "C" {
 
 // App. infos
 #define APP_NAME     "geeTetris"
-#define APP_VERSION  "0.4 - build 7"
+#define APP_VERSION  "0.4 - build 9"
 #define APP_AUTHOR   "GeeHB"
 
 // Playfield's dimensions (in box units)
@@ -106,6 +106,7 @@ enum GAME_KEY{
     KEY_CODE_PAUSE = KEY_OPTN,
     KEY_CODE_CAPTURE = KEY_7,
     KEY_CODE_ROTATE_DISPLAY = KEY_XOT,
+    KEY_CODE_SHOW_SCORES = KEY_MUL,
     KEY_CODE_EXIT = KEY_EXIT,
     KEY_CODE_ENTER = KEY_EXE
 };
@@ -120,6 +121,7 @@ enum GAME_KEY{
     KEY_CODE_FALL = ' ',
     KEY_CODE_PAUSE = 'p',
     KEY_CODE_ROTATE_DISPLAY = 'r',
+    KEY_CODE_SHOW_SCORES = 's',
     KEY_CODE_EXIT = 'q',
     KEY_CODE_ENTER = '\13'
 };
