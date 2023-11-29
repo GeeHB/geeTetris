@@ -7,3 +7,6 @@ __pycache__/
 
 # Common IDE files
 .vscode
+
+# Other files
+ticks.xlsx

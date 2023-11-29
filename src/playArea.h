@@ -91,7 +91,9 @@ class playArea{
         //
 
         // Update members on rotation
-        void rotatedDisplay(bool doRotate);
+        void rotatedDisplay(bool doRotate){
+            _rotatedDisplay(doRotate, false);
+        }
 
         // (trigonometric) rotations
         //  ... of a single point
@@ -177,6 +179,8 @@ class playArea{
         // Draw a line of text vertically
         void _dtextV(int x, int y, int fg, const char* text);
 
+        // Update members on rotation
+        void _rotatedDisplay(bool doRotate, bool force);
 
     protected:
         // Screen & display parameters

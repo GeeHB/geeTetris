@@ -38,12 +38,12 @@ uint8_t aboutTab::select(){
     strcpy(copyright, APP_NAME);
     strcat(copyright, " par ");
     strcat(copyright, APP_AUTHOR);
-    strcat(copyright, " version ");
+    strcat(copyright, " v");
     strcat(copyright, APP_VERSION);
 
     int w, h;
     dsize(copyright, NULL, &w, &h);
-    dtext(CASIO_WIDTH - w - 5, CASIO_HEIGHT - TAB_HEIGHT - h - 5, COLOUR_BLACK, copyright);
+    dtext(CASIO_WIDTH - w - 5, CASIO_HEIGHT - TAB_HEIGHT - h - 7, COLOUR_BLACK, copyright);
 
     dupdate();
 #endif // #ifdef DEST_CASIO_CALC
@@ -71,7 +71,7 @@ uint8_t tetrisTab::select(){
 
         tetrisGame game(params_);
         if (game.start()){
-            //game.showScores(game.score(), game.lines(), game.level());  // Show final score
+            game.showScores(game.score(), game.lines(), game.level());  // Show final score
         }
 
         // Ready for a new game !

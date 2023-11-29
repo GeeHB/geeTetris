@@ -5,33 +5,33 @@
 `geeTetris` est un jeu de type *Tetris* pour la calculatrice Casio Graph90+E développé en C++ en utilisant `gint`.
 
 Il offre différentes options : affichage de l'ombre de la pièce, démarrage avec un handicap de lignes 'sales', démarrage sur un niveau plus rapide. 
-Et il permet de jouer avec la calculatrice en mode horizontal (position standard) ou en mode vertical.
+Il permet aussi de jouer avec la calculatrice en mode horizontal (position standard) ou en mode vertical.
 
 ### Informations de version
 
 | Dépôt &nbsp;| https://gitea.planet-casio.com/Jhb/geeTetris |
 |----- |-------------------------------------|
-| **Date** | xxx nov. 2023 |
+| **Date** | 29 nov. 2023 |
 | **Version stable** | **0\.4** - branche `main` |
 | **Dépendances** |  **Casio / gint** : `-lstdc++`|
 | **Testé sur** | *Linux* (Fedora 38) avec `code::blocks`|
-|| *Casio Graph90+e*  avec `gint`|
+|| *Casio Graph90+E*  avec `gint`|
 
 
 ### Informations pour la compilation
 #### Sources
 Les sources sont organisés selon dossiers suivants :
-* `src/` - Sources spécifiques à l'application;
-* `src/shared` - Sources des objets pouvant être utilisés dans d'autres projets.
+* `src/` : Sources spécifiques à l'application;
+* `src/shared` : Sources des objets pouvant être utilisés dans d'autres projets.
 
 #### Constantes et définitions
-La majorité des comportements sont régis par des constantes que l'on peut trouver pour laeur grande majorité dans deux fichiers distincts :
+La majorité des comportements est régi par des constantes que l'on peut trouver pour laeur grande majorité dans deux fichiers distincts :
 * `src/consts.h` - Contantes et définitions générales de l'application
 * `src/shared/casioCalcs.h` - Constantes spécifiques aux calculatrices.
 
-A défaut, les constantes, toujours en majusucules dans les sources, sout définis avec les objets qu'ils concernent. Par exemple `src/shared/tabs.h` propose les définitions liées aux onglets.
+A défaut, les constantes, toujours en majusucules dans les sources, sont définies avec les objets qu'ils concernent. Par exemple `src/shared/tabs.h` propose les définitions liées aux onglets.
 
-A défaut d'émulateur, tous les sources sont 100% fonctionnels en C/CPP ANSI. Ils peuvent donc être compilés dans un projet Windows (testé avec Visual Studio) ou sous Linux. Dans ce cas seuls les affichages ne seront pas effectués :).
+Faute d'émulateur, tous les sources sont 100% fonctionnels en C/CPP ANSI. Ils peuvent donc être compilés dans un projet Windows (testé avec Visual Studio) ou sous Linux. Dans ce cas seuls les affichages ne seront pas effectués :).
 
 Deux constantes permettent d'orienter la compilation :
 
@@ -52,8 +52,8 @@ Cela permet facilement de passer d'une configuration à l'autre sans rien modifi
 Rien n'empêche néanmoins d'utiliser une autre méthode ...
 
 ##### TRACE_MODE
-Lorsque cette constante est définie, 2 fonctions sont activées sur la cauclatrice uniquement :
-1. Activation de la macro *TRACE* qui permet d'afficher une ligne de texte à l'écran (et donc accessoirement de visiualiser le contenu d'une variable);
+Lorsque cette constante est définie, 2 fonctions sont activées sur la caclculatrice uniquement :
+1. Activation des macros *TRACE* qui permettent d'afficher une ligne de texte à l'écran (et donc accessoirement de visiualiser le contenu d'une variable);
 2. Activation de la fonction de capture d'écran. Dans ce mode, tous les affichages sont transférés via *USB* à l'utilitaire `fxlink`.
 
 L'appel suivant de la macro *TRACE* demande l'affichage en rouge du texte "Mode test actif":
@@ -76,7 +76,7 @@ L'application se présente sous la forme d'onglets associés aux touches de cont
 | ![F4](assets/key_F4.png) | Affichage de **l'ombre de la pièce**. En l'absence d'ombre les lignes complètes raporteront plus de points. Les ombres sont affichées par défaut.|
 | ![F5](assets/key_F5.png) | **Lancement** d'une partie avec les paramètres sélectionnés.|
 | ![F6](assets/key_F6.png) | **Sortie** de l'application.|
-| ![shift](assets/key_shift.png) ![7](assets/key_7.png)| Activation / désactivation du mode **capture**. |
+| ![shift](assets/key_shift.png) ![7](assets/key_7.png)| Activation / désactivation de la **capture** (communication avec `fxlink`). Il faut le programme soit compilé en mode *TRACE*.|
 | ![shift](assets/key_alpha.png) ![7](assets/key_mult.png)| Affichage du tableau des scores. |
 
 **Attention** L"activation du mode *capture* peut bloquer la calculatrice.
@@ -119,9 +119,17 @@ Ecran d'accueil de `geeTetris` :
 
 ![Accueil](assets/welcome.png)
 
+Choix du niveau de démarrage :
+
+![Level](assets/levels.png)
+
 Choix du nombre de ligne 'sales' à ajouter en début de partie :
 
 ![Dirty lines](assets/dirty.png)
+
+Affichage ou mlasquage de l'ombre des pièces :
+
+![Shdow](assets/shadow.png)
 
 Jeu en mode normal :
 

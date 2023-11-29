@@ -49,7 +49,7 @@ playArea::playArea(){
     keyQuit_ = KEY_CODE_EXIT;
 
     // set parameters
-    rotatedDisplay(rotatedDisplay_);
+    _rotatedDisplay(rotatedDisplay_, true);
 }
 
 // Destruction
@@ -65,69 +65,71 @@ playArea::~playArea(){
 //
 //  @doRotate : indicates wether display must rotate or not
 //
-void playArea::rotatedDisplay(bool doRotate){
-    if (false == (rotatedDisplay_ = doRotate)){
-        playfield_.boxWidth = CASIO_BOX_WIDTH;
+void playArea::_rotatedDisplay(bool doRotate, bool force){
+    if (force || rotatedDisplay_ != doRotate){
+        if (false == (rotatedDisplay_ = doRotate)){
+            playfield_.boxWidth = CASIO_BOX_WIDTH;
 
-        playfield_.pos.x = CASIO_PLAYFIELD_LEFT + CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
-        playfield_.pos.y = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
+            playfield_.pos.x = CASIO_PLAYFIELD_LEFT + CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
+            playfield_.pos.y = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
 
-        playfield_.pos.w = PLAYFIELD_WIDTH * playfield_.boxWidth + 2 * CASIO_BORDER_GAP;
-        playfield_.pos.h = PLAYFIELD_HEIGHT * playfield_.boxWidth + 2 * CASIO_BORDER_GAP;
+            playfield_.pos.w = PLAYFIELD_WIDTH * playfield_.boxWidth + 2 * CASIO_BORDER_GAP;
+            playfield_.pos.h = PLAYFIELD_HEIGHT * playfield_.boxWidth + 2 * CASIO_BORDER_GAP;
 
-        // Nextpiece zone dims
-        nextPiece_.boxWidth = CASIO_BOX_WIDTH_NP;
-        nextPiece_.pos.x = CASIO_INFO_LEFT + CASIO_INFO_GAP;
-        if (nextPiece_.pos.x <= (playfield_.pos.x + playfield_.pos.w)){
-            nextPiece_.pos.x = playfield_.pos.x + playfield_.pos.w + 2 * CASIO_INFO_GAP;
+            // Nextpiece zone dims
+            nextPiece_.boxWidth = CASIO_BOX_WIDTH_NP;
+            nextPiece_.pos.x = CASIO_INFO_LEFT + CASIO_INFO_GAP;
+            if (nextPiece_.pos.x <= (playfield_.pos.x + playfield_.pos.w)){
+                nextPiece_.pos.x = playfield_.pos.x + playfield_.pos.w + 2 * CASIO_INFO_GAP;
+            }
+            nextPiece_.pos.y = CASIO_INFO_TOP;
+            nextPiece_.pos.w = nextPiece_.pos.h = 4 * nextPiece_.boxWidth + 2 * CASIO_INFO_GAP;
+
+            // Keys
+            keyLeft_ = KEY_CODE_LEFT;
+            keyRight_ = KEY_CODE_RIGHT;
+            keyRotatePiece_ = KEY_CODE_UP;
+            keyDown_ = KEY_CODE_DOWN;
+
+            // Use "default" font
+#ifdef DEST_CASIO_CALC
+            dfont((font_t*)&font_horz);
+#endif // #ifdef DEST_CASIO_CALC
         }
-        nextPiece_.pos.y = CASIO_INFO_TOP;
-        nextPiece_.pos.w = nextPiece_.pos.h = 4 * nextPiece_.boxWidth + 2 * CASIO_INFO_GAP;
+        else {
+            // "rotated" mode
+            //
+            playfield_.boxWidth = CASIO_BOX_WIDTH_ROTATED;    // Larger box
 
-        // Keys
-        keyLeft_ = KEY_CODE_LEFT;
-        keyRight_ = KEY_CODE_RIGHT;
-        keyRotatePiece_ = KEY_CODE_UP;
-        keyDown_ = KEY_CODE_DOWN;
+            playfield_.pos.x = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
+            playfield_.pos.y = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
 
-        // Use "default" font
+            playfield_.pos.w = PLAYFIELD_WIDTH * playfield_.boxWidth + 2 * CASIO_BORDER_GAP;
+            playfield_.pos.h = PLAYFIELD_HEIGHT * playfield_.boxWidth + 2 * CASIO_BORDER_GAP;
+
+            // Nextpiece
+            nextPiece_.boxWidth = CASIO_BOX_WIDTH_NP_ROTATED;  // box in preview is smaller
+            nextPiece_.pos.w = nextPiece_.pos.h = 4 * nextPiece_.boxWidth + 2 * CASIO_INFO_GAP;
+            nextPiece_.pos.x = playfield_.pos.x + playfield_.pos.w + CASIO_BORDER_GAP;
+            nextPiece_.pos.y = CASIO_INFO_TOP;
+
+            // Keys
+            keyLeft_ = KEY_CODE_DOWN;
+            keyRight_ = KEY_CODE_UP;
+            keyRotatePiece_ = KEY_CODE_LEFT;
+            keyDown_ = KEY_CODE_RIGHT;
+
+            // Install my font
 #ifdef DEST_CASIO_CALC
-        dfont((font_t*)&font_horz);
+            dfont((font_t*)&font_vert);
 #endif // #ifdef DEST_CASIO_CALC
-    }
-    else {
-        // "rotated" mode
-        //
-        playfield_.boxWidth = CASIO_BOX_WIDTH_ROTATED;    // Larger box
+        }
 
-        playfield_.pos.x = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
-        playfield_.pos.y = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
-
-        playfield_.pos.w = PLAYFIELD_WIDTH * playfield_.boxWidth + 2 * CASIO_BORDER_GAP;
-        playfield_.pos.h = PLAYFIELD_HEIGHT * playfield_.boxWidth + 2 * CASIO_BORDER_GAP;
-
-        // Nextpiece
-        nextPiece_.boxWidth = CASIO_BOX_WIDTH_NP_ROTATED;  // box in preview is smaller
-        nextPiece_.pos.w = nextPiece_.pos.h = 4 * nextPiece_.boxWidth + 2 * CASIO_INFO_GAP;
-        nextPiece_.pos.x = playfield_.pos.x + playfield_.pos.w + CASIO_BORDER_GAP;
-        nextPiece_.pos.y = CASIO_INFO_TOP;
-
-        // Keys
-        keyLeft_ = KEY_CODE_DOWN;
-        keyRight_ = KEY_CODE_UP;
-        keyRotatePiece_ = KEY_CODE_LEFT;
-        keyDown_ = KEY_CODE_RIGHT;
-
-        // Install my font
-#ifdef DEST_CASIO_CALC
-        dfont((font_t*)&font_vert);
-#endif // #ifdef DEST_CASIO_CALC
-    }
-
-    // Values indicators
-    textsPos_[0].x = textsPos_[1].x = textsPos_[2].x = nextPiece_.pos.x;
-    for (uint8_t id(0); id <VAL_COUNT; id++){
-        textsPos_[id].y = nextPiece_.pos.y + nextPiece_.pos.w + playfield_.boxWidth * ( 2 * id + 1);
+        // Values indicators
+        textsPos_[0].x = textsPos_[1].x = textsPos_[2].x = nextPiece_.pos.x;
+        for (uint8_t id(0); id <VAL_COUNT; id++){
+            textsPos_[id].y = nextPiece_.pos.y + nextPiece_.pos.w + playfield_.boxWidth * ( 2 * id + 1);
+        }
     }
 }
 

@@ -10,7 +10,7 @@ find_package(Gint 2.9 REQUIRED)
 
 set(SOURCES
   src/geeTetris.cpp
-  src/shared/scrCapture.cpp
+  #src/shared/scrCapture.cpp
   src/shared/keyboard.cpp
   src/shared/bFile.cpp
   src/shared/tabs.cpp

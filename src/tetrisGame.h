@@ -23,17 +23,33 @@
 #include "sList.h"
 #include "shared/keyboard.h"
 
+#ifdef DEST_CASIO_CALC
+#include <gint/timer.h>
+#include <gint/clock.h>
+extern bopti_image_t img_pause;
+#endif // #ifdef DEST_CASIO_CALC
+
 #include <cstdlib>
-#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif // #ifdef __cpluscplus
 
+// Timer & game speed
+//
+
+#define GAME_TICK_DURATION      25      //  in ms
+#define GAME_START_TICKS        48      // Initial piece speed in ticks ( 1200 ms / GAME_TICK_DURATION)
+
+#define GAME_MAX_ACC_LEVEL      15      // No more acceleration when this level is reached
+#define GAME_ACC_RATE           175     // Game acceleration in /000
+
+#define GAME_NEXT_LEVEL_MOVES   250     // Level++ after # movements
+
+
 // Game status
 //
 enum GAME_STATUS{
-    STATUS_INIT		 = 0,
     STATUS_READY	 = 1,
     STATUS_RUNNING	 = 2,
     STATUS_STOPPED	 = 8,
@@ -54,12 +70,8 @@ class tetrisGame {
     //
     public:
 
-        // Constructions
-        tetrisGame();
-        tetrisGame(tetrisParameters* params)
-        :tetrisGame(){
-            setParameters(params);
-        }
+        // Construction
+        tetrisGame(tetrisParameters* params);
 
         // Destruction
         ~tetrisGame() {
@@ -144,8 +156,8 @@ class tetrisGame {
             memset(playField_, COLOUR_ID_BOARD, PLAYFIELD_HEIGHT * PLAYFIELD_WIDTH);
         }
 
-        // Change the game speed
-        int _setSpeed(int currentDuration, uint8_t level, uint8_t incLevel = 1);
+        // Change the game speed (in ticks)
+        int _getSpeed(int currentTicks, uint8_t incLevel = 1);
 
         // Handle keyboard events
         void _handleGameKeys();
@@ -224,8 +236,17 @@ class tetrisGame {
         // Draw the tetrisGame
         void _drawTetrisGame();
 
+        // Lt of scores management
         static void _scores2List(char* data, sList& scores);
         static void _list2Scores(sList& scores, char* data);
+
+#ifdef DEST_CASIO_CALC
+        // Callback for game's timer
+        static int __callbackTick(volatile int *pTick){
+            *pTick = 1;
+            return TIMER_CONTINUE;
+        }
+#endif // #ifdef DEST_CASIO_CALC
 
     // Members
     //

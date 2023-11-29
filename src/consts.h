@@ -37,7 +37,7 @@ extern "C" {
 
 // App. infos
 #define APP_NAME     "geeTetris"
-#define APP_VERSION  "0.4 - build 9"
+#define APP_VERSION  "0.4-15"
 #define APP_AUTHOR   "GeeHB"
 
 // Playfield's dimensions (in box units)
@@ -51,15 +51,6 @@ extern "C" {
 #define SCORE_SPEED_GAME        2.0     // 2% * {piece's height} => quick play <=> more points
 #define SCORE_DIRTY_LINES       0.1     // 0.1% per starting dirty-line
 #define SCORE_LEVEL_VALUATION   15.0    // 15% more for each level
-
-// Timer & game's Levels
-//
-#define SLEEP_DURATION          5000    // 5ms
-#define MAX_LEVEL_ACC           15      // No more acceleration when this level is reached
-#define ACC_STEP                19      // Growing speed % per level
-#define ELAPSE_STEP             (100 - ACC_STEP)
-#define INITIAL_SPEED           1200    // Level 1 speed (larger is slower) in ms
-#define MOVES_UPDATE_LEVEL      250     // Change level criterium (# of pieces going down one step)
 
 // Indicators
 //
@@ -80,17 +71,16 @@ enum VALUE_ID{
 // Colour IDs
 //
 enum COLOUR_ID{
-    COLOUR_ID_BOARD     = 0,
+    COLOUR_ID_BOARD     = 0x00,
     // 1 -> 7 : Pieces colours (nCurses ID)
     COLOUR_ID_SHADOW    = 8,
     COLOUR_ID_TEXT      = 9,
     COLOUR_ID_BORDER    = 10,
     COLOUR_ID_BKGRND    = 11,
     //#define COLOUR_ID_ANIMATE   12     // animation When line if full
-    LAST_COLOUR_ID		= COLOUR_ID_BKGRND,
-    COLOUR_ID_NONE = 12
+    COLOUR_ID_NONE = 12,
+    LAST_COLOUR_ID		= COLOUR_ID_NONE
 };
-
 
 // Key codes
 //
@@ -204,7 +194,7 @@ typedef struct __uvalue{
 
     // Construction
     __uvalue(){
-        name[0] = 0;
+        name[0] = '\0';
         value = 0;
         previous = -1; //  value is not (yet) used
     }

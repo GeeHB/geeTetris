@@ -16,13 +16,6 @@
 
 #include "tetrisGame.h"
 
-#ifdef DEST_CASIO_CALC
-#include <gint/clock.h>
-extern bopti_image_t img_pause;
-#else
-#include <unistd.h>
-#endif // #ifdef DEST_CASIO_CALC
-
 #include <cstdio>
 #include <cmath>
 #include <time.h>
@@ -38,26 +31,17 @@ extern bopti_image_t img_pause;
 //--
 //---------------------------------------------------------------------------
 
-// Constrcution
+// Construction
 //
-tetrisGame::tetrisGame() {
-
-    // Default values
-    nextIndex_ = -1;
-
-    strcpy(values_[SCORE_ID].name, SCORE_STR);
-    values_[SCORE_ID].value = 0;
-
-    strcpy(values_[LEVEL_ID].name, LEVEL_STR);
-    values_[LEVEL_ID].value = 1;
-
-    strcpy(values_[COMPLETED_LINES_ID].name, COMPLETED_LINES_STR);
-    values_[COMPLETED_LINES_ID].value = 0;
-
-    _emptyTetrisGame();
+tetrisGame::tetrisGame(tetrisParameters* params) {
 
     // Initialize rand num. generator
-    srand((int)time(NULL));
+    srand((unsigned int)clock());
+
+    // Set indicators name
+    strcpy(values_[SCORE_ID].name, SCORE_STR);
+    strcpy(values_[LEVEL_ID].name, LEVEL_STR);
+    strcpy(values_[COMPLETED_LINES_ID].name, COMPLETED_LINES_STR);
 
     // Build the tetraminos'list
     //
@@ -110,8 +94,7 @@ tetrisGame::tetrisGame() {
     colours_[COLOUR_ID_BORDER] = COLOUR_DK_GREY;
     colours_[COLOUR_ID_BKGRND] = COLOUR_WHITE;  // could be different from board !
 
-    // Just created
-    status_ = STATUS_INIT;      // Can't be started !!!
+    setParameters(params);
 }
 
 // setParameters() : Set game's parameters
@@ -166,60 +149,62 @@ bool tetrisGame::start() {
     //Initializations ...
     currentPos_.valid(false);
     status_ = STATUS_RUNNING;
-
     _newPiece();
 
     // Set display's rotation mode
     _rotateDisplay(true);
 
-    // Initial 'speed' (ie. duration of a 'sequence' before moving down the piece)
-    uint32_t seqCount(0);
-    uint8_t rLevel(parameters_.startLevel_);
-    int diff, seqDuration(parameters_.startLevel_==1? INITIAL_SPEED : _setSpeed(INITIAL_SPEED, parameters_.startLevel_, parameters_.startLevel_ - 1));
+#ifdef DEST_CASIO_CALC
 
-    clock_t ts, now;
-    now = clock();
+    int seqCount(0);
+    uint8_t nextLevel(parameters_.startLevel_);
+    int levelTicks(parameters_.startLevel_==1? GAME_START_TICKS : _getSpeed(GAME_START_TICKS, parameters_.startLevel_ - 1));
+    int tickCount(levelTicks);
+
+    // Timer creation
+    static volatile int tick = 1;
+    int timerID = timer_configure(TIMER_ANY, GAME_TICK_DURATION*1000, GINT_CALL(__callbackTick, &tick));
+    if (timerID< 0){
+        return false;	// Unable to create a timer
+    }
+
+    timer_start(timerID);   // set the timer
 
     // Game main loop
     while (isRunning()){
-        diff = 0;
-        ts = now;
-
-        // During this short period, the piece can be moved or rotated
-        while (isRunning() && diff < seqDuration){
-            _handleGameKeys();
-
-#ifdef DEST_CASIO_CALC
-            sleep_us(SLEEP_DURATION);
-#else
-            usleep(SLEEP_DURATION);
-#endif // #ifdef DEST_CASIO_CALC
-
-            now = clock();
-            diff = (now - ts) * 1000 / CLOCKS_PER_SEC;
+        while(!tick){
+            sleep();
         }
+        tick = 0;
 
-        // One line down ...
-        _down();
+        _handleGameKeys();
 
-        // Accelerate ?
-        seqCount += 1;
-        if (0 == (seqCount % MOVES_UPDATE_LEVEL)){
-            // Real level (based on pieces movements)
-            rLevel = (uint8_t)floor(seqCount / MOVES_UPDATE_LEVEL) + 1;
+        if (!(tickCount--)){
+            _down();    // One line down ...
 
-            // Change level (if necessary) & accelerate
-            if (rLevel >= values_[LEVEL_ID].value){
-                values_[LEVEL_ID].value = rLevel;
-                seqDuration = _setSpeed(seqDuration, rLevel, 1);
+            // Accelerate ?
+            seqCount += 1;
+            if (0 == (seqCount % GAME_NEXT_LEVEL_MOVES)){
+                nextLevel = (uint8_t)floor(seqCount / GAME_NEXT_LEVEL_MOVES) + 1;
 
-                _drawNumValue(LEVEL_ID);
-                updateDisplay();
+                // Change level (if necessary) & accelerate
+                if (nextLevel > values_[LEVEL_ID].value){
+                    levelTicks = (nextLevel < GAME_MAX_ACC_LEVEL?_getSpeed(levelTicks, 1): levelTicks);
+
+                    values_[LEVEL_ID].value = nextLevel;
+                    _drawNumValue(LEVEL_ID);
+                }
             }
+
+            updateDisplay();
+            tickCount = levelTicks;
         }
-    }
+    }   // while (isRunning())
 
     // Game is Over
+    timer_stop(timerID);    // stop the timer
+#endif // #ifdef DEST_CASIO_CALC
+
     casioDisplay_.rotatedDisplay(false); // Return to default font
     return (!isCancelled());
 }
@@ -332,14 +317,14 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 #endif // #ifndef DEST_CASIO_CALC
 
             scWin.drawText(line, px, py, (score == (int32_t)current->record.score)?COLOUR_RED:COLOUR_BLUE);
-            scWin.update();
+            //scWin.update();
 
             // next ...
             py+=11;
             current = current->next;
         }
 
-        //scWin.update();
+        scWin.update();
 
 #ifdef DEST_CASIO_CALC
         // Wait for any key to be pressed
@@ -519,32 +504,34 @@ void tetrisGame::_piecePosChanged() {
     }
 }
 
-// _setSpeed() : Set or change the game speed in ms
+// _getSpeed() : Get the game speed in ticks according to the level
 //
-//  Between each automatic down movement the system "waits" a given duration.
-//  The greater this value, the lower the 'speed' will be.
+//  The player can move the piece every 'tick' but the piecce will automatically
+//  go down one line every #currentTicks
 //
 //  This 'speed' is linked to the level in the game
 //
-//  @currentDuration : current 'speed' in ms
-//  @level : current level in the game
+//  @currentTicks : current tick count
 //  @incLevel : value of current increment for the level (1 by default)
 //
-//  @return : new duration in ns.
+//  @return : new duration in ticks
 //
-int tetrisGame::_setSpeed(int currentDuration, uint8_t level, uint8_t incLevel){
-        if (!incLevel || level >= MAX_LEVEL_ACC){
-            return currentDuration;
+int tetrisGame::_getSpeed(int currentTicks, uint8_t incLevel){
+        /*
+        if (!incLevel || level >= GAME_MAX_ACC_LEVEL){
+            return currentTicks;
         }
+        */
 
-        // duration = currentDuration * acc ^ incLevel
-        int duration(currentDuration);
+        // newTicks = currentTicks * acc ^ incLevel
+        int ticks(currentTicks);
         int count(incLevel);
+        int accRate(1000 -GAME_ACC_RATE);
         while (count--){
-            duration = duration * ELAPSE_STEP / 100;
+            ticks = ticks* accRate / 1000;
         }
 
-        return duration;
+        return ticks;
 }
 
 // _handleGameKeys() : Handle keyboard events
@@ -757,12 +744,6 @@ void tetrisGame::_putPiece() {
 //  @downRowCount : count of down'rows
 //
 void tetrisGame::_reachLowerPos(uint8_t downRowcount){
-#ifdef TRACE_MODE
-    char trace[100];
-    char* pos=trace;
-    pos[0] = 0;
-#endif // #ifdef TRACE_MODE
-
     // put it
     _putPiece();
 
@@ -786,15 +767,6 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
             minY = 0;   // Not too low
         }
     }
-
-#ifdef TRACE_MODE
-        __valtoa(minY, "De", pos);
-        pos=trace + strlen(trace);
-        __valtoa(maxY , " a ", pos);
-
-        TRACE(trace, C_BLACK, colours_[COLOUR_ID_BKGRND]);
-#endif // TRACE_MODE
-
 
     bool foundEmpty(false);
     for (uint8_t line = minY; line <= maxY; line++){
@@ -1084,7 +1056,7 @@ char* tetrisGame::__strdrag(char *str, int rightChars){
 		return str;
 	}
 
-	str[len + rightChars] = 0;  // New string size
+	str[len + rightChars] = '\0';  // New string size
 
 	// Drag the string
 	for (i=len; i; i--){

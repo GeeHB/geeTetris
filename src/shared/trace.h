@@ -20,7 +20,7 @@
 #ifdef DEST_CASIO_CALC
 #include "scrCapture.h"   // capture only on TRACE mode
 
-//#define TRACE_MODE       1      // Only for tests
+// #define TRACE_MODE       1      // Only for tests
 #else
 #ifdef TRACE_MODE       // ???
 #undef TRACE_MODE
@@ -45,8 +45,10 @@ extern "C" {
 //
 #define TRACE(val, tCol, bkCol)      { if (NO_COLOUR != bkCol) drect(TRACE_POS_X, TRACE_POS_Y, TRACE_POS_X + TRACE_WIDTH - 1, TRACE_POS_Y + TRACE_HEIGHT -1, bkCol);dtext(TRACE_POS_X, TRACE_POS_Y, tCol, val);dupdate();}
 #define TRACE_DEF(val)                   TRACE(val, COLOUR_BLACK, NO_COLOUR);
+#define TRACE_WAIT(val, tCol, bkCol) {TRACE(val, tCol, bkCol); key_event_t evt; do { evt = pollevent();} while(evt.type != KEYEV_DOWN && evt.key != KEY_EXE);}
 #else
 #define TRACE(val, tCol, tbk)      {}
+#define TRACE_WAIT(val, tCol, tbk)      {}
 #define TRACE_DEF(val) {}
 #endif // #ifdef TRACE_WIDTH
 

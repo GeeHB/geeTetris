@@ -1,5 +1,5 @@
 #### v0.4
-* xxx nov. 2023
+* 29 nov. 2023
 * Ajouts
     * gestion des scores
         * `src/sList` : liste dynamique pour les scores
@@ -12,7 +12,7 @@
         * `src/shared/window` : 'fenêtre' 
 * Corrections
     * [x] BUG : Mauvais calcul de l'accélération des pieces
-    * [x] BUG : La vitesse initiale ne tient pas compte du niveau de départ (=> travail en ms)
+    * [x] BUG : La vitesse initiale ne tient pas compte du niveau de départ (=> travail en "tick")
     * [x] BUG : score valide même si 'exit' 
         - Simplification des statut des parties
     * [x] BUG : Sortie du jeu => retour à la police par défaut (pour l'écran et pour les scores)
