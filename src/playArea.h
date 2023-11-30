@@ -86,6 +86,26 @@ class playArea{
         // Destruction
         ~playArea();
 
+        // update() : Update display
+        //
+        void update(){
+#ifdef DEST_CASIO_CALC
+            dupdate();
+#endif // #ifdef DEST_CASIO_CALC
+        }
+
+        // clear() : Clear the screen with the given colour
+        //
+        void clear(int color){
+#ifdef DEST_CASIO_CALC
+#ifdef FX9860G
+            dclear((color_t)color);
+#else
+            dclear(color);
+#endif // #ifdef FX9860G
+#endif // #ifdef DEST_CASIO_CALC
+        }
+
         //
         // Displays orientations
         //
@@ -130,10 +150,18 @@ class playArea{
         //
         //   @x,@y : top left starting point
         //   @width, @height : dimensions
-        //   @borderColour : Colour of the border in RGB format or -1 (if no border)
-        //   @fillColour : Filling colour in RGB format or -1 (if empty)
+        //   @borderColour : Colour of the border NO_COLOR (-1) if none
+        //   @fillColour : Filling colour NO_COLOR (-1) if none
         //
-        void drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int32_t fillColour = NO_COLOR, int32_t borderColour = NO_COLOR);;
+        void drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int fillColour = NO_COLOR, int borderColour = NO_COLOR);
+
+        // drawBorder() : Draw a border around a rectangle
+        //
+        //   @x,@y : top left starting point
+        //   @width, @height : dimensions
+        //   @borderColour : Colour of the border
+        //
+        void drawBorder(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int borderColour);
 
         // _shitfToZone() : Change the origin and the coordinate system
         //          according to a selected drawing zone

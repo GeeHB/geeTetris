@@ -155,10 +155,10 @@ void playArea::dtext(int x, int y, int fg, const char* text){
 //
 //   @x,@y : top left starting point
 //   @width, @height : dimensions
-//   @borderColour : Colour of the border in RGB format or -1 (if no border)
-//   @fillColour : Filling colour in RGB format or -1 (if empty)
+//   @borderColour : Colour of the border or NO_COLOR (-1) if none
+//   @fillColour : Filling colour or NO_COLOR (-1) if none
 //
-void playArea::drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int32_t fillColour, int32_t borderColour){
+void playArea::drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int fillColour, int borderColour){
     int16_t xFrom(x), yFrom(y);
     int16_t xTo(xFrom + width - 1), yTo(yFrom + height - 1);
 
@@ -169,8 +169,44 @@ void playArea::drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t he
 
     // Draw the rect
 #ifdef DEST_CASIO_CALC
+#ifdef FX9860G
+    // Coloured rect
+    drect(xFrom, yFrom, xTo - 1, yTo - 1, fillColour);
+
+    // Half a border (bottom and right) for "small" pieces
+    if (NO_COLOR != borderColour){
+        dline(xFrom, yTo, xTo, yTo, borderColour);
+        dline(xTo, yFrom, xTo, yTo, borderColour);
+    }
+#else
     drect_border(xFrom, yFrom, xTo, yTo, fillColour, 1, borderColour);
+#endif // #ifdef FX9860G
 #endif // #ifdef DEST_CASIO_CALC
+}
+
+// drawBorder() : Draw a border around a rectangle
+//
+//   @x,@y : top left starting point
+//   @width, @height : dimensions
+//   @borderColour : Colour of the border
+//
+void playArea::drawBorder(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int borderColour){
+    // Draw the rect
+#ifdef DEST_CASIO_CALC
+#ifdef FX9860G
+    int16_t xFrom(x), yFrom(y);
+    int16_t xTo(xFrom + width - 1), yTo(yFrom + height - 1);
+
+    // Horizontal display ?
+    if (isRotated()){
+        rotate(xFrom, yFrom, xTo, yTo);
+    }
+
+    drect_border(xFrom, yFrom, xTo, yTo, C_NONE, 1, borderColour);
+#else
+    drawRectangle(x, y, width, height, C_NONE, borderColour);
+#endif // #ifdef FX9860G
+#endif // #ifdef FX9860G
 }
 
 // _shitfToZone() : Change the origin and the coordinate system

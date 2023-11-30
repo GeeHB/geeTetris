@@ -120,7 +120,7 @@ bool window::create(winInfo& info){
     dest.right--;   // included
     dest.bottom--;
 
-    dclear(infos_.bkColour); // background
+    dclear((color_t)infos_.bkColour); // background
 
     // Draw border(s)
     if (infos_.style & WIN_STYLE_SBORDER || infos_.style & WIN_STYLE_DBORDER){

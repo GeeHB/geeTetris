@@ -1,0 +1,16 @@
+font_vert.png:
+  type: font
+  name: font_vert
+  charset: print
+  grid.size: 7x5
+  grid.padding: 1
+  proportional: true
+
+font_horz.png:
+  type: font
+  name: font_horz
+  charset: print
+  grid.size: 5x7
+  grid.padding: 1
+  proportional: true
+

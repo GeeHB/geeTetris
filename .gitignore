@@ -1,6 +1,6 @@
-/build-cg
-/build-cg-push
+/build-*
 /*.g3a
+/*.g1a
 
 # Python bytecode
 __pycache__/

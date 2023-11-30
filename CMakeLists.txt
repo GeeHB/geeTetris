@@ -4,6 +4,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(MyAddin)
 
+include(GenerateG1A)
 include(GenerateG3A)
 include(Fxconv)
 find_package(Gint 2.9 REQUIRED)
@@ -23,23 +24,27 @@ set(SOURCES
 )
 # Shared assets, fx-9860G-only assets and fx-CG-50-only assets
 set(ASSETS
-  assets-cg/font_horz.png
-  assets-cg/font_vert.png
+  assets/font_horz.png
+  assets/font_vert.png
  )
+ set(ASSETS_fx
+  assets-fx/bw.png
+  assets-fx/pause.png
+)
 set(ASSETS_cg
   assets-cg/coloured.png
   assets-cg/pause.png
 )
 
-fxconv_declare_assets(${ASSETS} ${ASSETS_cg} WITH_METADATA)
+fxconv_declare_assets(${ASSETS} ${ASSETS_fx} ${ASSETS_cg} WITH_METADATA)
 
 add_executable(myaddin ${SOURCES} ${ASSETS} ${ASSETS_${FXSDK_PLATFORM}})
 target_compile_options(myaddin PRIVATE -Wall -Wextra -Os)
 target_link_libraries(myaddin Gint::Gint -lstdc++)
 
 if("${FXSDK_PLATFORM_LONG}" STREQUAL fx9860G)
-  generate_g1a(TARGET myaddin OUTPUT "MyAddin.g1a"
-    NAME "MyAddin" ICON assets-fx/icon.png)
+  generate_g1a(TARGET myaddin OUTPUT "geeTetris.g1a"
+    NAME "geeTetris" ICON assets-fx/icon.png)
 elseif("${FXSDK_PLATFORM_LONG}" STREQUAL fxCG50)
   generate_g3a(TARGET myaddin OUTPUT "geeTetris.g3a"
     NAME "geeTetris" ICONS assets-cg/icon-uns.png assets-cg/icon-sel.png)

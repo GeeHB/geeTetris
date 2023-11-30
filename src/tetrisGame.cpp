@@ -218,8 +218,8 @@ void tetrisGame::pause(){
     // draw the picture
 #ifdef DEST_CASIO_CALC
     dimage(0, 0, &img_pause);
-    dupdate();
 #endif // #ifdef DEST_CASIO_CALC
+    casioDisplay_.update();
 
     // status_ = STATUS_PAUSED;
     do{
@@ -834,9 +834,7 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 //
 void tetrisGame::_redraw(){
     // Clear the screen
-#ifdef DEST_CASIO_CALC
-    dclear(colours_[COLOUR_ID_BOARD]);
-#endif // #ifdef DEST_CASIO_CALC
+    casioDisplay_.clear(colours_[COLOUR_ID_BOARD]);
 
     _drawBackGround();
     _drawTetrisGame();
@@ -931,16 +929,14 @@ void tetrisGame::_eraseNextPiece(){
 //
 void tetrisGame::_drawBackGround(){
     // Border around the playfield
-    casioDisplay_.drawRectangle(casioDisplay_.playfield()->pos.x - CASIO_BORDER_GAP,
+    casioDisplay_.drawBorder(casioDisplay_.playfield()->pos.x - CASIO_BORDER_GAP,
         casioDisplay_.playfield()->pos.y - CASIO_BORDER_GAP,
-        casioDisplay_.playfield()->pos.w, casioDisplay_.playfield()->pos.h,
-        NO_COLOR, colours_[COLOUR_ID_BORDER]);
+        casioDisplay_.playfield()->pos.w, casioDisplay_.playfield()->pos.h, colours_[COLOUR_ID_BORDER]);
 
     // Border for 'Next piece'
-    casioDisplay_.drawRectangle(casioDisplay_.nextPiece()->pos.x - CASIO_BORDER_GAP,
+    casioDisplay_.drawBorder(casioDisplay_.nextPiece()->pos.x - CASIO_BORDER_GAP,
                 casioDisplay_.nextPiece()->pos.y - CASIO_BORDER_GAP,
-                casioDisplay_.nextPiece()->pos.w, casioDisplay_.nextPiece()->pos.h,
-                NO_COLOR, colours_[COLOUR_ID_BORDER]);
+                casioDisplay_.nextPiece()->pos.w, casioDisplay_.nextPiece()->pos.h, colours_[COLOUR_ID_BORDER]);
 }
 
 // _drawNumValue() : Draw a value and its name
