@@ -50,8 +50,6 @@ extern "C" {
 #define CASIO_INFO_TOP      10
 #define CASIO_INFO_GAP      4       // between border and text
 
-#define CASIO_VERT_TEXT_OFFSET  15
-
 // During games draings appends in 2 zones :
 //      game zone and next-piece (ie. preview) zone
 //

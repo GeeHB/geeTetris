@@ -1,3 +1,9 @@
+#### v0.5
+* xxx dec. 2023
+* Ajouts
+    * Génération pour la FX9860G
+* Corrections
+    * CMakeLists.txt définit la constantes DEST_CASIO_CALC
 #### v0.4
 * 29 nov. 2023
 * Ajouts

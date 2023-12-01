@@ -11,8 +11,8 @@ Il permet aussi de jouer avec la calculatrice en mode horizontal (position stand
 
 | Dépôt &nbsp;| https://gitea.planet-casio.com/Jhb/geeTetris |
 |----- |-------------------------------------|
-| **Date** | 29 nov. 2023 |
-| **Version stable** | **0\.4** - branche `main` |
+| **Date** | xxx dec. 2023 |
+| **Version stable** | **0\.5** - branche `main` |
 | **Dépendances** |  **Casio / gint** : `-lstdc++`|
 | **Testé sur** | *Linux* (Fedora 38) avec `code::blocks`|
 || *Casio Graph90+E*  avec `gint`|
@@ -24,12 +24,12 @@ Les sources sont organisés selon dossiers suivants :
 * `src/` : Sources spécifiques à l'application;
 * `src/shared` : Sources des objets pouvant être utilisés dans d'autres projets.
 
-#### Constantes et définitions
-La majorité des comportements est régi par des constantes que l'on peut trouver pour laeur grande majorité dans deux fichiers distincts :
+#### Constantes de l'application
+La majorité des comportements est régi par des constantes que l'on peut trouver pour leur grande majorité dans deux fichiers distincts :
 * `src/consts.h` - Contantes et définitions générales de l'application
 * `src/shared/casioCalcs.h` - Constantes spécifiques aux calculatrices.
 
-A défaut, les constantes, toujours en majusucules dans les sources, sont définies avec les objets qu'ils concernent. Par exemple `src/shared/tabs.h` propose les définitions liées aux onglets.
+A défaut, les constantes, toujours en majusucules dans les sources, sont définies avec les objets qui les concernent spécifiquement. Par exemple `src/shared/tabs.h` propose les définitions liées aux onglets.
 
 Faute d'émulateur, tous les sources sont 100% fonctionnels en C/CPP ANSI. Ils peuvent donc être compilés dans un projet Windows (testé avec Visual Studio) ou sous Linux. Dans ce cas seuls les affichages ne seront pas effectués :).
 
@@ -37,32 +37,13 @@ Deux constantes permettent d'orienter la compilation :
 
 | Constante | Fichier | Signification|
 | --- | --- | --- |
-| DEST_CASIO_CALC | `src/shared/casioCalcs.h` | Lorsque cette constante est définie, la compilation est orientée vers la calculatrice.|
-|TRACE_MODE|`src/trace.h`| Active le mode trace. Lorsque ce mode est activé, la MACRO TRACE permet d'afficher du texte sur l'écran. Sinon, la MACRO est vide. **Attention :** ce mode n'est possible que lorsque la constante DEST_CASIO_CALC est définie.|
-
-##### DEST_CASIO_CALC
-La présence de cette constante conditionne la génération du code spécifique aux calculatrices Casio.
-
-Par défaut le fichier `src/shared/casioCalcs.h`  lie la défintion de **DEST_CASIO_CALC** à l'absence de défintion de **LINUX_VER**. En français dans le texte : Si **LINUX_VER** n'est pas défini alors **CASIO_DEST_CALC** le sera :
-
-![define](assets/DEST_CASIO_CALC.png)
-
-Dans la configuration que j'utilise, mon compilateur sous Linux définit la variable **LINUX_VER**. Il invalide donc systématiquement **DEST_CASIO_CALC**.
-Cela permet facilement de passer d'une configuration à l'autre sans rien modifier aux sources.
-Rien n'empêche néanmoins d'utiliser une autre méthode ...
+| DEST_CASIO_CALC | `CMakeLists.txt` | Lorsque cette constante est définie, la compilation est orientée vers la calculatrice.|
+|TRACE_MODE|`src/trace.h`| Active le mode trace. **Attention :** ce mode n'est possible que lorsque la constante DEST_CASIO_CALC est définie.|
 
 ##### TRACE_MODE
-Lorsque cette constante est définie, 2 fonctions sont activées sur la caclculatrice uniquement :
-1. Activation des macros *TRACE* qui permettent d'afficher une ligne de texte à l'écran (et donc accessoirement de visiualiser le contenu d'une variable);
+Lorsque cette constante est définie, 2 fonctionalités sont activées sur la caclculatrice uniquement :
+1. Activation des 3 macros *TRACE* qui permettent d'afficher une ligne de texte à l'écran (et donc accessoirement de visiualiser le contenu d'une variable);
 2. Activation de la fonction de capture d'écran. Dans ce mode, tous les affichages sont transférés via *USB* à l'utilitaire `fxlink`.
-
-L'appel suivant de la macro *TRACE* demande l'affichage en rouge du texte "Mode test actif":
-
-![TRACE in source](assets/TRACE_code.png) 
-
-Lorsque la constante **TRACE_MODE** est définie, la ligne est effectivement affichée :
-
-![TRACE on screen](assets/TRACE_mainscreen.png) 
 
 ### Utilisation du clavier
 #### A partir du menu principal

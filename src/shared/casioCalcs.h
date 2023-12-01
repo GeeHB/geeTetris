@@ -10,16 +10,12 @@
 //--
 //--	Description:
 //--
-//--            Define the binary's dest. format
+//--            Types and defines specific to the casio targets
 //--
 //---------------------------------------------------------------------------
 
 #ifndef __GEE_CASIO_CALCS_h__
 #define __GEE_CASIO_CALCS_h__    1
-
-#ifndef LINUX_VER
-#define DEST_CASIO_CALC        1   // Compile for a Casio calculator
-#endif // #ifndef LINX_VER
 
 #ifdef DEST_CASIO_CALC
 // Specific includes for calculators
@@ -41,7 +37,7 @@
 //
 
 #ifndef DEST_CASIO_CALC
-// 24 bits RGB (for tests only)
+// 24 bits RGB (for tests only on Windows and Linux)
 #define C_RGB(r,g,b)      ((uint32_t)(((uint8_t)(r)|((uint16_t)((uint8_t)(g))<<8))|(((uint32_t)(uint8_t)(b))<<16)))
 #endif // #ifndef DEST_CASIO_CALC
 
@@ -98,7 +94,7 @@ typedef struct __point {
     uint16_t    y;
 } POINT;
 
-// Position of a tab
+// A simple rect. struct
 //
 typedef struct __rect{
     uint16_t    x,y;    // top left

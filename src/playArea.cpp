@@ -223,7 +223,7 @@ void playArea::shitfToZone(uint8_t zoneID, uint16_t& x, uint16_t& y, uint16_t& w
         width = height = playfield_.boxWidth;
     }
     else{
-        // Draw next piece
+        // For next piece zone
         x = nextPiece_.pos.x + CASIO_INFO_GAP;
         y = nextPiece_.pos.y + CASIO_INFO_GAP;
         width = height = nextPiece_.boxWidth;
