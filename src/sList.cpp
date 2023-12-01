@@ -21,17 +21,21 @@
 
 // Construction
 //
-sList::_node::_node(uint32_t escore, uint16_t elines, uint16_t elevel){
+sList::_node::_node(uint32_t escore, uint16_t elines, [[maybe_unused]] uint16_t elevel){
     record.score = escore;
     record.lines = elines;
+#ifndef FX9860G
     record.level = elevel;
+#endif // #ifndef FX9860G
     next = nullptr;
 }
 
 sList::_node::_node(RECORD& score){
     record.score = score.score;
     record.lines = score.lines;
+#ifndef FX9860G
     record.level = score.level;
+#endif // #ifndef FX9860G
     next = nullptr;
 }
 
@@ -46,15 +50,21 @@ int8_t sList::_node::compare(_node* other){
         return -2;
     }
 
-    if (other->record.score < record.score ||
-        (other->record.score == record.score && other->record.lines < record.lines) ||
-        (other->record.score == record.score && other->record.lines == record.lines && other->record.level < record.level )){
+    if (other->record.score < record.score
+        || (other->record.score == record.score && other->record.lines < record.lines)
+#ifndef FX9860G
+        || (other->record.score == record.score && other->record.lines == record.lines && other->record.level < record.level )
+#endif // #ifndef FX9860G
+        ){
         return -1;
     }
 
-    if (other->record.score > record.score ||
-        (other->record.score == record.score && other->record.lines > record.lines) ||
-        (other->record.score == record.score && other->record.lines == record.lines && other->record.level > record.level )){
+    if (other->record.score > record.score
+        || (other->record.score == record.score && other->record.lines > record.lines)
+#ifndef FX9860G
+        || (other->record.score == record.score && other->record.lines == record.lines && other->record.level > record.level )
+#endif // #ifndef FX9860G
+        ){
         return 1;
     }
 

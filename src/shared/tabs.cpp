@@ -39,9 +39,27 @@ extern font_t font_horz;
 //--
 //---------------------------------------------------------------------------
 
+#ifdef FX9860G
+// tabs colors
+#define COLOUR_SELECTED     C_BLACK
+#define COLOUR_UNSELECTED   C_LIGHT
+
+// Ranged values colors - selected
+#define COLOUR_VAL_TXT_SEL   COLOUR_WHITE
+#define COLOUR_VAL_BK_SEL    COLOUR_BLACK
+#else
+// tabs colors
 #define COLOUR_SELECTED     COLOUR_BLUE
 #define COLOUR_UNSELECTED   COLOUR_GREY
-#define COLOUR_BK_HILITE    COLOUR_LT_BLUE
+
+// Ranged values colors - selected
+#define COLOUR_VAL_TXT_SEL   COLOUR_WHITE
+#define COLOUR_VAL_BK_SEL    COLOUR_LT_BLUE
+#endif // #ifdef FX9860G
+
+// Ranged values colors - unselected
+#define COLOUR_VAL_TXT_UNSEL COLOUR_BLACK
+#define COLOUR_VAL_BK_UNSEL  COLOUR_WHITE
 
 //---------------------------------------------------------------------------
 //--
@@ -338,8 +356,9 @@ void tabRangedValue::_selectValue(int8_t value, bool select){
         uint16_t x(xPos_ + (value - minVal_) * TAB_RANGE_BOX_WIDTH);
 
 #ifdef DEST_CASIO_CALC
-        drect(x + 1, yPos_ + 1 , x + TAB_RANGE_BOX_WIDTH - 1, yPos_ + TAB_RANGE_BOX_WIDTH - 1 , select?COLOUR_BK_HILITE:COLOUR_WHITE);
-        dprint(x + 5, yPos_ + 3, select?COLOUR_WHITE:COLOUR_BLACK, "%d", value);
+        drect(x + 1, yPos_ + 1 , x + TAB_RANGE_BOX_WIDTH - 1, yPos_ + TAB_RANGE_BOX_WIDTH - 1 ,
+                select?COLOUR_VAL_BK_SEL:COLOUR_VAL_BK_UNSEL);
+        dprint(x + 5, yPos_ + 3, select?COLOUR_VAL_TXT_SEL:COLOUR_VAL_TXT_UNSEL, "%d", value);
 #else
         x++;    // for compiler
 #endif // #ifdef DEST_CASIO_CALC

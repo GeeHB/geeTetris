@@ -32,6 +32,26 @@ extern "C" {
 
 // Box dimensions in pixels
 //
+
+#ifdef FX9860G
+#define CASIO_BOX_WIDTH           3
+#define CASIO_BOX_WIDTH_ROTATED   5
+
+#define CASIO_BOX_WIDTH_NP          CASIO_BOX_WIDTH    // next piece preview
+#define CASIO_BOX_WIDTH_NP_ROTATED  3
+
+// Playfield pos & dims
+//
+#define CASIO_PLAYFIELD_LEFT    0
+#define CASIO_PLAYFIELD_BORDER  0
+#define CASIO_BORDER_GAP        1
+
+// Texts pos & dims
+//
+#define CASIO_INFO_LEFT     45
+#define CASIO_INFO_TOP      1
+#define CASIO_INFO_GAP      1       // between border and text
+#else
 #define CASIO_BOX_WIDTH           9
 #define CASIO_BOX_WIDTH_ROTATED   14
 
@@ -49,6 +69,7 @@ extern "C" {
 #define CASIO_INFO_LEFT     250
 #define CASIO_INFO_TOP      10
 #define CASIO_INFO_GAP      4       // between border and text
+#endif // #ifdef FX9860G
 
 // During games draings appends in 2 zones :
 //      game zone and next-piece (ie. preview) zone

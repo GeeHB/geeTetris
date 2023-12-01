@@ -29,7 +29,7 @@ La majorité des comportements est régi par des constantes que l'on peut trouve
 * `src/consts.h` - Contantes et définitions générales de l'application
 * `src/shared/casioCalcs.h` - Constantes spécifiques aux calculatrices.
 
-A défaut, les constantes, toujours en majusucules dans les sources, sont définies avec les objets qui les concernent spécifiquement. Par exemple `src/shared/tabs.h` propose les définitions liées aux onglets.
+A défaut, les constantes, toujours en majusucules dans les sources, sont définies avec les objets qui les concernent spécifiquement. Par exemple `src/shared/tabs.h` et `src/shared/tabs.cpp` proposent les définitions liées aux onglets.
 
 Faute d'émulateur, tous les sources sont 100% fonctionnels en C/CPP ANSI. Ils peuvent donc être compilés dans un projet Windows (testé avec Visual Studio) ou sous Linux. Dans ce cas seuls les affichages ne seront pas effectués :).
 
@@ -57,6 +57,7 @@ L'application se présente sous la forme d'onglets associés aux touches de cont
 | ![F4](assets/key_F4.png) | Affichage de **l'ombre de la pièce**. En l'absence d'ombre les lignes complètes raporteront plus de points. Les ombres sont affichées par défaut.|
 | ![F5](assets/key_F5.png) | **Lancement** d'une partie avec les paramètres sélectionnés.|
 | ![F6](assets/key_F6.png) | **Sortie** de l'application.|
+| ![left](assets/key_left.png) ![right](assets/key_right.png)| Modification de la valeur du paramètre dans les onglets *Level* et *Lines*.|
 | ![shift](assets/key_shift.png) ![7](assets/key_7.png)| Activation / désactivation de la **capture** (communication avec `fxlink`). Il faut le programme soit compilé en mode *TRACE*.|
 | ![shift](assets/key_alpha.png) ![7](assets/key_mult.png)| Affichage du tableau des scores. |
 
@@ -119,3 +120,8 @@ Jeu en mode normal :
 ... la même partie continue en affichage vertical :
 
 ![Vertical](assets/vert.png)
+
+
+Affichage des meilleurs scores à partir de la page principale :
+
+![high](assets/best.png)

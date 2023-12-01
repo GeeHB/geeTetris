@@ -29,15 +29,17 @@ extern bopti_image_t img_geeTetris;
 // The current tab is selected => show splash screen
 //
 uint8_t aboutTab::select(){
-    // Draw the image and text
+    // Draw the image and copyright
 #ifdef DEST_CASIO_CALC
     clearScreen();
     dimage(0, 0, &img_geeTetris);
 
     char copyright[255];    // Should be enough !
     strcpy(copyright, APP_NAME);
+#ifdef FXCG50
     strcat(copyright, " par ");
     strcat(copyright, APP_AUTHOR);
+#endif // #ifdef FX9860G
     strcat(copyright, " v");
     strcat(copyright, APP_VERSION);
 

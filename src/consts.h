@@ -37,7 +37,7 @@ extern "C" {
 
 // App. infos
 #define APP_NAME     "geeTetris"
-#define APP_VERSION  "0.5-1"
+#define APP_VERSION  "0.5-2"
 #define APP_AUTHOR   "GeeHB"
 
 // Playfield's dimensions (in box units)
@@ -61,17 +61,23 @@ enum VALUE_ID{
     VAL_COUNT = COMPLETED_LINES_ID + 1
 };
 
+#ifdef FX9860G
+#define SCORE_STR   "Sc: "
+#define LEVEL_STR   "Le: "
+#define COMPLETED_LINES_STR "Li: "
+#define MAX_VALUE_NAME_LEN 13
+#else
 #define SCORE_STR   "Score : "
 #define LEVEL_STR   "Level : "
 #define COMPLETED_LINES_STR "Lines : "
-
 #define MAX_VALUE_NAME_LEN 30
+#endif // #ifdef FX9860G
 
 //
 // Colour IDs
 //
 enum COLOUR_ID{
-    COLOUR_ID_BOARD     = 0x00,
+    COLOUR_ID_BOARD     = 0,
     // 1 -> 7 : Pieces colours (nCurses ID)
     COLOUR_ID_SHADOW    = 8,
     COLOUR_ID_TEXT      = 9,
@@ -79,7 +85,7 @@ enum COLOUR_ID{
     COLOUR_ID_BKGRND    = 11,
     //#define COLOUR_ID_ANIMATE   12     // animation When line if full
     COLOUR_ID_NONE = 12,
-    LAST_COLOUR_ID		= COLOUR_ID_NONE
+    LAST_COLOUR_ID		= COLOUR_ID_BKGRND
 };
 
 // Key codes

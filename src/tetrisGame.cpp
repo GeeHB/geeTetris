@@ -293,31 +293,46 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
     wInf.position.y = WIN_X;
     wInf.position.w = WIN_WIDTH;
     wInf.position.h = WIN_HEIGHT;
+#ifndef FX9860G
     wInf.bkColour = COLOUR_LT_GREY;
+#endif // #ifdef FX9860G
     scWin.create(wInf);
 
     sList::PNODE current(scores.head());
     if (nullptr == current){
-        scWin.drawText("La liste est vide", -1, -1, COLOUR_RED);
+        scWin.drawText("La liste est vide", -1, -1
+#ifndef FX9860G
+            , COLOUR_RED
+#endif // #ifndef FX9860G
+            );
     }
     else{
         uint8_t count(0);
         int px(15), py(8);
-        char line[25];
+        char line[26];
         while (current && count < MAX_SCORES){
             line[0] = 0;
             __valtoa(++count, NULL, line, 3);
-            __valtoa(current->record.score, NULL, line + 3, 8); // score
-            __valtoa(current->record.lines, NULL, line + 11, 5); // lines
-            __valtoa(current->record.level, NULL, line + 16, 5); // level
+            __valtoa(current->record.score, NULL, line + 3, 9); // score
+            __valtoa(current->record.lines, NULL, line + 12, 5); // lines
+#ifndef FX9860G
+            // No "levels" for FX9860G
+            __valtoa(current->record.level, NULL, line + 17, 5); // level
+#endif // FX9860G
+
 #ifndef DEST_CASIO_CALC
             if (score == (int32_t)current->record.score){
                 line[0] = '>';
             }
 #endif // #ifndef DEST_CASIO_CALC
 
-            scWin.drawText(line, px, py, (score == (int32_t)current->record.score)?COLOUR_RED:COLOUR_BLUE);
-            //scWin.update();
+            scWin.drawText(line, px, py, (score == (int32_t)current->record.score)?
+#ifndef FX9860G
+                COLOUR_RED:COLOUR_BLUE
+#else
+                C_BLACK:C_LIGHT
+#endif // FX9860G
+            );
 
             // next ...
             py+=11;
@@ -1084,7 +1099,11 @@ void tetrisGame::_scores2List(char* data, sList& scores){
 
             // append to list (no need to add, values are already ordered)
             if (record.score){
-                scores.append(record.score, record.lines, record.level);
+                scores.append(record.score, record.lines
+#ifndef FX9860G
+                    , record.level
+#endif // #ifndef FX9860G
+                );
             }
             pos+=SIZE_SCORE;    // next record
         }

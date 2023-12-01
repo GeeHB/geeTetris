@@ -110,6 +110,12 @@ int main(){
             else{
                 if (KEY_CODE_SHOW_SCORES == car && keys.isPressed(MOD_ALPHA)){
                     tetrisGame::showScores();
+                    /*
+                    // "window" mode is not compatible with capture ????
+                    gCapture.install();
+                    drect(0, 0, 1, 1, C_WHITE);
+                    dupdate();
+                    */
                     currentTab->select();
                 }
 #ifdef TRACE_MODE
