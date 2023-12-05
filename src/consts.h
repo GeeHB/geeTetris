@@ -37,7 +37,7 @@ extern "C" {
 
 // App. infos
 #define APP_NAME     "geeTetris"
-#define APP_VERSION  "0.5-2"
+#define APP_VERSION  "0.5-3"
 #define APP_AUTHOR   "GeeHB"
 
 // Playfield's dimensions (in box units)

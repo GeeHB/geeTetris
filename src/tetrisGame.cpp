@@ -343,11 +343,7 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 
 #ifdef DEST_CASIO_CALC
         // Wait for any key to be pressed
-        keyboard keyb;
-        uint car(0);
-        do{
-            car = keyb.getKey();
-        } while (car == KEY_CODE_NONE);
+        getkey():
 #endif // DEST_CASIO_CALC
 
         // Close the window

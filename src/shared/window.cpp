@@ -17,6 +17,8 @@
 
 #include "window.h"
 
+#include "trace.h"
+
 #include <cstring>
 #include <cstdlib>
 
@@ -115,7 +117,10 @@ bool window::create(winInfo& info){
 #ifdef DEST_CASIO_CALC
     struct dwindow dest;
     _rect2Window(infos_.position, dest);
+
+#ifndef TRACE_MODE
     dwindow_set(dest);
+#endif // #ifndef TRACE_MODE
 
     dest.right--;   // included
     dest.bottom--;
@@ -179,8 +184,10 @@ void window::close(){
     if (activated_){
         // return to a whole screened window
 #ifdef DEST_CASIO_CALC
+#ifndef TRACE_MODE
         struct dwindow screen = {0, 0, CASIO_WIDTH, CASIO_HEIGHT};
         dwindow_set(screen);
+#endif // #ifndef TRACE_MODE
 #endif // #ifdef DEST_CASIO_CALC
 
         // end
@@ -198,13 +205,13 @@ void window::update(){
 }
 
 
-// drawTExt() : Draw a line of text (in window coordinates)
+// drawText() : Draw a line of text (in window coordinates)
 //
 //  @text : pointer to the text to draw
-//  @x, @y : coordinates of text relative to top left corer of the window
+//  @x, @y : coordinates of text relative to top left corner of the window
 //          if < 0, the text will be centered (horizontally for x  <0, vertically if y < 0)
-//  @tCol : text clour. If is equal to -1, the default text colour will be used
-//  @bCol : background clour. If is equal to -1, the default ground colour will be used
+//  @tCol : text colour. If is equal to -1, the default text colour will be used
+//  @bCol : background colour. If is equal to -1, the default ground colour will be used
 //
 void window::drawText(const char* text, int x, int y, int tCol, int bCol){
     if (activated_){

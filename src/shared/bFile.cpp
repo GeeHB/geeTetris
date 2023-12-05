@@ -118,20 +118,31 @@ bool bFile::open(FONTCHARACTER filename, int access){
 // @return : file successfully created ?
 //
 bool bFile::create(FONTCHARACTER filename, int type, int *size){
-    // File can't be open
-    if (!isOpen()){
+    if (type == BFile_File){
+        // File can't be open
+        if (!isOpen()){
 #ifdef DEST_CASIO_CALC
-        error_ = gint_world_switch(GINT_CALL(BFile_Create, filename, type, size));
-        return (error_ == 0);	// Created ?
+            error_ = gint_world_switch(GINT_CALL(BFile_Create, filename, BFile_File, size));
+            return (error_ == 0);	// Created ?
 #else
-	// size if ignored
-	if (open(filename, BFile_ReadWrite)){
-		if (isOpen()){
-			close();
-			return true;
-		}
-	}
+            // size if ignored
+            if (open(filename, BFile_ReadWrite)){
+                if (isOpen()){
+                    close();
+                    return true;
+                }
+            }
 #endif // #ifdef DEST_CASIO_CALC
+        }
+    }
+    else{
+        // Create a folder
+#ifdef DEST_CASIO_CALC
+            error_ = gint_world_switch(GINT_CALL(BFile_Create, filename, BFile_Folder, size));
+            return (error_ == 0);	// Created ?
+#else
+            return fs::create_directory(filename);
+#endif // BFile_File
     }
 
     return false;

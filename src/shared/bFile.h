@@ -17,8 +17,6 @@
 #ifndef __GEE_TOOLS_B_FILE_h__
 #define __GEE_TOOLS_B_FILE_h__    1
 
-#include "casioCalcs.h"     // Define dest. format
-
 #ifdef DEST_CASIO_CALC
 #include <gint/gint.h>
 #include <gint/bfile.h>
@@ -28,6 +26,9 @@ typedef uint16_t const * FONTCHARACTER;
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+
+#include <filesystem>       // to create a folder
+namespace fs = std::filesystem;
 
 typedef char const * FONTCHARACTER;
 
