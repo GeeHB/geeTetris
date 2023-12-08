@@ -1,6 +1,3 @@
-# Configure with [fxsdk build-fx] or [fxsdk build-cg], which provide the
-# toolchain file and module path of the fxSDK
-
 cmake_minimum_required(VERSION 3.15)
 project(MyAddin)
 
@@ -11,7 +8,7 @@ find_package(Gint 2.9 REQUIRED)
 
 set(SOURCES
   src/geeTetris.cpp
-  #src/shared/scrCapture.cpp
+  src/shared/scrCapture.cpp
   src/shared/keyboard.cpp
   src/shared/bFile.cpp
   src/shared/tabs.cpp

@@ -264,11 +264,11 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 
     // Add the current score
     if (score != -1 && scores.add(score, lines, level)){
-        if (!scoresFile.open((FONTCHARACTER)SCORES_FILENAME, BFile_WriteOnly)){
-            // Try to create the file
-            int size(SIZE_SCORES_FILE);
-            scoresFile.create((FONTCHARACTER)SCORES_FILENAME, BFile_File, &size);
-        }
+        scoresFile.remove((FONTCHARACTER)SCORES_FILENAME);
+
+        // Try to create the file
+        int size(SIZE_SCORES_FILE);
+        scoresFile.create((FONTCHARACTER)SCORES_FILENAME, BFile_File, &size);
 
         // Save the new list
         if (scoresFile.getLastError() == 0){
@@ -343,7 +343,7 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 
 #ifdef DEST_CASIO_CALC
         // Wait for any key to be pressed
-        getkey():
+        getkey();
 #endif // DEST_CASIO_CALC
 
         // Close the window

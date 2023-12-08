@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //--	File	: bFile.h
 //--
@@ -6,16 +6,27 @@
 //--
 //--	Project	:
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //--	Description:
 //--
 //--			Definition of bFile object
 //--
-//---------------------------------------------------------------------------
+//--		This release isn't fully tested.
+//--		At this time, it's only functionnal for FXCG50 calculator
+//--
+//--		Missing :
+//--                    - whence in read ops
+//--					- BFile_Ext_Stat
+//--					- search API
+//--					- seek API
+//--
+//----------------------------------------------------------------------
 
 #ifndef __GEE_TOOLS_B_FILE_h__
-#define __GEE_TOOLS_B_FILE_h__    1
+#define __GEE_TOOLS_B_FILE_h__      1
+
+#define VERSION_B_FILE_OBJECT       0.3
 
 #ifdef DEST_CASIO_CALC
 #include <gint/gint.h>
@@ -62,7 +73,6 @@ public:
     // isOpen() : Is the file already open ?
     //
     //  Check wether file (or folder) exists
-    //  and the last access error
     //
     // @return : true if the object is valid
     //
@@ -96,7 +106,7 @@ public:
     // write() : Write data in the current file
     //
     // @data : Pointer to the data buffer
-    // @size : Size in byte to write
+    // @size : Size in byte to write (should be an even number of bytes)
     //
     // @return : data written ?
     //
@@ -106,11 +116,19 @@ public:
     //
     // @data : Pointer to the destination buffer
     // @size : Size in byte to read
-    // @whence :
+    // @whence : ?
     //
     // @return : # bytes read
     //
     int read(void *data, int size, int whence);
+
+    // remove() : Remove a file
+    //
+    // @filename : name of the file to remove
+    //
+    // @return : file successfully removed ?
+    //
+    bool rename(FONTCHARACTER oldpath, FONTCHARACTER newpath);
 
     // remove() : Remove a file
     //

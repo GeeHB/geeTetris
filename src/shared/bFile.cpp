@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //--	File	: bFile.cpp
 //--
@@ -6,18 +6,31 @@
 //--
 //--	Project	:
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //--	Description:
 //--
 //--			Implementation of bFile object
 //--
-//--		This very first release doesn't handle folder and is only
-//--		functionnal for FXCG50 calculator
+//--		This release isn't fully tested.
+//--		At this time, it's only functionnal for FXCG50 calculator
 //--
-//---------------------------------------------------------------------------
+//--		Missing :
+//--					- BFile_Rename
+//--					- BFile_Ext_Stat
+//--					- search API
+//--					- seek API
+//--
+//----------------------------------------------------------------------
 
 #include "bFile.h"
+
+#ifndef DEST_CASIO_CALC
+#include <malloc.h>
+#endif // #ifndef DEST_CASIO_CALC
+
+#include <cstring>
+#include <cstdlib>
 
 // Construction
 //
@@ -86,7 +99,7 @@ bool bFile::open(FONTCHARACTER filename, int access){
             fd_ = 0;
         }
         else{
-            error_ = 0;     // The file is open
+            error_ = 0;     // File is open
         }
 #else
         std::ios_base::openmode mode;
@@ -94,7 +107,6 @@ bool bFile::open(FONTCHARACTER filename, int access){
             mode = std::fstream::in | std::ifstream::binary;
         }
         else {
-        //if (access & BFile_WriteOnly){
             mode = std::fstream::out | std::fstream::trunc;
         }
 
@@ -126,9 +138,9 @@ bool bFile::create(FONTCHARACTER filename, int type, int *size){
             return (error_ == 0);	// Created ?
 #else
             // size if ignored
-            if (open(filename, BFile_ReadWrite)){
+            if (open(filename, BFile_WriteOnly)){
                 if (isOpen()){
-                    close();
+                    //close();
                     return true;
                 }
             }
@@ -151,31 +163,57 @@ bool bFile::create(FONTCHARACTER filename, int type, int *size){
 // write() : Write data in the current file
 //
 // @data : Pointer to the data buffer
-// @size : Size in byte to write
+// @size : Size in byte to write (should be an even number of bytes)
 //
 // @return : data written ?
 //
 bool bFile::write(void const *data, int even_size){
-    if (data && even_size && isOpen()){
+    bool done(false);
+    int mySize(even_size);
+
+    if (data && isOpen()){
 #ifdef DEST_CASIO_CALC
-        error_ = gint_world_switch(GINT_CALL(BFile_Write, fd_, data, even_size));
-        return (error_ == 0);	// data written ?
+		void* buffer;
+		if (even_size % 2){
+			if (NULL == (buffer = malloc(even_size + 1))){
+				// Unable to allocate memory
+				return false;
+			}
+
+			// Copy the buffer
+			memcpy(buffer, data, even_size);
+
+			// ... add a null byte
+			memcpy((void*)(((const char*)buffer) + mySize++), 0x00, 1);
+
+		}
+		else{
+			buffer = (void*)data;
+		}
+
+        error_ = gint_world_switch(GINT_CALL(BFile_Write, fd_, buffer, mySize));
+        done =  (error_ == 0);	// data written ?
+
+        // Free the buffer ?
+		if (even_size % 2){
+			free(buffer);
+		}
 #else
-    file_.write((const char*)data, even_size);
+    file_.write((const char*)data, mySize);
 
 	// done ?
-	return file_.good();
+	done = file_.good();
 #endif // #ifdef DEST_CASIO_CALC
     }
 
-    return false;
+    return done;
 }
 
 // read() : Read data from the current file
 //
 // @data : Pointer to the destination buffer
 // @lg : Size in byte to read
-// @whence :
+// @whence : position (if > 0)
 //
 // @return : # bytes read
 //
@@ -192,7 +230,7 @@ int bFile::read(void *data, int lg, int whence){
         return read;	// #bytes read
 #else
     file_.read((char*)data, lg);
-    int red = file_.gcount();
+    int red(file_.gcount());
 
     // # bytes read
     return red;
@@ -200,6 +238,27 @@ int bFile::read(void *data, int lg, int whence){
     }
 
     return 0;   // read nothing
+}
+
+// rename() : Rename or move a file
+//
+//  @oldpath : name of the file to rename
+//  @newpath : destination path
+//
+//  @return : file successfully renamed ?
+//
+bool bFile::rename(FONTCHARACTER oldpath, FONTCHARACTER newpath){
+    // File can't be open
+    if (!isOpen()){
+#ifdef DEST_CASIO_CALC
+        error_ = gint_world_switch(GINT_CALL(BFile_Rename, oldpath, newpath));
+        return (error_ == 0);	// Renamed ?
+#else
+	return (0 == std::rename(oldpath, newpath));
+#endif // #ifdef DEST_CASIO_CALC
+    }
+
+    return false;
 }
 
 // remove() : Remove a file
