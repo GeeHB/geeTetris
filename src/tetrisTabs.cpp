@@ -45,7 +45,7 @@ uint8_t aboutTab::select(){
 
     int w, h;
     dsize(copyright, NULL, &w, &h);
-    dtext(CASIO_WIDTH - w - 5, CASIO_HEIGHT - TAB_HEIGHT - h - 7, COLOUR_BLACK, copyright);
+    dtext(CASIO_WIDTH - w - 5, CASIO_HEIGHT - TAB_HEIGHT - h - 10, COLOUR_BLACK, copyright);
 
     dupdate();
 #endif // #ifdef DEST_CASIO_CALC

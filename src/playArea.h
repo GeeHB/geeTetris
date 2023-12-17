@@ -43,14 +43,14 @@ extern "C" {
 // Playfield pos & dims
 //
 #define CASIO_PLAYFIELD_LEFT    0
-#define CASIO_PLAYFIELD_BORDER  0
+#define CASIO_PLAYFIELD_BORDER  1
 #define CASIO_BORDER_GAP        1
 
 // Texts pos & dims
 //
-#define CASIO_INFO_LEFT     45
-#define CASIO_INFO_TOP      1
-#define CASIO_INFO_GAP      1       // between border and text
+#define CASIO_INFO_LEFT         65
+#define CASIO_INFO_TOP          1
+#define CASIO_INFO_GAP          1       // between border and text
 #else
 #define CASIO_BOX_WIDTH           9
 #define CASIO_BOX_WIDTH_ROTATED   14
@@ -136,23 +136,10 @@ class playArea{
 
         // (trigonometric) rotations
         //  ... of a single point
-        void rotate(int16_t& x, int16_t& y){
-            int16_t ny(CASIO_HEIGHT - x);
-            x = y;
-            y = ny;
-        }
+        void rotate(int16_t& x, int16_t& y);
 
         // ... of a rect
-        void rotate(int16_t& xFrom, int16_t& yFrom, int16_t& xTo, int16_t& yTo){
-            rotate(xFrom, yFrom);
-            rotate(xTo, yTo);
-
-            // The rect (xFrom, yFrom) -> (xTo, yTo)
-            // turns and becomes (xTo, yFrom) -> (xFrom, yTo)
-            int16_t oFrom(xFrom);
-            xFrom = xTo;
-            xTo = oFrom;
-        }
+        void rotate(int16_t& xFrom, int16_t& yFrom, int16_t& xTo, int16_t& yTo);
 
         bool isRotated(){
             return rotatedDisplay_;
@@ -199,6 +186,11 @@ class playArea{
         ZONE* nextPiece(){
             return &nextPiece_;
         }
+
+        // Strings manipulations
+        static char* __valtoa(int num, const char* name, char* str, size_t rLength = 0);
+        static void __strrev(char *str);
+        static char* __strdrag(char *str, int rightChars);
 
         // Fonts
         //

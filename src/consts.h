@@ -37,7 +37,7 @@ extern "C" {
 
 // App. infos
 #define APP_NAME     "geeTetris"
-#define APP_VERSION  "0.5-3"
+#define APP_VERSION  "0.6-3"
 #define APP_AUTHOR   "GeeHB"
 
 // Playfield's dimensions (in box units)
@@ -125,18 +125,26 @@ enum GAME_KEY{
 
 // Tab names
 //
+
+#ifdef FX9860G
+#define TAB_ABOUT   " ? "
+#define TAB_PLAY    "Go"
+#else
 #define TAB_ABOUT   "Tetris"
+#define TAB_PLAY    "Play"
+#endif // #ifdef FX9860G
+
 #define TAB_LINES   "Lines"
 #define TAB_LEVEL   "Level"
 #define TAB_SHADOW  "Shadow"
-#define TAB_PLAY    "Play"
 #define TAB_QUIT    "Exit"
 
+
 // Comments for tabs
-#define TAB_LEVEL_STR   "Choose starting level"
-#define TAB_DIRTY_LINES_STR   "Number of 'dirty' lines when starting the game"
+#define TAB_LEVEL_STR   "Starting level"
+#define TAB_DIRTY_LINES_STR   "'Dirty' lines"
 #define TAB_SHADOW_OFF_STR  "No shadows"
-#define TAB_SHADOW_ON_STR   "Shadows will be drawn"
+#define TAB_SHADOW_ON_STR   "Shadows on"
 
 //
 // Min / max values for parameters

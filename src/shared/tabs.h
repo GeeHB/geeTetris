@@ -39,13 +39,29 @@ extern "C" {
 #define TAB_COUNT       6
 
 // Dimensions in pixels
+#ifdef FX9860G
+#define TAB_HEIGHT      11
+#else
 #define TAB_HEIGHT      22
+#endif // #ifdef FX9860G
+
 #define TAB_WIDTH       (CASIO_WIDTH / TAB_COUNT)
 
 #define TAB_ROUNDED_DIM  4
-#define TAB_NAME_LEN    10      // max char var the tab name
 
-#define TAB_RANGE_BOX_WIDTH     15      // width of a single box in pixels
+// Max. len of tab name
+#ifdef FX9860G
+#define TAB_NAME_LEN    3
+#else
+#define TAB_NAME_LEN    10
+#endif // #ifdef FX9860G
+
+// Width of a single box in pixels
+#ifdef FX9860G
+#define TAB_RANGE_BOX_WIDTH     12
+#else
+#define TAB_RANGE_BOX_WIDTH     15
+#endif // #ifdef FX9860G
 
 #define TAB_RANGE_COMMENT_X     10
 
@@ -258,7 +274,12 @@ public:
     tabManager();
 
     // Destructor
-    ~tabManager(){}
+    ~tabManager(){
+#ifdef FX9860G
+        dfont(dfont_default());
+#endif // #ifdef FX9860G
+    }
+
 
     // Add a tab
     bool add(tab* ptab, int8_t ID = -1);
@@ -288,6 +309,7 @@ private:
     // Members
     tab*    tabs_[TAB_COUNT];
     int8_t  active_;    // ID of active tab
+
 };
 
 #ifdef __cplusplus

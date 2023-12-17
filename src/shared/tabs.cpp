@@ -41,20 +41,33 @@ extern font_t font_horz;
 
 #ifdef FX9860G
 // tabs colors
-#define COLOUR_SELECTED     C_BLACK
-#define COLOUR_UNSELECTED   C_LIGHT
+#define COLOUR_SELECTED     C_WHITE
+#define COLOUR_UNSELECTED   C_BLACK
+
+#define COLOUR_BK_SELECTED     C_BLACK
+#define COLOUR_BK_UNSELECTED   C_WHITE
 
 // Ranged values colors - selected
 #define COLOUR_VAL_TXT_SEL   COLOUR_WHITE
 #define COLOUR_VAL_BK_SEL    COLOUR_BLACK
+
+#define TABRANGED_COMMENT_Y_OFFESET 15
+
 #else
 // tabs colors
 #define COLOUR_SELECTED     COLOUR_BLUE
 #define COLOUR_UNSELECTED   COLOUR_GREY
 
+#define COLOUR_BK_SELECTED     C_WHITE
+#define COLOUR_BK_UNSELECTED   C_WHITE
+
+
 // Ranged values colors - selected
 #define COLOUR_VAL_TXT_SEL   COLOUR_WHITE
 #define COLOUR_VAL_BK_SEL    COLOUR_LT_BLUE
+
+#define TABRANGED_COMMENT_Y_OFFESET     25
+
 #endif // #ifdef FX9860G
 
 // Ranged values colors - unselected
@@ -126,7 +139,7 @@ void tab::setRect(RECT& rect){
 void tab::draw(const RECT* anchor, bool selected, const char* name){
 #ifdef DEST_CASIO_CALC
     // Draw back ground
-    drect(anchor->x, anchor->y, anchor->x + anchor->w - 1, anchor->y + anchor->h - 1, COLOUR_WHITE);
+    drect(anchor->x, anchor->y, anchor->x + anchor->w - 1, anchor->y + anchor->h - 1, selected?COLOUR_BK_SELECTED:COLOUR_BK_UNSELECTED);
 
     // Text
     if (name){
@@ -342,7 +355,9 @@ void tabRangedValue::_drawRange(){
 
 #ifdef DEST_CASIO_CALC
     if (comment_){
-        dtext(TAB_RANGE_COMMENT_X, yPos_ - 25, COLOUR_BLACK, comment_);
+        dtext(TAB_RANGE_COMMENT_X,
+            yPos_ - TABRANGED_COMMENT_Y_OFFESET,
+            COLOUR_BLACK, comment_);
     }
 
     dupdate();
@@ -380,6 +395,10 @@ tabManager::tabManager(){
     // Initialize members
     memset(tabs_, 0x00, sizeof(tabs_));
     active_ = -1;
+
+#ifdef FX9860G
+    dfont((font_t*)&font_horz);
+#endif // #ifdef FX9860G
 }
 
 // Add a tab

@@ -61,6 +61,26 @@ playArea::~playArea(){
 #endif // #ifdef DEST_CASIO_CALC
 }
 
+// (trigonometric) rotations
+//  ... of a single point
+void playArea::rotate(int16_t& x, int16_t& y){
+    int16_t ny(CASIO_HEIGHT - x);
+    x = y;
+    y = ny;
+}
+
+// ... of a rect
+void playArea::rotate(int16_t& xFrom, int16_t& yFrom, int16_t& xTo, int16_t& yTo){
+    rotate(xFrom, yFrom);
+    rotate(xTo, yTo);
+
+    // The rect (xFrom, yFrom) -> (xTo, yTo)
+    // turns and becomes (xTo, yFrom) -> (xFrom, yTo)
+    int16_t oFrom(xFrom);
+    xFrom = xTo;
+    xTo = oFrom;
+}
+
 // rotatedDisplay() : Update members on rotation
 //
 //  @doRotate : indicates wether display must rotate or not
@@ -93,7 +113,7 @@ void playArea::_rotatedDisplay(bool doRotate, bool force){
 
             // Use "default" font
 #ifdef DEST_CASIO_CALC
-            dfont((font_t*)&font_horz);
+            dfont(hFont_);
 #endif // #ifdef DEST_CASIO_CALC
         }
         else {
@@ -121,7 +141,7 @@ void playArea::_rotatedDisplay(bool doRotate, bool force){
 
             // Install my font
 #ifdef DEST_CASIO_CALC
-            dfont((font_t*)&font_vert);
+            dfont(vFont_);
 #endif // #ifdef DEST_CASIO_CALC
         }
 
@@ -158,7 +178,7 @@ void playArea::dtext(int x, int y, int fg, const char* text){
 //   @borderColour : Colour of the border or NO_COLOR (-1) if none
 //   @fillColour : Filling colour or NO_COLOR (-1) if none
 //
-void playArea::drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int fillColour, int borderColour){
+void playArea::drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int fillColour, [[maybe_unused]]  int borderColour){
     int16_t xFrom(x), yFrom(y);
     int16_t xTo(xFrom + width - 1), yTo(yFrom + height - 1);
 
@@ -173,10 +193,22 @@ void playArea::drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t he
     // Coloured rect
     drect(xFrom, yFrom, xTo - 1, yTo - 1, fillColour);
 
+    char bidon[20];
+    __valtoa(xFrom, "", bidon);
+    __valtoa(xTo, " - ", bidon + strlen(bidon));
+
+    if (rotatedDisplay_){
+        dfont((font_t*)&font_horz);
+    }
+    TRACE(bidon, COLOUR_BLACK, COLOUR_WHITE);
+    if (rotatedDisplay_){
+        dfont((font_t*)&font_vert);
+    }
+
     // Half a border (bottom and right) for "small" pieces
     if (NO_COLOR != borderColour){
-        dline(xFrom, yTo, xTo, yTo, borderColour);
-        dline(xTo, yFrom, xTo, yTo, borderColour);
+        dline(xFrom, yTo, xTo, yTo, C_WHITE);
+        dline(xTo, yFrom, xTo, yTo, C_WHITE);
     }
 #else
     drect_border(xFrom, yFrom, xTo, yTo, fillColour, 1, borderColour);
@@ -268,6 +300,115 @@ void playArea::_dtextV(int x, int y, int fg, const char* text){
             current++;
         }
     }
+}
+
+// __valtoa() : Transform a numeric value into a string
+//
+//  This specific method creates a string composed of the name of the value
+//  and the value it self. It is equivalent to a sprintf(out, "%s : %d", name, value)
+//
+//  The base can't be changed it is always equal to 10
+//
+//  This method assumes the output buffer - ie. str - is large enough to contain
+//  the name and the formated value.
+//
+//  @num : Numeric value to transform
+//  @name : Name of the value (can be NULL)
+//  @str : Pointer to output string
+//  @rLength : Align to right ?
+//
+//  @return : pointer to formated string
+//
+char* playArea::__valtoa(int num, const char* name, char* str, size_t rLength){
+    char* strVal(str);
+
+    // Add name
+	if (name){
+	    strcpy(str, name);
+	    strVal+=strlen(str);    // num. value starts here
+	}
+
+	// Append num. value
+	int sum ((num < 0)?-1*num:num);
+	uint8_t i(0), digit, dCount(0);
+	do{
+		digit = sum % 10;
+		strVal[i++] = '0' + digit;
+		if (!(++dCount % 3)){
+		    strVal[i++] = ' ';  // for large numbers lisibility
+		}
+
+		sum /= 10;
+	}while (sum);
+
+	// A sign ?
+	if (num < 0){
+	    strVal[i++] = '-';
+	}
+	strVal[i] = '\0';
+
+	// Reverse the string (just the num. part)
+	__strrev(strVal);
+
+	// Shift to the right ?
+    if (rLength){
+		size_t len(strlen(str));
+		if (rLength > len){
+		    __strdrag(strVal, rLength - len); // just drag the value
+        }
+	}
+
+	return str;
+}
+
+// __strrev() : Reverse a string
+//
+//  @str : String to reverse
+//
+void playArea::__strrev(char *str){
+	int i, j;
+	unsigned char a;
+	size_t len = strlen((const char *)str);
+	for (i = 0, j = len - 1; i < j; i++, j--){
+		a = str[i];
+		str[i] = str[j];
+		str[j] = a;
+	}
+}
+
+// __strdrag() : Drag a string to the right
+//
+//	Drag the original string to the right.  Chars on the left will be fill
+//  with spaces.
+//
+//  This function assumes str is large enough to complete successfully
+//  with at least (strlen(str) + rightChars + 1) bytes
+//
+//  @str : String to slide
+//  @rightChars : Count of chars str should be dragged to
+//
+//  @return : pointer to the string
+//
+char* playArea::__strdrag(char *str, int rightChars){
+	size_t len, i;
+	if (!str || 0 == (len = strlen(str)) || rightChars <= 0){
+		return str;
+	}
+
+	str[len + rightChars] = '\0';  // New string size
+
+	// Drag the string
+	for (i=len; i; i--){
+		str[i+rightChars - 1] = str[i-1];
+	}
+
+	// Put spaces on the left
+	for (i=0; i<(size_t)rightChars; i++){
+		str[i] = ' ';
+	}
+
+	// Finished
+	return str;
 }
 
 // EOF

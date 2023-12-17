@@ -312,12 +312,12 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
         char line[26];
         while (current && count < MAX_SCORES){
             line[0] = 0;
-            __valtoa(++count, NULL, line, 3);
-            __valtoa(current->record.score, NULL, line + 3, 9); // score
-            __valtoa(current->record.lines, NULL, line + 12, 5); // lines
+            playArea::__valtoa(++count, NULL, line, 3);
+            playArea::__valtoa(current->record.score, NULL, line + 3, 9); // score
+            playArea::__valtoa(current->record.lines, NULL, line + 12, 5); // lines
 #ifndef FX9860G
             // No "levels" for FX9860G
-            __valtoa(current->record.level, NULL, line + 17, 5); // level
+            playArea::__valtoa(current->record.level, NULL, line + 17, 5); // level
 #endif // FX9860G
 
 #ifndef DEST_CASIO_CALC
@@ -959,124 +959,16 @@ void tetrisGame::_drawNumValue(uint8_t index){
 
     // Erase previous value ?
     if (-1 != values_[index].previous){
-        __valtoa(values_[index].previous, values_[index].name, valStr);
+        playArea::__valtoa(values_[index].previous, values_[index].name, valStr);
 
         casioDisplay_.dtext(casioDisplay_.textsPos_[index].x, casioDisplay_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
     }
 
     // print new value
-    __valtoa(values_[index].value, values_[index].name, valStr);
+    playArea::__valtoa(values_[index].value, values_[index].name, valStr);
     casioDisplay_.dtext(casioDisplay_.textsPos_[index].x, casioDisplay_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
 
     values_[index].previous = values_[index].value; // to erase the value next time
-}
-
-// __valtoa() : Transform a numeric value into a string
-//
-//  This specific method creates a string composed of the name of the value
-//  and the value it self. It is equivalent to a sprintf(out, "%s : %d", name, value)
-//
-//  The base can't be changed it is always equal to 10
-//
-//  This method assumes the output buffer - ie. str - is large enough to contain
-//  the name and the formated value.
-//
-//  @num : Numeric value to transform
-//  @name : Name of the value (can be NULL)
-//  @str : Pointer to output string
-//
-//  @return : pointer to formated string
-//
-char* tetrisGame::__valtoa(int num, const char* name, char* str, size_t rLength){
-    char* strVal(str);
-
-    // Add name
-	if (name){
-	    strcpy(str, name);
-	    strVal+=strlen(str);    // num. value starts here
-	}
-
-	// Append num. value
-	int sum ((num < 0)?-1*num:num);
-	uint8_t i(0), digit, dCount(0);
-	do{
-		digit = sum % 10;
-		strVal[i++] = '0' + digit;
-		if (!(++dCount % 3)){
-		    strVal[i++] = ' ';  // for large numbers lisibility
-		}
-
-		sum /= 10;
-	}while (sum);
-
-	// A sign ?
-	if (num < 0){
-	    strVal[i++] = '-';
-	}
-	strVal[i] = '\0';
-
-	// Reverse the string (just the num. part)
-	__strrev(strVal);
-
-	// Shift to the right ?
-    if (rLength){
-		size_t len(strlen(str));
-		if (rLength > len){
-		    __strdrag(strVal, rLength - len); // just drag the value
-        }
-	}
-
-	return str;
-}
-
-// __strrev() : Reverse a string
-//
-//  @str : String to reverse
-//
-void tetrisGame::__strrev(char *str){
-	int i, j;
-	unsigned char a;
-	size_t len = strlen((const char *)str);
-	for (i = 0, j = len - 1; i < j; i++, j--){
-		a = str[i];
-		str[i] = str[j];
-		str[j] = a;
-	}
-}
-
-// __strdrag() : Drag a string to the right
-//
-//	Drag the original string to the right.  Chars on the left will be fill
-//  with spaces.
-//
-//  This function assumes str is large enough to complete successfully
-//  with at least (strlen(str) + rightChars + 1) bytes
-//
-//  @str : String to slide
-//  @rightChars : Count of chars str should be dragged to
-//
-//  @return : pointer to the string
-//
-char* tetrisGame::__strdrag(char *str, int rightChars){
-	size_t len, i;
-	if (!str || 0 == (len = strlen(str)) || rightChars <= 0){
-		return str;
-	}
-
-	str[len + rightChars] = '\0';  // New string size
-
-	// Drag the string
-	for (i=len; i; i--){
-		str[i+rightChars - 1] = str[i-1];
-	}
-
-	// Put spaces on the left
-	for (i=0; i<(size_t)rightChars; i++){
-		str[i] = ' ';
-	}
-
-	// Finished
-	return str;
 }
 
 // _scores2List() : Transfer file content to the list os scores
