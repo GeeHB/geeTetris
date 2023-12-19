@@ -1,4 +1,4 @@
-## *geeTetris* - Un jeu de *Tetris* pour la Casio GRAPH90+E / FX-CG50
+## *geeTetris* - Un jeu de *Tetris* pour les Casio GRAPH90+E / FX-CG50 et GRAPH35+E ii
 
 ### Présentation
 
@@ -11,10 +11,10 @@ Il permet aussi de jouer avec la calculatrice en mode horizontal (position stand
 
 | Dépôt &nbsp;| https://gitea.planet-casio.com/Jhb/geeTetris |
 |----- |-------------------------------------|
-| **Date** | xxx dec. 2023 |
-| **Version stable** | **0\.5** - branche `main` |
+| **Date** | 19 dec. 2023 |
+| **Version stable** | **0\.6.4** - branche `main` |
 | **Dépendances** |  **Casio / gint** : `-lstdc++`|
-| **Testé sur** | *Linux* (Fedora 38) avec `code::blocks`|
+| **Testé sur** | *Linux* (Fedora 39) avec `code::blocks`|
 || *Casio Graph90+E*  avec `gint`|
 
 
@@ -32,18 +32,6 @@ La majorité des comportements est régi par des constantes que l'on peut trouve
 A défaut, les constantes, toujours en majusucules dans les sources, sont définies avec les objets qui les concernent spécifiquement. Par exemple `src/shared/tabs.h` et `src/shared/tabs.cpp` proposent les définitions liées aux onglets.
 
 Faute d'émulateur, tous les sources sont 100% fonctionnels en C/CPP ANSI. Ils peuvent donc être compilés dans un projet Windows (testé avec Visual Studio) ou sous Linux. Dans ce cas seuls les affichages ne seront pas effectués :).
-
-Deux constantes permettent d'orienter la compilation :
-
-| Constante | Fichier | Signification|
-| --- | --- | --- |
-| DEST_CASIO_CALC | `CMakeLists.txt` | Lorsque cette constante est définie, la compilation est orientée vers la calculatrice.|
-|TRACE_MODE|`src/trace.h`| Active le mode trace. **Attention :** ce mode n'est possible que lorsque la constante DEST_CASIO_CALC est définie.|
-
-##### TRACE_MODE
-Lorsque cette constante est définie, 2 fonctionalités sont activées sur la caclculatrice uniquement :
-1. Activation des 3 macros *TRACE* qui permettent d'afficher une ligne de texte à l'écran (et donc accessoirement de visiualiser le contenu d'une variable);
-2. Activation de la fonction de capture d'écran. Dans ce mode, tous les affichages sont transférés via *USB* à l'utilitaire `fxlink`.
 
 ### Utilisation du clavier
 #### A partir du menu principal
