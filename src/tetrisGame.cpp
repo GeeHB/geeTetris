@@ -116,6 +116,9 @@ void tetrisGame::setParameters(tetrisParameters* params) {
         tetraminos_[index].rotateBack();
     }
 
+    //  Screen rotation
+    casioDisplay_.rotatedDisplay(params->rotatedDisplay_ == TRUE, true);
+
     // Empty the playset
     _emptyTetrisGame();
 
@@ -205,7 +208,10 @@ bool tetrisGame::start() {
     timer_stop(timerID);    // stop the timer
 #endif // #ifdef DEST_CASIO_CALC
 
-    casioDisplay_.rotatedDisplay(false); // Return to default font
+    if (casioDisplay_.isRotated()){
+        _rotateDisplay(); // Cancel rotation if any
+    }
+    
     return (!isCancelled());
 }
 
@@ -879,7 +885,26 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
         for (uint8_t col = 0; col < PIECE_WIDTH; col++) {
             colourID = datas[row * PIECE_WIDTH + col];
             if (colourID != COLOUR_ID_BOARD) {
-                casioDisplay_.drawRectangle(x, y, w, h, colours_[(COLOUR_ID_NONE != specialColourID) ? specialColourID : colourID]);
+                // Draw the block
+
+                // A shadow ?
+                if (COLOUR_ID_SHADOW == specialColourID){
+#ifdef FX9860G
+                // Gray engine on
+    #ifdef GRAY_ENGINE_ON
+                casioDisplay_.drawRectangle(x, y, w, h, colours_[COLOUR_ID_SHADOW]);
+    #else
+                // No gray engine => draw borders of shadow
+                //casioDisplay_.drawRectangle(x, y, w, h, C_NONE, C_BLACK);
+                casioDisplay_.drawBorder(x, y, w, h, C_BLACK);
+    #endif // GRAY_ENGINE_ON
+#else
+                casioDisplay_.drawRectangle(x, y, w, h, colours_[COLOUR_ID_SHADOW]);
+#endif // #ifdef FX9860G
+                }
+                else{
+                    casioDisplay_.drawRectangle(x, y, w, h, colours_[(COLOUR_ID_NONE != specialColourID) ? specialColourID : colourID]);
+                }
             }
             x += w;
         }
@@ -947,7 +972,7 @@ void tetrisGame::_drawBackGround(){
     // Border for 'Next piece'
     casioDisplay_.drawBorder(casioDisplay_.nextPiece()->pos.x - CASIO_BORDER_GAP,
                 casioDisplay_.nextPiece()->pos.y - CASIO_BORDER_GAP,
-                casioDisplay_.nextPiece()->pos.w, casioDisplay_.nextPiece()->pos.h, colours_[COLOUR_ID_BORDER]);
+                casioDisplay_.nextPiece()->pos.w + 1, casioDisplay_.nextPiece()->pos.h + 1, colours_[COLOUR_ID_BORDER]);
 }
 
 // _drawNumValue() : Draw a value and its name
@@ -955,6 +980,14 @@ void tetrisGame::_drawBackGround(){
 //  @index of the VALUE object to be drawn
 //
 void tetrisGame::_drawNumValue(uint8_t index){
+    
+    // No room for indicators on BW calcs in rotated mode !
+#ifdef FX9860G
+    if (casioDisplay_.isRotated()){
+        return;
+    }
+#endif // #ifdef FX9860G
+    
     char valStr[MAX_VALUE_NAME_LEN + 1];
 
     // Erase previous value ?

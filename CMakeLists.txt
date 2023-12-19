@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(MyAddin)
+project(geeTetris)
 
 include(GenerateG1A)
 include(GenerateG3A)
@@ -8,7 +8,7 @@ find_package(Gint 2.9 REQUIRED)
 
 set(SOURCES
   src/geeTetris.cpp
-  src/shared/scrCapture.cpp
+  #src/shared/scrCapture.cpp
   src/shared/keyboard.cpp
   src/shared/bFile.cpp
   src/shared/tabs.cpp
@@ -35,14 +35,14 @@ set(ASSETS_cg
 
 fxconv_declare_assets(${ASSETS} ${ASSETS_fx} ${ASSETS_cg} WITH_METADATA)
 
-add_executable(myaddin ${SOURCES} ${ASSETS} ${ASSETS_${FXSDK_PLATFORM}})
-target_compile_options(myaddin PRIVATE -Wall -Wextra -Os -D=DEST_CASIO_CALC)
-target_link_libraries(myaddin Gint::Gint -lstdc++)
+add_executable(geeTetris ${SOURCES} ${ASSETS} ${ASSETS_${FXSDK_PLATFORM}})
+target_compile_options(geeTetris PRIVATE -Wall -Wextra -Os -D=DEST_CASIO_CALC)
+target_link_libraries(geeTetris Gint::Gint -lstdc++)
 
 if("${FXSDK_PLATFORM_LONG}" STREQUAL fx9860G)
-  generate_g1a(TARGET myaddin OUTPUT "geeTetris.g1a"
+  generate_g1a(TARGET geeTetris OUTPUT "geeTetris.g1a"
     NAME "geeTetris" ICON assets-fx/icon.png)
 elseif("${FXSDK_PLATFORM_LONG}" STREQUAL fxCG50)
-  generate_g3a(TARGET myaddin OUTPUT "geeTetris.g3a"
+  generate_g3a(TARGET geeTetris OUTPUT "geeTetris.g3a"
     NAME "geeTetris" ICONS assets-cg/icon-uns.png assets-cg/icon-sel.png)
 endif()

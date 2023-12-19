@@ -30,7 +30,6 @@ scrCapture  gCapture;           // Screen capture
 // Program entry point
 //
 int main(){
-
     tetrisParameters params;
     tabKeyboard keys;
 

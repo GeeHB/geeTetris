@@ -51,6 +51,7 @@ extern "C" {
 #define CASIO_INFO_LEFT         65
 #define CASIO_INFO_TOP          1
 #define CASIO_INFO_GAP          1       // between border and text
+#define CASIO_INFO_DY           12      // Between each line of text
 #else
 #define CASIO_BOX_WIDTH           9
 #define CASIO_BOX_WIDTH_ROTATED   14
@@ -67,8 +68,9 @@ extern "C" {
 // Texts pos & dims
 //
 #define CASIO_INFO_LEFT     250
-#define CASIO_INFO_TOP      10
+#define CASIO_INFO_TOP      5
 #define CASIO_INFO_GAP      4       // between border and text
+#define CASIO_INFO_DY       23
 #endif // #ifdef FX9860G
 
 // During games draings appends in 2 zones :
@@ -130,8 +132,8 @@ class playArea{
         //
 
         // Update members on rotation
-        void rotatedDisplay(bool doRotate){
-            _rotatedDisplay(doRotate, false);
+        void rotatedDisplay(bool doRotate, bool force = false){
+            _rotatedDisplay(doRotate, force);
         }
 
         // (trigonometric) rotations
@@ -156,8 +158,8 @@ class playArea{
         //
         //   @x,@y : top left starting point
         //   @width, @height : dimensions
-        //   @borderColour : Colour of the border NO_COLOR (-1) if none
         //   @fillColour : Filling colour NO_COLOR (-1) if none
+        //   @borderColour : Colour of the border NO_COLOR (-1) if none
         //
         void drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int fillColour = NO_COLOR, int borderColour = NO_COLOR);
 

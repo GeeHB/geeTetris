@@ -98,7 +98,6 @@ class tetrisGame {
             // Already escaped ?
             if (!isCancelled()) {
                 status_ |= STATUS_CANCELED;
-                end(); // stop the game
             }
         }
 

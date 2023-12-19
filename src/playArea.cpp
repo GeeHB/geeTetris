@@ -40,6 +40,13 @@ playArea::playArea(){
 #ifdef DEST_CASIO_CALC
     hFont_ = &font_horz;
     vFont_ = &font_vert;
+
+    // Start the gray engine
+#ifdef FX9860G
+    #ifdef GRAY_ENGINE_ON
+        dgray(DGRAY_ON);
+    #endif // #ifdef GRAY_ENGINE_ON
+#endif // #ifdef FX9860G
 #endif // #ifdef DEST_CASIO_CALC
 
     // Default keys
@@ -47,9 +54,6 @@ playArea::playArea(){
     keyPause_ = KEY_CODE_PAUSE;
     keyRotateDisplay_ = KEY_CODE_ROTATE_DISPLAY;
     keyQuit_ = KEY_CODE_EXIT;
-
-    // set parameters
-    _rotatedDisplay(rotatedDisplay_, true);
 }
 
 // Destruction
@@ -58,6 +62,13 @@ playArea::~playArea(){
     // Return to default font
 #ifdef DEST_CASIO_CALC
     dfont(dfont_default());
+
+    // Stop the gray engine
+    #ifdef FX9860G
+        #ifdef GRAY_ENGINE_ON
+            dgray(DGRAY_OFF);
+        #endif // #ifdef GRAY_ENGINE_ON
+    #endif // #ifdef FX9860G
 #endif // #ifdef DEST_CASIO_CALC
 }
 
@@ -75,10 +86,10 @@ void playArea::rotate(int16_t& xFrom, int16_t& yFrom, int16_t& xTo, int16_t& yTo
     rotate(xTo, yTo);
 
     // The rect (xFrom, yFrom) -> (xTo, yTo)
-    // turns and becomes (xTo, yFrom) -> (xFrom, yTo)
-    int16_t oFrom(xFrom);
-    xFrom = xTo;
-    xTo = oFrom;
+    // turns and becomes (xFrom, yTo) -> (xTo, yFrom)
+    int16_t oFrom(yFrom);
+    yFrom = yTo;
+    yTo = oFrom;
 }
 
 // rotatedDisplay() : Update members on rotation
@@ -130,7 +141,7 @@ void playArea::_rotatedDisplay(bool doRotate, bool force){
             // Nextpiece
             nextPiece_.boxWidth = CASIO_BOX_WIDTH_NP_ROTATED;  // box in preview is smaller
             nextPiece_.pos.w = nextPiece_.pos.h = 4 * nextPiece_.boxWidth + 2 * CASIO_INFO_GAP;
-            nextPiece_.pos.x = playfield_.pos.x + playfield_.pos.w + CASIO_BORDER_GAP;
+            nextPiece_.pos.x = playfield_.pos.x + playfield_.pos.w + 1;
             nextPiece_.pos.y = CASIO_INFO_TOP;
 
             // Keys
@@ -148,7 +159,8 @@ void playArea::_rotatedDisplay(bool doRotate, bool force){
         // Values indicators
         textsPos_[0].x = textsPos_[1].x = textsPos_[2].x = nextPiece_.pos.x;
         for (uint8_t id(0); id <VAL_COUNT; id++){
-            textsPos_[id].y = nextPiece_.pos.y + nextPiece_.pos.w + playfield_.boxWidth * ( 2 * id + 1);
+            textsPos_[id].y = nextPiece_.pos.y + nextPiece_.pos.w +
+                CASIO_INFO_DY * id + 6;
         }
     }
 }
@@ -175,8 +187,8 @@ void playArea::dtext(int x, int y, int fg, const char* text){
 //
 //   @x,@y : top left starting point
 //   @width, @height : dimensions
-//   @borderColour : Colour of the border or NO_COLOR (-1) if none
 //   @fillColour : Filling colour or NO_COLOR (-1) if none
+//   @borderColour : Colour of the border or NO_COLOR (-1) if none
 //
 void playArea::drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int fillColour, [[maybe_unused]]  int borderColour){
     int16_t xFrom(x), yFrom(y);
@@ -193,23 +205,16 @@ void playArea::drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t he
     // Coloured rect
     drect(xFrom, yFrom, xTo - 1, yTo - 1, fillColour);
 
-    char bidon[20];
-    __valtoa(xFrom, "", bidon);
-    __valtoa(xTo, " - ", bidon + strlen(bidon));
-
-    if (rotatedDisplay_){
-        dfont((font_t*)&font_horz);
-    }
-    TRACE(bidon, COLOUR_BLACK, COLOUR_WHITE);
-    if (rotatedDisplay_){
-        dfont((font_t*)&font_vert);
-    }
-
     // Half a border (bottom and right) for "small" pieces
+    /*
     if (NO_COLOR != borderColour){
-        dline(xFrom, yTo, xTo, yTo, C_WHITE);
-        dline(xTo, yFrom, xTo, yTo, C_WHITE);
+        dline(xFrom, yTo, xTo, yTo, borderColour);
+        dline(xTo, yFrom, xTo, yTo, borderColour);
     }
+    */
+    int bColour(NO_COLOR==borderColour?C_WHITE:borderColour);
+    dline(xFrom, yTo, xTo, yTo, bColour);
+    dline(xTo, yFrom, xTo, yTo, bColour);
 #else
     drect_border(xFrom, yFrom, xTo, yTo, fillColour, 1, borderColour);
 #endif // #ifdef FX9860G
