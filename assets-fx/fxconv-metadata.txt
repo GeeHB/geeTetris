@@ -2,7 +2,3 @@ bw.png:
   type: bopti-image
   name: img_geeTetris
 
-pause.png:
-  type: bopti-image
-  name: img_pause
- 

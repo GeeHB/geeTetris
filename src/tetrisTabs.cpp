@@ -50,7 +50,9 @@ uint8_t aboutTab::select(){
     dupdate();
 #endif // #ifdef DEST_CASIO_CALC
 
+#ifdef FXCG50
     TRACE("Mode test actif", COLOUR_RED, NO_COLOR);
+#endif // FXCG50
 
     // Nothing special
     return tab::select();

@@ -26,7 +26,6 @@
 #ifdef DEST_CASIO_CALC
 #include <gint/timer.h>
 #include <gint/clock.h>
-extern bopti_image_t img_pause;
 #endif // #ifdef DEST_CASIO_CALC
 
 #include <cstdlib>
@@ -85,7 +84,9 @@ class tetrisGame {
         bool start();
 
         // Pause or resume the game
+#ifdef FXCG50
         void pause();
+#endif // FXCG50
 
         // Status
         //

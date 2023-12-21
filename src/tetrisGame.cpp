@@ -23,6 +23,10 @@
 #include "shared/window.h"
 #include "shared/bFile.h"
 
+#ifdef FXCG50
+extern bopti_image_t img_pause;
+#endif // #ifdef FXCG50
+
 //---------------------------------------------------------------------------
 //--
 //-- tetrisGame object
@@ -211,12 +215,13 @@ bool tetrisGame::start() {
     if (casioDisplay_.isRotated()){
         _rotateDisplay(); // Cancel rotation if any
     }
-    
+
     return (!isCancelled());
 }
 
 // pause() : Pause or resume the game
 //
+#ifdef FXCG50
 void tetrisGame::pause(){
     char car(KEY_CODE_NONE);
     bool paused(true);
@@ -247,6 +252,7 @@ void tetrisGame::pause(){
 
     }while (paused);
 }
+#endif // #ifdef FXCG50
 
 // _showScores() : Show best scores and current one (if in the list)
 //
@@ -564,10 +570,12 @@ void tetrisGame::_handleGameKeys() {
             return;
         }
 
+#ifdef FXCG50
         if (casioDisplay_.keyPause_ == car){
             pause();
             return;
         }
+#endif // #ifdef FXCG50
 
         if (casioDisplay_.keyRotateDisplay_ == car){
             _rotateDisplay();
@@ -980,14 +988,14 @@ void tetrisGame::_drawBackGround(){
 //  @index of the VALUE object to be drawn
 //
 void tetrisGame::_drawNumValue(uint8_t index){
-    
+
     // No room for indicators on BW calcs in rotated mode !
 #ifdef FX9860G
     if (casioDisplay_.isRotated()){
         return;
     }
 #endif // #ifdef FX9860G
-    
+
     char valStr[MAX_VALUE_NAME_LEN + 1];
 
     // Erase previous value ?

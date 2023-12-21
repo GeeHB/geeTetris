@@ -26,7 +26,7 @@ set(ASSETS
  )
  set(ASSETS_fx
   assets-fx/bw.png
-  assets-fx/pause.png
+  #assets-fx/pause.png
 )
 set(ASSETS_cg
   assets-cg/coloured.png
