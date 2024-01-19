@@ -36,7 +36,6 @@ extern "C" {
 
 // Timer & game speed
 //
-
 #define GAME_TICK_DURATION      25      //  in ms
 #define GAME_START_TICKS        48      // Initial piece speed in ticks ( 1200 ms / GAME_TICK_DURATION)
 

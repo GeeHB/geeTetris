@@ -1,18 +1,10 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
-//--	File	: keyboard.cpp
+//--    keyboard.cpp
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
+//--    Implementation of keyboard object
 //--
-//--	Project	:
-//--
-//---------------------------------------------------------------------------
-//--
-//--	Description:
-//--
-//--			Implementation of keyboard object
-//--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 #include "keyboard.h"
 
@@ -62,6 +54,7 @@ uint keyboard::getKey(){
     }
 #else
     key = getchar();
+    if (key == 10) key = 0; // CR
     mod_ = MOD_NONE;
 #endif // #ifdef DEST_CASIO_CALC
 

@@ -25,7 +25,7 @@
 #ifdef TRACE_MODE       // ???
 #undef TRACE_MODE
 #endif // TRACE_MODE
-#endif // DEST_CASIO_CALCDEST_CASIO_CALC
+#endif // DEST_CASIO_CALC
 
 #ifdef __cplusplus
 extern "C" {

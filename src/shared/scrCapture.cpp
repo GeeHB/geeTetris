@@ -1,24 +1,32 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
-//--	File	: scrCapture.cpp
+//--    scrCapture.cpp
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
+//--    Implementation of scrCapture - Screen capture using fxlink
 //--
-//--	Project	:
-//--
-//---------------------------------------------------------------------------
-//--
-//--	Description:
-//--
-//--			Implementation of scrCapture - Screen capture using fxlink
-//--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 #include "scrCapture.h"
 
 #include <gint/display.h>
 #include <gint/usb.h>
 #include <gint/usb-ff-bulk.h>
+
+// Construction
+//
+scrCapture::scrCapture(){
+    set_ = false;
+}
+
+// Destruction
+scrCapture::~scrCapture(){
+    remove();
+}
+
+// Already installed ?
+bool scrCapture::isSet(){
+    return set_;
+}
 
 // Install
 //
@@ -36,7 +44,7 @@ bool scrCapture::install(){
 
     // Set the hook
     dupdate_set_hook(GINT_CALL(usb_fxlink_videocapture, 0));
-    return true;
+    return (set_ = true);
 }
 
 // Remove

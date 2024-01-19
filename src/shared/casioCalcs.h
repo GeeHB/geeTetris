@@ -1,18 +1,10 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
-//--	File	: casioCalcs.h
-//--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
-//--
-//--	Project	:
-//--
-//---------------------------------------------------------------------------
-//--
-//--	Description:
+//--    casioCalcs.h
 //--
 //--            Types and defines specific to the casio targets
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 #ifndef __GEE_CASIO_CALCS_h__
 #define __GEE_CASIO_CALCS_h__    1
@@ -31,11 +23,6 @@
 #define CASIO_HEIGHT    192
 #endif // #ifdef DEST_CASIO_CALC
 
-// Using the gray engine on monochrome displays
-#ifdef FX9860G
-#include "gint/gray.h"
-#endif // #ifdef FX9860G
-
 #include <cstdint>
 
 // A few basic colours
@@ -47,41 +34,22 @@
 #endif // #ifndef DEST_CASIO_CALC
 
 #ifdef FX9860G
-#ifdef GRAY_ENGINE_ON
 enum DEF_COLOUR{
     COLOUR_BLACK   = C_BLACK,
     COLOUR_WHITE   = C_WHITE,
     COLOUR_RED     = C_DARK,
-    COLOUR_GREEN   = C_DARK,
-    COLOUR_YELLOW  = C_DARK,
+    COLOUR_GREEN   = C_BLACK,
+    COLOUR_YELLOW  = C_BLACK,
     COLOUR_BLUE    = C_DARK,
-    COLOUR_LT_BLUE = C_DARK,
+    COLOUR_LT_BLUE = C_BLACK,
     COLOUR_PURPLE  = C_DARK,
-    COLOUR_CYAN    = C_DARK,
+    COLOUR_CYAN    = C_BLACK,
     COLOUR_ORANGE  = C_DARK,
-    COLOUR_LT_GREY = C_LIGHT,       // shadows
-    COLOUR_GREY    = C_DARK,
+    COLOUR_LT_GREY = C_LIGHT,
+    COLOUR_GREY    = C_WHITE,
     COLOUR_DK_GREY = C_DARK,
     NO_COLOR      = -1
 };
-#else
-enum DEF_COLOUR{
-    COLOUR_BLACK   = C_BLACK,
-    COLOUR_WHITE   = C_WHITE,
-    COLOUR_RED     = C_BLACK,
-    COLOUR_GREEN   = C_BLACK,
-    COLOUR_YELLOW  = C_BLACK,
-    COLOUR_BLUE    = C_BLACK,
-    COLOUR_LT_BLUE = C_BLACK,
-    COLOUR_PURPLE  = C_BLACK,
-    COLOUR_CYAN    = C_BLACK,
-    COLOUR_ORANGE  = C_BLACK,
-    COLOUR_LT_GREY = C_BLACK,
-    COLOUR_GREY    = C_BLACK,
-    COLOUR_DK_GREY = C_BLACK,
-    NO_COLOR      = -1
-};
-#endif // GRAY_ENGINE_ON
 #else
 enum DEF_COLOUR{
     COLOUR_BLACK   = C_RGB(0, 0, 0),
@@ -94,7 +62,7 @@ enum DEF_COLOUR{
     COLOUR_PURPLE  = C_RGB(31, 0, 31),
     COLOUR_CYAN    = C_RGB(0, 31, 31),
     COLOUR_ORANGE  = C_RGB(31, 16, 0),
-    COLOUR_LT_GREY = C_RGB(29, 29, 29),     // used for shadows
+    COLOUR_LT_GREY = C_RGB(29, 29, 29),
     COLOUR_GREY    = C_RGB(16, 16, 16),
     COLOUR_DK_GREY = C_RGB(8, 8, 8),
     NO_COLOR      = -1
@@ -121,8 +89,8 @@ typedef struct __point {
 // A simple rect. struct
 //
 typedef struct __rect{
-    uint16_t    x,y;    // top left
-    uint16_t    w, h;   // width and height
+    int    x,y;    // top left
+    int    w, h;   // width and height
 } RECT;
 
 #endif // #ifndef __GEE_CASIO_CALCS_h__

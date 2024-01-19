@@ -127,7 +127,6 @@ void tetrisGame::setParameters(tetrisParameters* params) {
     _emptyTetrisGame();
 
     // Add dirty lines ...
-    //
     uint8_t maxLines(PLAYFIELD_HEIGHT - PIECE_HEIGHT - 1);
     if (parameters_.dirtyLines_ > maxLines) {
         parameters_.dirtyLines_ = maxLines;
@@ -162,15 +161,15 @@ bool tetrisGame::start() {
     _rotateDisplay(true);
 
 #ifdef DEST_CASIO_CALC
-
     int seqCount(0);
     uint8_t nextLevel(parameters_.startLevel_);
     int levelTicks(parameters_.startLevel_==1? GAME_START_TICKS : _getSpeed(GAME_START_TICKS, parameters_.startLevel_ - 1));
     int tickCount(levelTicks);
 
     // Timer creation
-    static volatile int tick = 1;
-    int timerID = timer_configure(TIMER_ANY, GAME_TICK_DURATION*1000, GINT_CALL(__callbackTick, &tick));
+    static volatile int tick(1);
+    int timerID = timer_configure(TIMER_ANY, GAME_TICK_DURATION*1000,
+					GINT_CALL(__callbackTick, &tick));
     if (timerID< 0){
         return false;	// Unable to create a timer
     }
@@ -280,7 +279,7 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 
         // Try to create the file
         int size(SIZE_SCORES_FILE);
-        scoresFile.create((FONTCHARACTER)SCORES_FILENAME, BFile_File, &size);
+        scoresFile.createEx((FONTCHARACTER)SCORES_FILENAME, BFile_File, &size, BFile_WriteOnly);
 
         // Save the new list
         if (scoresFile.getLastError() == 0){

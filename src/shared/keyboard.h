@@ -1,21 +1,13 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
-//--	File	: keyboard.h
+//--    keyboard.h
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
+//--    Definition of keyboard object
 //--
-//--	Project	:
-//--
-//---------------------------------------------------------------------------
-//--
-//--	Description:
-//--
-//--			Definition of keyboard object
-//--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
-#ifndef __GEE_TOOLS_KEYBOARD_h__
-#define __GEE_TOOLS_KEYBOARD_h__    1
+#ifndef __GEE_TOOLS_KEYBOARD_C_h__
+#define __GEE_TOOLS_KEYBOARD_C_h__    1
 
 #include "casioCalcs.h"
 
@@ -54,14 +46,17 @@ public:
     }
 
     // Destruction
-    virtual ~keyboard(){}
+    ~keyboard(){}
 
     // Key event in the queue
-    virtual uint getKey();
+    uint getKey();
 
     // Status of modifiers
     bool isPressed(uint mod){
         return (mod != MOD_NONE && _isSet(mod));
+    }
+    uint modifier(){
+        return mod_;
     }
 
 private:
@@ -85,6 +80,6 @@ protected:
 }
 #endif // #ifdef __cplusplus
 
-#endif // __GEE_TOOLS_KEYBOARD_h__
+#endif // __GEE_TOOLS_KEYBOARD_C_h__
 
 // EOF
