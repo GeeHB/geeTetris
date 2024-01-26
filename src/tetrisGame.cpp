@@ -1,18 +1,11 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
-//--	File	: tetrisGame.cpp
+//--    tetrisGame.cpp
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: geeTetris / cpp version
+//--        Implementation of tetrisGame object
 //--
-//---------------------------------------------------------------------------
-//--
-//--	Description:
-//--
-//--	    Implementation of tetrisGame object
-//--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 #include "tetrisGame.h"
 
@@ -27,13 +20,13 @@
 extern bopti_image_t img_pause;
 #endif // #ifdef FXCG50
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //-- tetrisGame object
 //--
 //--    Handle the gameplay and the game (without display !)
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 // Construction
 //
@@ -169,9 +162,9 @@ bool tetrisGame::start() {
     // Timer creation
     static volatile int tick(1);
     int timerID = timer_configure(TIMER_ANY, GAME_TICK_DURATION*1000,
-					GINT_CALL(__callbackTick, &tick));
+                    GINT_CALL(__callbackTick, &tick));
     if (timerID< 0){
-        return false;	// Unable to create a timer
+        return false;   // Unable to create a timer
     }
 
     timer_start(timerID);   // set the timer
@@ -381,11 +374,15 @@ void tetrisGame::_rotateDisplay(bool first){
         // Redraw the piece and it's shadow
         if (-1 != nextPos_.shadowTopPos_) {
             // first : the shadow
-            _drawSinglePiece(_pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.shadowTopPos_, true, COLOUR_ID_SHADOW);
+            _drawSinglePiece(_pieceDatas(nextPos_.index_, n
+                    extPos_.rotationIndex_), nextPos_.leftPos_,
+                    nextPos_.shadowTopPos_, true, COLOUR_ID_SHADOW);
         }
 
         // and then the tetramino(can recover the shadow !!!!)
-        _drawSinglePiece(_pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.topPos_);
+        _drawSinglePiece(_pieceDatas(nextPos_.index_,
+                    nextPos_.rotationIndex_),
+                    nextPos_.leftPos_, nextPos_.topPos_);
     }
 
     // The next pice
@@ -505,21 +502,29 @@ void tetrisGame::_piecePosChanged() {
     if (!currentPos_.isValid() || currentPos_ != nextPos_) {
         // Erase the tetramino(and maybe it's shadow)
         if (currentPos_.isValid()) {
-            _drawSinglePiece(_pieceDatas(currentPos_.index_, currentPos_.rotationIndex_), currentPos_.leftPos_, currentPos_.topPos_, true, COLOUR_ID_BOARD);
+            _drawSinglePiece(_pieceDatas(currentPos_.index_,
+                    currentPos_.rotationIndex_), currentPos_.leftPos_,
+                    currentPos_.topPos_, true, COLOUR_ID_BOARD);
             if (-1 != currentPos_.shadowTopPos_) {
                 // then the shadow
-                _drawSinglePiece(_pieceDatas(currentPos_.index_, currentPos_.rotationIndex_), currentPos_.leftPos_, currentPos_.shadowTopPos_, true, COLOUR_ID_BOARD);
+                _drawSinglePiece(_pieceDatas(currentPos_.index_,
+                    currentPos_.rotationIndex_), currentPos_.leftPos_,
+                    currentPos_.shadowTopPos_, true, COLOUR_ID_BOARD);
             }
         }
 
         // redraw
         if (-1 != nextPos_.shadowTopPos_) {
             // first : the shadow
-            _drawSinglePiece(_pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.shadowTopPos_, true, COLOUR_ID_SHADOW);
+            _drawSinglePiece(_pieceDatas(nextPos_.index_,
+                    nextPos_.rotationIndex_), nextPos_.leftPos_,
+                    nextPos_.shadowTopPos_, true, COLOUR_ID_SHADOW);
         }
 
         // and then the tetramino(can recover the shadow !!!!)
-        _drawSinglePiece(_pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.topPos_);
+        _drawSinglePiece(_pieceDatas(nextPos_.index_,
+                    nextPos_.rotationIndex_),
+                    nextPos_.leftPos_, nextPos_.topPos_);
 
         updateDisplay();
         currentPos_ = nextPos_;
@@ -563,7 +568,7 @@ int tetrisGame::_getSpeed(int currentTicks, uint8_t incLevel){
 void tetrisGame::_handleGameKeys() {
     char car(keyboard_.getKey());
 
-	if(car != KEY_CODE_NONE) {
+    if(car != KEY_CODE_NONE) {
         if (casioDisplay_.keyQuit_ == car){
             cancel();
             return;
@@ -605,7 +610,7 @@ void tetrisGame::_handleGameKeys() {
             _fall();
             return;
         }
-	}
+    }
 }
 
 // _canMove : Can the current piece be at the given position ?
@@ -835,7 +840,9 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
                 break;
         }
 
-        double mult(100. + SCORE_SPEED_GAME * downRowcount + SCORE_DIRTY_LINES * parameters_.dirtyLines_ + SCORE_LEVEL_VALUATION * values_[COMPLETED_LINES_ID].value);
+        double mult(100. + SCORE_SPEED_GAME * downRowcount
+                + SCORE_DIRTY_LINES * parameters_.dirtyLines_
+                + SCORE_LEVEL_VALUATION * values_[COMPLETED_LINES_ID].value);
         if (!parameters_.shadow_){
             mult += SCORE_NO_SHADOW;
         }
@@ -871,12 +878,14 @@ void tetrisGame::_redraw(){
 // _drawSinglePiece() : Draw a whole tetramino using the given colour
 //
 //  @datas is the piece'datas in its current rotation state
-//  @cornerX, @cornerY are the coordinates of the upper left corner in blocks coordinates
+//  @cornerX, @cornerY are the coordinates of the upper left corner
+//                  in blocks coordinates
 //  @inTetrisGame : True = > draw in the tetrisGame, False = > draw "next" piece
 //  @specialColourID is the colour to use for the tetramino.
 //   If set to COLOUR_ID_NONE the tetramino's colour will be used
 //
-void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool inTetrisGame, uint8_t specialColourID) {
+void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX,
+        uint16_t cornerY, bool inTetrisGame, uint8_t specialColourID) {
     // First visible row ID
     int8_t rowFirst(0);
     if (inTetrisGame) {
@@ -884,7 +893,9 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
     }
 
     uint16_t x, xFirst(cornerX), y(cornerY - rowFirst), w, h;
-    casioDisplay_.shitfToZone(inTetrisGame?ZONE_GAME:ZONE_PREVIEW, xFirst, y, w, h);  // Get coords and dims. in the screen
+    casioDisplay_.shitfToZone(inTetrisGame?
+            ZONE_GAME:
+            ZONE_PREVIEW, xFirst, y, w, h);  // Get coords and dims. in the screen
 
     uint8_t colourID;
     for (uint8_t row = rowFirst; row < PIECE_HEIGHT; row++) {
@@ -910,7 +921,9 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
 #endif // #ifdef FX9860G
                 }
                 else{
-                    casioDisplay_.drawRectangle(x, y, w, h, colours_[(COLOUR_ID_NONE != specialColourID) ? specialColourID : colourID]);
+                    casioDisplay_.drawRectangle(x, y, w, h,
+                        colours_[(COLOUR_ID_NONE != specialColourID) ?
+                        specialColourID : colourID]);
                 }
             }
             x += w;
@@ -962,7 +975,9 @@ void tetrisGame::_drawTetrisGame() {
 void tetrisGame::_eraseNextPiece(){
     uint16_t x(0), y(0), w, h;
     casioDisplay_.shitfToZone(ZONE_PREVIEW, x, y, w, h);
-    casioDisplay_.drawRectangle(x, y, w * PIECE_WIDTH, h * PIECE_HEIGHT, colours_[COLOUR_ID_BOARD], colours_[COLOUR_ID_BOARD]);
+    casioDisplay_.drawRectangle(x, y, w * PIECE_WIDTH,
+                        h * PIECE_HEIGHT, colours_[COLOUR_ID_BOARD],
+                        colours_[COLOUR_ID_BOARD]);
 }
 
 // _drawBackGround() : Draw entire background
@@ -972,14 +987,19 @@ void tetrisGame::_eraseNextPiece(){
 //
 void tetrisGame::_drawBackGround(){
     // Border around the playfield
-    casioDisplay_.drawBorder(casioDisplay_.playfield()->pos.x - CASIO_BORDER_GAP,
+    casioDisplay_.drawBorder(
+        casioDisplay_.playfield()->pos.x - CASIO_BORDER_GAP,
         casioDisplay_.playfield()->pos.y - CASIO_BORDER_GAP,
-        casioDisplay_.playfield()->pos.w, casioDisplay_.playfield()->pos.h, colours_[COLOUR_ID_BORDER]);
+        casioDisplay_.playfield()->pos.w,
+        casioDisplay_.playfield()->pos.h,
+        colours_[COLOUR_ID_BORDER]);
 
     // Border for 'Next piece'
-    casioDisplay_.drawBorder(casioDisplay_.nextPiece()->pos.x - CASIO_BORDER_GAP,
-                casioDisplay_.nextPiece()->pos.y - CASIO_BORDER_GAP,
-                casioDisplay_.nextPiece()->pos.w + 1, casioDisplay_.nextPiece()->pos.h + 1, colours_[COLOUR_ID_BORDER]);
+    casioDisplay_.drawBorder(
+        casioDisplay_.nextPiece()->pos.x - CASIO_BORDER_GAP,
+        casioDisplay_.nextPiece()->pos.y - CASIO_BORDER_GAP,
+        casioDisplay_.nextPiece()->pos.w + 1,
+        casioDisplay_.nextPiece()->pos.h + 1, colours_[COLOUR_ID_BORDER]);
 }
 
 // _drawNumValue() : Draw a value and its name
@@ -1001,12 +1021,16 @@ void tetrisGame::_drawNumValue(uint8_t index){
     if (-1 != values_[index].previous){
         playArea::__valtoa(values_[index].previous, values_[index].name, valStr);
 
-        casioDisplay_.dtext(casioDisplay_.textsPos_[index].x, casioDisplay_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
+        casioDisplay_.dtext(casioDisplay_.textsPos_[index].x,
+            casioDisplay_.textsPos_[index].y,
+            colours_[COLOUR_ID_BKGRND], valStr);
     }
 
     // print new value
     playArea::__valtoa(values_[index].value, values_[index].name, valStr);
-    casioDisplay_.dtext(casioDisplay_.textsPos_[index].x, casioDisplay_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
+    casioDisplay_.dtext(casioDisplay_.textsPos_[index].x,
+            casioDisplay_.textsPos_[index].y,
+            colours_[COLOUR_ID_TEXT], valStr);
 
     values_[index].previous = values_[index].value; // to erase the value next time
 }

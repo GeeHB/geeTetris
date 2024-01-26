@@ -1,12 +1,11 @@
-/build-*
-/*.g3a
+/build*
+/*.g3a*
 /*.g1a
+project.md
 
 # Python bytecode
 __pycache__/
 
 # Common IDE files
 .vscode
-
-# Other files
-ticks.xlsx
+*.geany

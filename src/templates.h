@@ -1,25 +1,20 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
-//--	File	: templates.h
+//--    templates.h
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
+//--        Definition of the 7 tetraminos templates
 //--
-//--	Project	: geeTetris - cpp version
+//--        The num. value is the colour ID. Colours'IDs are based
+//--        on nCurses index
 //--
-//---------------------------------------------------------------------------
+//--        A piece is given with all its postions after rotations in
+//--        trignometric direction
+//--        Each "rotation", to be precise, is a combination of a
+//--        rotation and a translation
 //--
-//--	Descritpion:
+//--        Based on Nintendo for pieces and rotation.
 //--
-//--                 Definition of the 7 tetraminos templates
-//--
-//--                 The num. value is the colour ID. Colours'IDs are based on nCurses index
-//--
-//--                 A piece is given with all its postions after rotations in trignometric direction
-//--                 Each "rotation", to be precise, is a combination of a rotation and a translation
-//--
-//--                 Based on Nintendo for pieces and rotation.
-//--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 #ifndef __GEE_TETRIS_PIECE_TEMPLATE_h__
 #define __GEE_TETRIS_PIECE_TEMPLATE_h__    1

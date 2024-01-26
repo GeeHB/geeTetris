@@ -1,21 +1,13 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
-//--	File	: sList.h
+//--    sList.h
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
-//--
-//--	Project	: geeTetris - cpp version
-//--
-//---------------------------------------------------------------------------
-//--
-//--	Description:
-//--
-//--			Definition of sList objet
+//--            Definition of sList objet
 //--                A (very) simple linked list for scores.
 //--                Since this list will only have around ten elements,
 //--                we don't need to use std lists
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 #ifndef __GEE_TETRIS_SIMPLE_LIST_h__
 #define __GEE_TETRIS_SIMPLE_LIST_h__    1
@@ -64,13 +56,13 @@ extern "C" {
 #define WIN_HEIGHT  140
 #endif // #ifdef FX9860G
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //-- sList
 //--
 //--    A score list. Items are automatically ordered in descending order
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 class sList{
     public:
 
@@ -140,7 +132,7 @@ class sList{
     //
     protected:
         PNODE   head_;      // Head of the list
-        PNODE	tail_;		// tail of the list
+        PNODE   tail_;      // tail of the list
 };
 
 

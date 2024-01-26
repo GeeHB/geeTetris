@@ -8,7 +8,7 @@ find_package(Gint 2.9 REQUIRED)
 
 set(SOURCES
   src/geeTetris.cpp
-  #src/shared/scrCapture.cpp
+  src/shared/scrCapture.cpp
   src/shared/keyboard.cpp
   src/shared/bFile.cpp
   src/shared/tabs.cpp
@@ -36,7 +36,7 @@ set(ASSETS_cg
 fxconv_declare_assets(${ASSETS} ${ASSETS_fx} ${ASSETS_cg} WITH_METADATA)
 
 add_executable(geeTetris ${SOURCES} ${ASSETS} ${ASSETS_${FXSDK_PLATFORM}})
-target_compile_options(geeTetris PRIVATE -Wall -Wextra -Os -D=DEST_CASIO_CALC)
+target_compile_options(geeTetris PRIVATE -Wall -Wextra -Os -D=DEST_CASIO_CALC -D=NO_CAPTURE)
 target_link_libraries(geeTetris Gint::Gint -lstdc++)
 
 if("${FXSDK_PLATFORM_LONG}" STREQUAL fx9860G)

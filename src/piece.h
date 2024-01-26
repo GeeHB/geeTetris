@@ -1,19 +1,12 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
-//--	File	: piece.h
+//--    piece.h
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: geeTetris - cpp version
-//--
-//---------------------------------------------------------------------------
-//--
-//--	Description:
-//--
-//--			Definition of piece & pieceStatus objects :
+//--            Definition of piece & pieceStatus objects :
 //--                a tetramino and all the informations for its drawing
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 #ifndef __GEE_TETRIS_PIECE_h__
 #define __GEE_TETRIS_PIECE_h__    1
@@ -40,14 +33,14 @@ extern "C" {
 // Empty val in templates
 #define EMPTY_CHAR      '.'
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //-- pieceStatus object
 //--
 //--    All the informations concerning a tetramino :
 // --       index, rotation, position ...
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 class pieceStatus{
 
     // Public methods
@@ -97,32 +90,38 @@ class pieceStatus{
 
         // Equal ?
         bool operator == (pieceStatus& right){
-            return (index_ == right.index_ && leftPos_ == right.leftPos_ && topPos_ == right.topPos_ && rotationIndex_ == right.rotationIndex_);
+            return (index_ == right.index_
+                    && leftPos_ == right.leftPos_
+                    && topPos_ == right.topPos_
+                    && rotationIndex_ == right.rotationIndex_);
         }
         // ... or not ?
         bool operator != (pieceStatus& right) {
-            return (index_ != right.index_ || leftPos_ != right.leftPos_ || topPos_ != right.topPos_ || rotationIndex_ != right.rotationIndex_);
+            return (index_ != right.index_
+                    || leftPos_ != right.leftPos_
+                    || topPos_ != right.topPos_
+                    || rotationIndex_ != right.rotationIndex_);
         }
 
     // Members
     //
     public:
         bool valid_;
-        int8_t index_;              // Index of the piece (-1 = don't draw)
+        int8_t index_;      // Index of the piece (-1 = don't draw)
 
-        int8_t leftPos_;            // Initial pos.
+        int8_t leftPos_;    // Initial pos.
         uint8_t topPos_;
         uint8_t rotationIndex_;     // ID of current rotation
         int8_t shadowTopPos_;       // yPos of shadow (-1 = no shadow)
 };
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //-- piece object
 //--
 //--    a tetramino and all it's rotation states
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 class piece{
 

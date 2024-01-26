@@ -1,20 +1,12 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
-//--	File	: tetrisGame.h
+//--    tetrisGame.h
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
-//--
-//--	Project	: geeTetris - cpp version
-//--
-//---------------------------------------------------------------------------
-//--
-//--	Description:
-//--
-//--	    Definition of tetrisGame
-//---------------------------------------------------------------------------
+//--        Definition of tetrisGame
+//----------------------------------------------------------------------
 
 #ifndef __GEE_TETRIS_GAME_h__
-#define __GEE_TETRIS_GAME_h__	1
+#define __GEE_TETRIS_GAME_h__   1
 
 #include "consts.h"
 #include "piece.h"
@@ -48,19 +40,19 @@ extern "C" {
 // Game status
 //
 enum GAME_STATUS{
-    STATUS_READY	 = 1,
-    STATUS_RUNNING	 = 2,
-    STATUS_STOPPED	 = 8,
+    STATUS_READY     = 1,
+    STATUS_RUNNING   = 2,
+    STATUS_STOPPED   = 8,
     STATUS_CANCELED  = 16
 };
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //-- tetrisGame object
 //--
 //--    Handle the gameplay and the game(without display !)
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 class tetrisGame {
 
@@ -163,10 +155,14 @@ class tetrisGame {
 
         // Datas of a piece
         uint8_t* _nextPieceDatas() {
-            return ((nextIndex_ < 0 || nextIndex_ >= TETRAMINOS_COUNT) ? nullptr : tetraminos_[nextIndex_].datas(0));
+            return ((nextIndex_ < 0
+                || nextIndex_ >= TETRAMINOS_COUNT) ?
+                 nullptr : tetraminos_[nextIndex_].datas(0));
         }
         uint8_t* _pieceDatas(int8_t index, uint8_t  rotIndex) {
-            return ((index < 0 || index >= TETRAMINOS_COUNT || rotIndex >= tetraminos_[index].maxRotations()) ? nullptr : tetraminos_[index].datas(rotIndex));
+            return ((index < 0 || index >= TETRAMINOS_COUNT
+                    || rotIndex >= tetraminos_[index].maxRotations()) ?
+                    nullptr : tetraminos_[index].datas(rotIndex));
         }
 
         // New piece (in the game)

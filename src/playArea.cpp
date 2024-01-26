@@ -1,18 +1,10 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
-//--	File	: playArea.cpp
+//--    playArea.cpp
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
+//--            Implementation of playArea object
 //--
-//--	Project	: geeTetris - cpp version
-//--
-//---------------------------------------------------------------------------
-//--
-//--	Description:
-//--
-//--			Implementation of playArea object
-//--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 #include "playArea.h"
 
@@ -22,13 +14,13 @@ extern font_t font_horz;
 extern font_t font_vert;
 #endif // #ifdef DEST_CASIO_CALC
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //-- playArea object
 //--
 //--    methods, constants (coordinates, dimensions) for the casio calculators
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 // Construction
 //
@@ -328,42 +320,42 @@ char* playArea::__valtoa(int num, const char* name, char* str, size_t rLength){
     char* strVal(str);
 
     // Add name
-	if (name){
-	    strcpy(str, name);
-	    strVal+=strlen(str);    // num. value starts here
-	}
+    if (name){
+        strcpy(str, name);
+        strVal+=strlen(str);    // num. value starts here
+    }
 
-	// Append num. value
-	int sum ((num < 0)?-1*num:num);
-	uint8_t i(0), digit, dCount(0);
-	do{
-		digit = sum % 10;
-		strVal[i++] = '0' + digit;
-		if (!(++dCount % 3)){
-		    strVal[i++] = ' ';  // for large numbers lisibility
-		}
-
-		sum /= 10;
-	}while (sum);
-
-	// A sign ?
-	if (num < 0){
-	    strVal[i++] = '-';
-	}
-	strVal[i] = '\0';
-
-	// Reverse the string (just the num. part)
-	__strrev(strVal);
-
-	// Shift to the right ?
-    if (rLength){
-		size_t len(strlen(str));
-		if (rLength > len){
-		    __strdrag(strVal, rLength - len); // just drag the value
+    // Append num. value
+    int sum ((num < 0)?-1*num:num);
+    uint8_t i(0), digit, dCount(0);
+    do{
+        digit = sum % 10;
+        strVal[i++] = '0' + digit;
+        if (!(++dCount % 3)){
+            strVal[i++] = ' ';  // for large numbers lisibility
         }
-	}
 
-	return str;
+        sum /= 10;
+    }while (sum);
+
+    // A sign ?
+    if (num < 0){
+        strVal[i++] = '-';
+    }
+    strVal[i] = '\0';
+
+    // Reverse the string (just the num. part)
+    __strrev(strVal);
+
+    // Shift to the right ?
+    if (rLength){
+        size_t len(strlen(str));
+        if (rLength > len){
+            __strdrag(strVal, rLength - len); // just drag the value
+        }
+    }
+
+    return str;
 }
 
 // __strrev() : Reverse a string
@@ -371,19 +363,19 @@ char* playArea::__valtoa(int num, const char* name, char* str, size_t rLength){
 //  @str : String to reverse
 //
 void playArea::__strrev(char *str){
-	int i, j;
-	unsigned char a;
-	size_t len = strlen((const char *)str);
-	for (i = 0, j = len - 1; i < j; i++, j--){
-		a = str[i];
-		str[i] = str[j];
-		str[j] = a;
-	}
+    int i, j;
+    unsigned char a;
+    size_t len = strlen((const char *)str);
+    for (i = 0, j = len - 1; i < j; i++, j--){
+        a = str[i];
+        str[i] = str[j];
+        str[j] = a;
+    }
 }
 
 // __strdrag() : Drag a string to the right
 //
-//	Drag the original string to the right.  Chars on the left will be fill
+//  Drag the original string to the right.  Chars on the left will be fill
 //  with spaces.
 //
 //  This function assumes str is large enough to complete successfully
@@ -395,25 +387,25 @@ void playArea::__strrev(char *str){
 //  @return : pointer to the string
 //
 char* playArea::__strdrag(char *str, int rightChars){
-	size_t len, i;
-	if (!str || 0 == (len = strlen(str)) || rightChars <= 0){
-		return str;
-	}
+    size_t len, i;
+    if (!str || 0 == (len = strlen(str)) || rightChars <= 0){
+        return str;
+    }
 
-	str[len + rightChars] = '\0';  // New string size
+    str[len + rightChars] = '\0';  // New string size
 
-	// Drag the string
-	for (i=len; i; i--){
-		str[i+rightChars - 1] = str[i-1];
-	}
+    // Drag the string
+    for (i=len; i; i--){
+        str[i+rightChars - 1] = str[i-1];
+    }
 
-	// Put spaces on the left
-	for (i=0; i<(size_t)rightChars; i++){
-		str[i] = ' ';
-	}
+    // Put spaces on the left
+    for (i=0; i<(size_t)rightChars; i++){
+        str[i] = ' ';
+    }
 
-	// Finished
-	return str;
+    // Finished
+    return str;
 }
 
 // EOF

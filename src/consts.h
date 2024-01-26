@@ -1,18 +1,11 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
-//--	File	: consts.h
+//--    consts.h
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
-//--	Project	: geeTetris - cpp version
+//--            Shared types, objects and constants
 //--
-//---------------------------------------------------------------------------
-//--
-//--	Description:
-//--
-//--			Shared types, objects and constants
-//--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 #ifndef __GEE_TETRIS_CONSTS_h__
 #define __GEE_TETRIS_CONSTS_h__    1
@@ -37,7 +30,7 @@ extern "C" {
 
 // App. infos
 #define APP_NAME     "geeTetris"
-#define APP_VERSION  "0.6-5"
+#define APP_VERSION  "0.7.1"
 #define APP_AUTHOR   "GeeHB"
 
 // Playfield's dimensions (in box units)
@@ -85,7 +78,7 @@ enum COLOUR_ID{
     COLOUR_ID_BKGRND    = 11,
     //#define COLOUR_ID_ANIMATE   12     // animation When line if full
     COLOUR_ID_NONE = 12,
-    LAST_COLOUR_ID		= COLOUR_ID_BKGRND
+    LAST_COLOUR_ID      = COLOUR_ID_BKGRND
 };
 
 // Key codes
@@ -161,14 +154,14 @@ enum GAME_KEY{
 #define TRUE    !FALSE
 #endif // #ifndef FALSE
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //-- tetrisParameters object
 //--
 //--    All the game's parameters
 //--    could be a simple interface / struct
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 class tetrisParameters {
     public:
