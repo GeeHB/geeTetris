@@ -11,7 +11,6 @@
 #define __GEE_TETRIS_CONSTS_h__    1
 
 #include "shared/casioCalcs.h"  // Choose dest. format
-#include "shared/trace.h"       // "test" mode
 
 #ifdef DEST_CASIO_CALC
 #include <gint/keyboard.h>
@@ -172,7 +171,7 @@ class tetrisParameters {
             startLevel_ = MIN_LEVEL;
             dirtyLines_ = MIN_DIRTY_LINES;
             shadow_ = TRUE;
-            rotatedDisplay_ = FALSE;        // by default, no screen rotation
+            rotatedDisplay_ = FALSE;    // by default, no screen rotation
         }
 
         // recopy

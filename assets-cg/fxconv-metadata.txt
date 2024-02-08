@@ -1,8 +1,12 @@
 coloured.png:
   type: bopti-image
-  name: img_geeTetris
+  name: g_imgAbout
 
 pause.png:
   type: bopti-image
-  name: img_pause
+  name: g_imgPause
+  
+menu.png:
+  type: bopti-image
+  name: g_menuImgs
  

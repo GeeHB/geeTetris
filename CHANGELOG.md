@@ -1,5 +1,14 @@
-#### v0.5
-* xxx dec. 2023
+#### v0.7
+* xxx janv. 2024
+* version sans lib. c++ (pour un binaire moins volumineux)
+    * retrait des onglet (tabManager, tetrisTab, tabs, ...)
+    * remplacement par `src/shared/menuBar` (classe sans héritage et sans stl)
+* Utilisation des versions + récentes et corrigées pour les classes
+    * `src/shared/bFile`
+    * `src/shared/keyboard`
+    * `src/shared/scrCapture`
+#### v0.6.xxx
+* 22 dec. 2023
 * Ajouts
     * Génération pour la FX9860G
 * Corrections
@@ -13,14 +22,14 @@
         * 's' ('Alpha' + 'X') sur l'écran d'accueil
     * mode TRACE via `src/shared/trace.h`
         * messages sur l'écran
-        * Accès à la capture d'écran (`shift` `7`)        
+        * Accès à la capture d'écran (`shift` `7`)
     * classes partagées:
         * `src/shared/bFile` : Accès au FS
-        * `src/shared/window` : 'fenêtre' 
+        * `src/shared/window` : 'fenêtre'
 * Corrections
     * [x] BUG : Mauvais calcul de l'accélération des pieces
     * [x] BUG : La vitesse initiale ne tient pas compte du niveau de départ (=> travail en "tick")
-    * [x] BUG : score valide même si 'exit' 
+    * [x] BUG : score valide même si 'exit'
         - Simplification des statut des parties
     * [x] BUG : Sortie du jeu => retour à la police par défaut (pour l'écran et pour les scores)
     * [x] BUG : `src/shared/keyboard`` - Mauvaise de gestion des "modifiers"

@@ -12,22 +12,20 @@
 #include <cstring>
 
 #ifndef DEST_CASIO_CALC
+#include "locals.h"
 #include <iostream>
 using namespace std;
-#define KEY_F1      'a'
-#define KEY_F6      'y'
-#define KEY_EXIT    'x'
 #else
 // Background image
 //
 extern bopti_image_t g_menuImgs;
 
-#define MENU_IMG_WIDTH          12
-#define MENU_IMG_HEIGHT         12
-
-#define MENU_IMG_BACK_ID        0
-#define MENU_IMG_CHECKED_ID     1
-#define MENU_IMG_UNCHECKED_ID   2
+// Images index in the image
+enum IMAGE_INDEXES{
+    MENU_IMG_BACK_ID = 0,
+    MENU_IMG_CHECKED_ID = 1,
+    MENU_IMG_UNCHECKED_ID = 2
+};
 
 #endif // #ifndef DEST_CASIO_CALC
 
@@ -36,11 +34,48 @@ extern bopti_image_t g_menuImgs;
 menuBar::menuBar(){
     // Intializes members
     visible_ = &current_; // show current bar
-    rect_ = {0, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT,
-            CASIO_WIDTH, MENUBAR_DEF_HEIGHT};
-
+    setHeight(MENUBAR_DEF_HEIGHT, false);
     _clearMenuBar(&current_);
 }
+
+//
+// Ownerdraw function
+//
+
+// setMenuDrawingCallBack() : Set function for ownerdraw drawings
+//
+// When an item has the ITEM_STATUS_OWNERDRAWN status bit set, the
+// ownerdraw callback function will be called each time the menubar
+// needs to redraw the item
+//
+// @pF : Pointer to the callback function or NULL if no ownerdraw
+//
+// @return : pointer to the default drawing function
+//
+MENUDRAWINGCALLBACK menuBar::setMenuDrawingCallBack(MENUDRAWINGCALLBACK pF){
+    current_.pDrawing = (void*)pF;
+    return (MENUDRAWINGCALLBACK)defDrawItem;   // Def. function if needed by calling function
+}
+
+// setColour() : Change the colour used for item's drawings in the
+//              active menu bar
+//
+//  @index : index of the colour to change
+//  @colour : new colour value
+//
+//  @return : previous colour or -1 if error
+//
+int menuBar::setColour(uint8_t index, int colour){
+    if (index>=COL_COUNT){
+        return -1;
+    }
+
+    // Change the colour
+    int actual = visible_->colours[index];
+    visible_->colours[index] = colour;
+    return actual;
+}
+
 
 //
 // Dimensions
@@ -55,12 +90,15 @@ void menuBar::getRect(RECT& barRect){
 //  setHeight() : change menu bar height
 //
 //  @barHeight : New height in pixels
+//  @updateBar : Update the menubar ?
 //
 //  @return : true if hieght has changed
 //
-bool menuBar::setHeight(uint16_t barHeight){
+bool menuBar::setHeight(uint16_t barHeight, bool updateBar){
     rect_ = {0, CASIO_HEIGHT - barHeight, CASIO_WIDTH, barHeight};
-    update();
+    if (updateBar){
+        update();
+    }
     return true;
 }
 
@@ -77,27 +115,37 @@ void menuBar::update(){
     for (uint8_t index(0); index < MENU_MAX_ITEM_COUNT; index++){
         item = visible_->items[index];
 #ifdef DEST_CASIO_CALC
-        _drawItem(&anchor, item);
+        _drawItem(item, &anchor);
 #else
         if (item){
             cout << "|" <<
-                (_isBitSet(item->state, ITEM_STATE_SELECTED)?">" : " ");
-            if (_isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
+                (isBitSet(item->state, ITEM_STATE_SELECTED)?">" : " ");
+            if (isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
                 cout <<
-                    (_isBitSet(item->state, ITEM_STATE_CHECKED)?"[x] ":"[ ] ");
+                    (isBitSet(item->state, ITEM_STATE_CHECKED)?"[x] ":"[ ] ");
             }
 
-            if (_isBitSet(item->state,ITEM_STATE_INACTIVE)){
-                cout << "_" << (item->text+1);
+            if (isBitSet(item->status, ITEM_STATUS_TEXT)){
+                if (isBitSet(item->state,ITEM_STATE_INACTIVE)){
+                    cout << "_" << (item->text+1);
+                }
+                else {
+                    cout << item->text;
+                }
             }
-            else {
-                cout << item->text;
+            else{
+                cout << "[no text]";
             }
-            cout << (_isBitSet(item->state,ITEM_STATE_SELECTED)?"<" : " ");
+
+            if (item->ownerData){
+                cout << "[" << (int)item->ownerData << "]";
+            }
+
+            cout << (isBitSet(item->state,ITEM_STATE_SELECTED)?"<" : " ");
             cout << "|";
         }
         else{
-            cout << "|     |";
+            cout << "| [empty] |";
         }
 #endif // DEST_CASIO_CALC
 
@@ -138,17 +186,17 @@ bool menuBar::activateItem(int searchedID, int searchMode, bool activated){
     PMENUITEM item(_findItem(&current_, searchedID, searchMode, &container));
     if (item){
         // Found an item with this ID
-        bool active = !_isBitSet(item->state, ITEM_STATE_INACTIVE);
+        bool active = !isBitSet(item->state, ITEM_STATE_INACTIVE);
         if (active != activated){
             // change item's state
             if (activated){
-                _removeBit(item->state, ITEM_STATE_INACTIVE);
+                removeBit(item->state, ITEM_STATE_INACTIVE);
             }
             else{
-                _setBit(item->state, ITEM_STATE_INACTIVE);
+                setBit(item->state, ITEM_STATE_INACTIVE);
 
                 // an inactivate item can't be selected !
-                _removeBit(item->state, ITEM_STATE_SELECTED);
+                removeBit(item->state, ITEM_STATE_SELECTED);
                 if (container){
                     container->selIndex = -1;
                 }
@@ -168,7 +216,7 @@ bool menuBar::activateItem(int searchedID, int searchMode, bool activated){
 void menuBar::freeMenuItem(PMENUITEM item){
     if (item){
         // A submenu ?
-        if (_isBitSet(item->status, ITEM_STATUS_SUBMENU) && item->subMenu){
+        if (isBitSet(item->status, ITEM_STATUS_SUBMENU) && item->subMenu){
             _freeMenuBar((PMENUBAR)item->subMenu, true);
         }
 
@@ -199,9 +247,9 @@ MENUACTION menuBar::handleKeyboard(){
             // Associated item
             if (kID < MENU_MAX_ITEM_COUNT &&
                 (item = visible_->items[kID]) &&
-                !_isBitSet(item->state, ITEM_STATE_INACTIVE)){
+                !isBitSet(item->state, ITEM_STATE_INACTIVE)){
                 // A sub menu ?
-                if (_isBitSet(item->status, ITEM_STATUS_SUBMENU)){
+                if (isBitSet(item->status, ITEM_STATUS_SUBMENU)){
                     if (item->subMenu){
                         visible_ = (MENUBAR*)item->subMenu; // "visible" menu
                         _selectByIndex(-1, false, false);
@@ -210,9 +258,7 @@ MENUACTION menuBar::handleKeyboard(){
                 }
                 else{
                     if (IDM_RESERVED_BACK == item->id){
-                        visible_ = visible_->parent;    // Return to parent menu
-                        _selectByIndex(-1, false, false);
-                        update();
+                        showParentBar();
                     }
                     else{
                         // a selectable item ...
@@ -226,12 +272,12 @@ MENUACTION menuBar::handleKeyboard(){
                         }
 
                         // A checkbox ?
-                        if (_isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
-                            if (_isBitSet(item->state, ITEM_STATE_CHECKED)){
-                                _removeBit(item->state, ITEM_STATE_CHECKED);
+                        if (isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
+                            if (isBitSet(item->state, ITEM_STATE_CHECKED)){
+                                removeBit(item->state, ITEM_STATE_CHECKED);
                             }
                             else{
-                                _setBit(item->state, ITEM_STATE_CHECKED);
+                                setBit(item->state, ITEM_STATE_CHECKED);
                             }
                         }
                     }
@@ -266,6 +312,176 @@ MENUACTION menuBar::handleKeyboard(){
     return ret;
 }
 
+// showParentBar() : Return to parent menubar if exists
+//
+//  @updateBar : update the menu ?
+//
+void menuBar::showParentBar(bool updateBar){
+    if (visible_ && visible_->parent){
+        visible_ = visible_->parent;
+        _selectByIndex(-1, false, false);
+
+        if (updateBar){
+            update();
+        }
+    }
+}
+
+//  defDrawItem() : Draw an item
+//
+// @bar : Pointer to the bar containing the item to be drawn
+//  @item : Pointer to a MENUITEM strcut containing informations
+//          concerning the item to draw
+//  @anchor : Position of the item in screen coordinates
+//  @style : Drawing style ie. element(s) to draw
+//
+//  @return : False on error(s)
+//
+bool menuBar::defDrawItem(PMENUBAR const bar, PMENUITEM const item,
+                        RECT* const anchor, int style){
+    if (NULL == bar || NULL == anchor){
+        return false;
+    }
+
+#ifdef DEST_CASIO_CALC
+    bool selected(false);
+
+    // Draw background
+    if (isBitSet(style, MENU_DRAW_BACKGROUND)){
+        drect(anchor->x, anchor->y, anchor->x + anchor->w - 1,
+                anchor->y + anchor->h - 1,
+                bar->colours[ITEM_BACKGROUND]);
+    }
+
+    if (item){
+        int colour;
+
+        selected = isBitSet(item->state, ITEM_STATE_SELECTED);
+        int imgID(-1);  // No image
+
+        // Text
+        int x, w, h(0);
+        if (isBitSet(item->status, ITEM_STATUS_TEXT)){
+            // Text is centerd
+            dsize(item->text, NULL, &w, &h);
+        }
+
+        // An image ?
+        if (IDM_RESERVED_BACK == item->id){
+            imgID = MENU_IMG_BACK_ID;
+        }
+        else{
+            // Is the item a checkbox ?
+            if (isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
+                imgID = (isBitSet(item->state, ITEM_STATE_CHECKED)?
+                            MENU_IMG_CHECKED_ID:MENU_IMG_UNCHECKED_ID);
+            }
+        }
+
+        if (imgID > -1){
+            // New text position
+            x = anchor->x + 2;
+
+            // Draw the image on left of text
+            if (isBitSet(style, MENU_DRAW_IMAGE)){
+                dsubimage(x, anchor->y + (anchor->h - MENU_IMG_HEIGHT) / 2,
+                        &g_menuImgs, imgID * MENU_IMG_WIDTH,
+                        0, MENU_IMG_WIDTH, MENU_IMG_HEIGHT, DIMAGE_NOCLIP);
+            }
+            x+=(MENU_IMG_WIDTH + 2);
+        }
+        else{
+            x = anchor->x + (anchor->w - w) / 2;
+        }
+
+       if (isBitSet(style, MENU_DRAW_TEXT) &&
+            isBitSet(item->status, ITEM_STATUS_TEXT)){
+
+            // text too large ?
+
+            // text colour ID
+            colour = (selected?
+                        TXT_SELECTED:
+                        (isBitSet(item->state, ITEM_STATE_INACTIVE)?
+                        TXT_INACTIVE:TXT_UNSELECTED));
+
+            // draw the text
+            dtext(x, anchor->y + (anchor->h - h) / 2,
+                    bar->colours[colour], item->text);
+        }
+
+        // Borders
+        if (isBitSet(style, MENU_DRAW_BORDERS) && selected){
+            colour = bar->colours[ITEM_BORDER];
+            dline(anchor->x, anchor->y,
+                anchor->x, anchor->y + anchor->h - 2, colour); // Left
+            dline(anchor->x+1, anchor->y + anchor->h - 1,
+                anchor->x + anchor->w -1 - ITEM_ROUNDED_DIM,
+                anchor->y + anchor->h - 1, colour);  // top
+            dline(anchor->x + anchor->w -1 - ITEM_ROUNDED_DIM, // bottom
+                anchor->y + anchor->h - 1,
+                anchor->x + anchor->w - 1,
+                anchor->y + anchor->h - 1 - ITEM_ROUNDED_DIM, colour);
+            dline(anchor->x + anchor->w - 1, anchor->y,    // right
+                anchor->x + anchor->w - 1,
+                anchor->y + anchor->h - 1 - ITEM_ROUNDED_DIM, colour);
+        }
+    } // if (item)
+
+    if (isBitSet(style, MENU_DRAW_BORDERS && !selected)){
+        dline(anchor->x, anchor->y,
+                anchor->x + anchor->w -1, anchor->y,
+                bar->colours[ITEM_BORDER]);
+    }
+#endif // #ifdef DEST_CASIO_CALC
+    return true;    // Done
+}
+
+// isMenuItemChecked() : Check wether a checkbox is in the checked state
+//
+//  @id : checkbox item id
+//  @searchMode : type of search (SEARCH_BY_ID or SEARCH_BY_INDEX)
+//
+//  return : ITEM_CHECKED if the item is checked, ITEM_UNCHECKED if the item is not cheched
+//          ITEM_ERROR on error (invalid id, not a check box, ...)
+//
+int menuBar::isMenuItemChecked(int id, int searchMode){
+    PMENUITEM item(_findItem(&current_, id, searchMode));
+    if (item && isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
+        return (isBitSet(item->state, ITEM_STATE_CHECKED)?ITEM_CHECKED:ITEM_UNCHECKED);
+    }
+
+    // Not found or not a checkbox
+    return ITEM_ERROR;
+}
+
+// checkMenuItem() : Check or uncheck a menu item checkbox
+//
+//  @id : checkbox item id
+//  @searchMode : type of search (SEARCH_BY_ID or SEARCH_BY_INDEX)
+//  @checkState : ITEM_CHECKED if item should be checked or ITEM_UNCHECKED
+//
+//  return : ITEM_CHECKED it item is checked, ITEM_UNCHECKED if not checked
+//           and ITEM_ERROR on error
+//
+int menuBar::checkMenuItem(int id, int searchMode, int check){
+    PMENUITEM item(_findItem(&current_, id, searchMode));
+    if (item && isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
+        if (1 == check){
+            setBit(item->state, ITEM_STATE_CHECKED);
+        }
+        else{
+            removeBit(item->state, ITEM_STATE_CHECKED);
+        }
+
+        // return tatus of bit
+        return (isBitSet(item->state, ITEM_STATE_CHECKED)?ITEM_CHECKED:ITEM_UNCHECKED);
+    }
+
+    // Not found or not a checkbox
+    return ITEM_ERROR;
+}
+
 //
 // Menu bars
 //
@@ -279,9 +495,9 @@ MENUACTION menuBar::handleKeyboard(){
 //  @text : Submenu text
 //  @state : initial state of submenu
 //
-//  @return : true if sub menu is added
+//  @return : pointer the created item or NULL
 //
-bool menuBar::_addSubMenu(const PMENUBAR container, uint8_t index,
+PMENUITEM menuBar::_addSubMenu(PMENUBAR const container, uint8_t index,
                             PMENUBAR subMenu, int id,
                             const char* text, int itemState){
     size_t len(0);
@@ -291,14 +507,14 @@ bool menuBar::_addSubMenu(const PMENUBAR container, uint8_t index,
         _findItem(container, id, SEARCH_BY_ID) ||
         container->itemCount == (MENU_MAX_ITEM_COUNT - 1) ||
         ! text || !(len = strlen(text))){
-        return false;
+        return NULL;
     }
 
     // Create a copy of the menu bar
     PMENUBAR sub(_copyMenuBar(subMenu,
-                    _isBitSet(itemState, ITEM_STATE_NO_BACK_BUTTON)));
+                    isBitSet(itemState, ITEM_STATE_NO_BACK_BUTTON)));
     if (NULL == sub){
-        return false;
+        return NULL;
     }
 
     // Create item
@@ -306,17 +522,17 @@ bool menuBar::_addSubMenu(const PMENUBAR container, uint8_t index,
                             ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
     if (NULL == item){
         _freeMenuBar(sub, true);
-        return false;
+        return NULL;
     }
 
-    item->status = ITEM_STATUS_SUBMENU;
+    item->status = ITEM_STATUS_SUBMENU | ITEM_STATUS_TEXT;
     item->subMenu = sub;
     sub->parent = container;
 
     container->items[index] = item;    // item pointing to the sub menu
     container->itemCount++;
 
-    return true;
+    return item;
 }
 
 // _clearMenuBar() : Empty a menu bar
@@ -325,10 +541,18 @@ bool menuBar::_addSubMenu(const PMENUBAR container, uint8_t index,
 //
 void menuBar::_clearMenuBar(PMENUBAR bar){
     if (bar){
-        bar->itemCount = 0;
+        // Bar is empty
+        memset(bar, 0x00, sizeof(MENUBAR));
         bar->selIndex = -1;     // No item is selected
-        bar->parent = NULL;
         memset(bar->items, 0x00, sizeof(PMENUITEM) * MENU_MAX_ITEM_COUNT);
+
+        // Def colours
+        bar->colours[TXT_SELECTED] = ITEM_COLOUR_SELECTED;
+        bar->colours[TXT_UNSELECTED] = ITEM_COLOUR_UNSELECTED;
+        bar->colours[TXT_INACTIVE] = ITEM_COLOUR_INACTIVE;
+        bar->colours[ITEM_BACKGROUND] = ITEM_COLOUR_BACKGROUND;
+        bar->colours[ITEM_BACKGROUND_SELECTED] = ITEM_COLOUR_BACKGROUND;
+        bar->colours[ITEM_BORDER] = ITEM_COLOUR_BORDER;
     }
 }
 
@@ -342,12 +566,13 @@ void menuBar::_clearMenuBar(PMENUBAR bar){
 //
 //  @return : Pointer to the new copy
 //
-PMENUBAR menuBar::_copyMenuBar(const PMENUBAR source, bool noBackButton){
+PMENUBAR menuBar::_copyMenuBar(PMENUBAR const source, bool noBackButton){
     PMENUBAR bar(NULL);
     if (source && (bar = (PMENUBAR)malloc(sizeof(MENUBAR)))){
         _clearMenuBar(bar);
         bar->itemCount = source->itemCount;
         bar->parent = source->parent;
+        bar->pDrawing = source->pDrawing;
         uint8_t max(noBackButton?MENU_MAX_ITEM_COUNT:(MENU_MAX_ITEM_COUNT-1));
         PMENUITEM sitem, nitem;
         for (uint8_t index(0); index < max; index++){
@@ -361,6 +586,11 @@ PMENUBAR menuBar::_copyMenuBar(const PMENUBAR source, bool noBackButton){
                     _createItem(IDM_RESERVED_BACK, STR_RESERVED_BACK,
                                 ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
         }
+
+        // Copy choosen colours
+        memcpy(bar->colours, source->colours, COL_COUNT * sizeof(int));
+
+
     }
     return bar;
 }
@@ -395,18 +625,17 @@ void menuBar::_freeMenuBar(PMENUBAR bar, bool freeAll){
 //  @state : Item's initial state
 //  @status : Item's status
 //
-//  @return : true if the item has been added
+//  @return : pointer the created item or NULL
 //
-bool menuBar::_addItem(const PMENUBAR bar, uint8_t index, int id,
+PMENUITEM menuBar::_addItem(PMENUBAR const bar, uint8_t index, int id,
                         const char* text, int state, int status){
-    size_t len(0);
     if (!bar ||
         index >= MENU_MAX_ITEM_COUNT ||
         NULL != bar->items[index] ||
         _findItem(bar, id, SEARCH_BY_ID) ||    // this ID is already handled
-        current_.itemCount >= MENU_MAX_ITEM_COUNT ||
-        ! text || !(len = strlen(text))){
-        return false;
+        current_.itemCount >= MENU_MAX_ITEM_COUNT /*||
+        !text || !(len = strlen(text))*/){
+        return NULL;
     }
 
     PMENUITEM item(_createItem(id, text, state, status));
@@ -421,10 +650,10 @@ bool menuBar::_addItem(const PMENUBAR bar, uint8_t index, int id,
         }
 
         // Successfully added
-        return true;
+        return item;
     }
 
-    return false;
+    return NULL;
 }
 
 //  _createItem() : creae a new menu item
@@ -437,21 +666,27 @@ bool menuBar::_addItem(const PMENUBAR bar, uint8_t index, int id,
 //  @return : pointer to the new created if valid or NULL
 //
 PMENUITEM menuBar::_createItem(int id, const char* text, int state, int status){
-    size_t len(strlen(text));
+    size_t len(text?strlen(text):0);
     MENUITEM* item(NULL);
     if ((item = (PMENUITEM)malloc(sizeof(MENUITEM)))){
+        memset(item, 0x00, sizeof(MENUITEM));
         item->id = id;
         item->state = state;
         item->status = status;
+        setBit(item->status, ITEM_STATUS_TEXT);
         if (len > ITEM_NAME_LEN){
             strncpy(item->text, text, ITEM_NAME_LEN);
             item->text[ITEM_NAME_LEN] = '\0';
         }
         else{
-            strcpy(item->text, text);
+            if (text){
+                strcpy(item->text, text);
+            }
+            else{
+                item->text[0]='\0';
+                removeBit(item->status, ITEM_STATUS_TEXT);
+            }
         }
-
-        item->subMenu = NULL;
     }
 
     return item;
@@ -464,17 +699,23 @@ PMENUITEM menuBar::_createItem(int id, const char* text, int state, int status){
 //
 //  @return : pointer to the copied item or NULL
 //
-PMENUITEM menuBar::_copyItem(const PMENUBAR bar, PMENUITEM source){
+PMENUITEM menuBar::_copyItem(PMENUBAR const bar, PMENUITEM source){
     PMENUITEM item(NULL);
     if (source && (item = (PMENUITEM)malloc(sizeof(MENUITEM)))){
         item->id = source->id;
         item->state = source->state;
         item->status = source->status;
-        strcpy(item->text, source->text);;
+        item->ownerData = source->ownerData;
+        if (isBitSet(source->status, ITEM_STATUS_TEXT)){
+            strcpy(item->text, source->text);
+        }
+        else{
+            item->text[0] = '\0';
+        }
 
-        if (source->status & ITEM_STATUS_SUBMENU){
+        if (isBitSet(source->status, ITEM_STATUS_SUBMENU)){
             item->subMenu = _copyMenuBar((PMENUBAR)source->subMenu,
-                        _isBitSet(item->state, ITEM_STATE_NO_BACK_BUTTON));
+                        isBitSet(item->state, ITEM_STATE_NO_BACK_BUTTON));
             ((PMENUBAR)(item->subMenu))->parent = bar;
         }
         else{
@@ -493,11 +734,11 @@ PMENUITEM menuBar::_copyItem(const PMENUBAR bar, PMENUITEM source){
 //  @containerBar : pointer to a PMENUBAR. when not NULL,
 //          if item is found, containerBar will point to the bar
 //          containing the item
-//  @pIndex : when not NULL, will point to the Item'ID in its menu
+//  @pIndex : when not NULL, will point to the item's index in its menu
 //
 //  @return : pointer to the item if found or NULL
 //
-PMENUITEM menuBar::_findItem(const PMENUBAR bar, int searchedID, int searchMode,
+PMENUITEM menuBar::_findItem(PMENUBAR const bar, int searchedID, int searchMode,
                 PMENUBAR* containerBar, uint8_t* pIndex){
     PMENUITEM item(NULL), sItem(NULL), foundItem(NULL);
     if (bar){
@@ -505,24 +746,24 @@ PMENUITEM menuBar::_findItem(const PMENUBAR bar, int searchedID, int searchMode,
             for (uint8_t index = 0;
                 !foundItem && index < MENU_MAX_ITEM_COUNT; index++){
                 if ((item = bar->items[index])){
-                    if (_isBitSet(item->status, ITEM_STATUS_SUBMENU)){
-                        // in a sub menu ?
-                        if ((sItem = _findItem((PMENUBAR)item->subMenu,
-                                searchedID, searchMode, containerBar, pIndex))){
-                            foundItem = sItem;   // Found in a sub menu
+                    if (item->id == searchedID){    // items and sub-menus have IDs !!!
+                        if (pIndex){
+                            (*pIndex) = index;
                         }
+
+                        foundItem = item;
                     }
                     else{
-                        if (item->id == searchedID){
-                            if (pIndex){
-                                (*pIndex) = index;
+                        if (isBitSet(item->status, ITEM_STATUS_SUBMENU)){
+                            // search in the sub-menu ?
+                            if ((sItem = _findItem((PMENUBAR)item->subMenu,
+                                    searchedID, searchMode, containerBar, pIndex))){
+                                foundItem = sItem;   // Found in a sub-menu
                             }
-
-                            foundItem = item;
                         }
                     }
-                }
-            }
+                } // if (item)
+            } // for
         }
         else{
             if (SEARCH_BY_INDEX == searchMode){
@@ -551,7 +792,7 @@ PMENUITEM menuBar::_findItem(const PMENUBAR bar, int searchedID, int searchMode,
 //
 //  @return : true if the item has been successfully removed
 //
-bool menuBar::_removeItem(const PMENUBAR bar, int searchedID, int searchMode){
+bool menuBar::_removeItem(PMENUBAR const bar, int searchedID, int searchMode){
     PMENUITEM item(NULL);
     if (bar){
         switch(searchMode){
@@ -562,7 +803,7 @@ bool menuBar::_removeItem(const PMENUBAR bar, int searchedID, int searchMode){
                 bar->items[searchedID] = NULL;
 
                 // A sub menu ?
-                if (_isBitSet(item->status, ITEM_STATUS_SUBMENU)){
+                if (isBitSet(item->status, ITEM_STATUS_SUBMENU)){
                     _freeMenuBar((PMENUBAR)item->subMenu, true);
                 }
 
@@ -626,31 +867,31 @@ bool menuBar::_selectByIndex(int8_t index, bool selected, bool redraw){
         }
 
         if (selected){
-            _setBit(item->state, ITEM_STATE_SELECTED);
+            setBit(item->state, ITEM_STATE_SELECTED);
             visible_->selIndex = index;
 
             // unselect prev.
             if (-1 != sel && (item = visible_->items[sel])){
-                _removeBit(item->state, ITEM_STATE_SELECTED);
+                removeBit(item->state, ITEM_STATE_SELECTED);
             }
         }
         else{
-            _removeBit(item->state, ITEM_STATE_SELECTED);
+            removeBit(item->state, ITEM_STATE_SELECTED);
             visible_->selIndex = -1;
         }
     }
 
-    // Update screen ?
+    // Update item ?
     if (redraw){
         RECT anchor = {rect_.x, rect_.y, MENUBAR_DEF_ITEM_WIDTH, rect_.h};
         if (-1 != sel){
             anchor.x+=(sel * anchor.w);
-            _drawItem(&anchor, visible_->items[sel]);
+            _drawItem(visible_->items[sel], &anchor);
         }
 
         if (-1 != index){
             anchor.x=(index * anchor.w + rect_.x);
-            _drawItem(&anchor, visible_->items[index]);
+            _drawItem(visible_->items[index], &anchor);
         }
     }
 
@@ -660,89 +901,25 @@ bool menuBar::_selectByIndex(int8_t index, bool selected, bool redraw){
 
 //  _drawItem() : Draw an item
 //
-//  @anchor : Position of the item in screen coordinates
 //  @item : Pointer to a MENUITEM strcut containing informations
 //          concerning the item to draw
+//  @anchor : Position of the item in screen coordinates
 //
-void menuBar::_drawItem(const RECT* anchor, const MENUITEM* item){
-#ifdef DEST_CASIO_CALC
-    bool selected(false);
-
-    // Draw background
-    drect(anchor->x, anchor->y, anchor->x + anchor->w - 1,
-            anchor->y + anchor->h - 1, COLOUR_WHITE);
-
-    if (item){
-        selected = _isBitSet(item->state, ITEM_STATE_SELECTED);
-        int imgID(-1);  // No image
-
-        // Text
-        if (item->text){
-            int x,y, w, h;
-
-            // Text is centerd
-            dsize(item->text, NULL, &w, &h);
-            y = anchor->y + (anchor->h - h) / 2;
-
-            // An image ?
-            if (IDM_RESERVED_BACK == item->id){
-                imgID = MENU_IMG_BACK_ID;
-            }
-            else{
-                // Is the item a checkbox ?
-                if (_isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
-                    imgID = (_isBitSet(item->state, ITEM_STATE_CHECKED)?
-                                MENU_IMG_CHECKED_ID:MENU_IMG_UNCHECKED_ID);
-                }
-            }
-
-            if (imgID > -1){
-                // New text position
-                x = anchor->x + (anchor->w - w - MENU_IMG_WIDTH - 2) / 2;
-
-                // Draw the image on left of text
-                dsubimage(x, y - 2, &g_menuImgs, imgID * MENU_IMG_WIDTH,
-                        0, MENU_IMG_WIDTH, MENU_IMG_HEIGHT, DIMAGE_NOCLIP);
-                x+=(MENU_IMG_WIDTH + 2);
-            }
-            else{
-                x = anchor->x + (anchor->w - w) / 2;
-            }
-
-            // text too large ?
-
-            // draw the text
-            dtext(x, y,
-                selected?
-                    ITEM_COLOUR_SELECTED:
-                    (_isBitSet(item->state, ITEM_STATE_INACTIVE)?
-                        ITEM_COLOUR_INACTIVE:
-                        ITEM_COLOUR_UNSELECTED)
-                , item->text);
-        }
-
-        // frame
-        if (selected){
-            dline(anchor->x, anchor->y,
-                anchor->x, anchor->y + anchor->h - 2, COLOUR_BLACK); // Left
-            dline(anchor->x+1, anchor->y + anchor->h - 1,
-                anchor->x + anchor->w -1 - ITEM_ROUNDED_DIM,
-                anchor->y + anchor->h - 1, COLOUR_BLACK);  // top
-            dline(anchor->x + anchor->w -1 - ITEM_ROUNDED_DIM, // bottom
-                anchor->y + anchor->h - 1,
-                anchor->x + anchor->w - 1,
-                anchor->y + anchor->h - 1 - ITEM_ROUNDED_DIM, COLOUR_BLACK);
-            dline(anchor->x + anchor->w - 1, anchor->y,    // right
-                anchor->x + anchor->w - 1,
-                anchor->y + anchor->h - 1 - ITEM_ROUNDED_DIM, COLOUR_BLACK);
-        }
-    } // if (item)
-
-    if (!selected){
-        dline(anchor->x, anchor->y,
-                anchor->x + anchor->w -1, anchor->y, COLOUR_BLACK);
+//  @return : False on error(s)
+//
+bool menuBar::_drawItem(PMENUITEM const item, RECT* const anchor){
+    if (NULL == anchor){
+        return false;
     }
-#endif // #ifdef DEST_CASIO_CALC
+
+    MENUDRAWINGCALLBACK ownerFunction;
+    if (isBitSet(item->status, ITEM_STATUS_OWNERDRAWN) &&
+        NULL != (ownerFunction = (MENUDRAWINGCALLBACK)visible_->pDrawing)){
+        return ownerFunction(visible_, item, anchor, MENU_DRAW_ALL); // Call ownerdraw func.
+    }
+
+    // Call default method
+    return defDrawItem(visible_, item, anchor, MENU_DRAW_ALL);
 }
 
 // EOF

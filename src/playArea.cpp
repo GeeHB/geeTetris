@@ -18,7 +18,7 @@ extern font_t font_vert;
 //--
 //-- playArea object
 //--
-//--    methods, constants (coordinates, dimensions) for the casio calculators
+//--    methods, constants (coordinates, dimensions) for the casio calcs
 //--
 //----------------------------------------------------------------------
 
@@ -93,20 +93,25 @@ void playArea::_rotatedDisplay(bool doRotate, bool force){
         if (false == (rotatedDisplay_ = doRotate)){
             playfield_.boxWidth = CASIO_BOX_WIDTH;
 
-            playfield_.pos.x = CASIO_PLAYFIELD_LEFT + CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
+            playfield_.pos.x = CASIO_PLAYFIELD_LEFT +
+                    CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
             playfield_.pos.y = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
 
-            playfield_.pos.w = PLAYFIELD_WIDTH * playfield_.boxWidth + 2 * CASIO_BORDER_GAP;
-            playfield_.pos.h = PLAYFIELD_HEIGHT * playfield_.boxWidth + 2 * CASIO_BORDER_GAP;
+            playfield_.pos.w = PLAYFIELD_WIDTH * playfield_.boxWidth
+                    + 2 * CASIO_BORDER_GAP;
+            playfield_.pos.h = PLAYFIELD_HEIGHT * playfield_.boxWidth
+                    + 2 * CASIO_BORDER_GAP;
 
             // Nextpiece zone dims
             nextPiece_.boxWidth = CASIO_BOX_WIDTH_NP;
             nextPiece_.pos.x = CASIO_INFO_LEFT + CASIO_INFO_GAP;
             if (nextPiece_.pos.x <= (playfield_.pos.x + playfield_.pos.w)){
-                nextPiece_.pos.x = playfield_.pos.x + playfield_.pos.w + 2 * CASIO_INFO_GAP;
+                nextPiece_.pos.x = playfield_.pos.x
+                    + playfield_.pos.w + 2 * CASIO_INFO_GAP;
             }
             nextPiece_.pos.y = CASIO_INFO_TOP;
-            nextPiece_.pos.w = nextPiece_.pos.h = 4 * nextPiece_.boxWidth + 2 * CASIO_INFO_GAP;
+            nextPiece_.pos.w = nextPiece_.pos.h =
+                    4 * nextPiece_.boxWidth + 2 * CASIO_INFO_GAP;
 
             // Keys
             keyLeft_ = KEY_CODE_LEFT;
@@ -182,7 +187,9 @@ void playArea::dtext(int x, int y, int fg, const char* text){
 //   @fillColour : Filling colour or NO_COLOR (-1) if none
 //   @borderColour : Colour of the border or NO_COLOR (-1) if none
 //
-void playArea::drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int fillColour, [[maybe_unused]]  int borderColour){
+void playArea::drawRectangle(uint16_t x, uint16_t y, uint16_t width,
+    uint16_t height, int fillColour, [[maybe_unused]]  int borderColour){
+
     int16_t xFrom(x), yFrom(y);
     int16_t xTo(xFrom + width - 1), yTo(yFrom + height - 1);
 
@@ -219,7 +226,8 @@ void playArea::drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t he
 //   @width, @height : dimensions
 //   @borderColour : Colour of the border
 //
-void playArea::drawBorder(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int borderColour){
+void playArea::drawBorder(uint16_t x, uint16_t y, u
+    int16_t width, uint16_t height, int borderColour){
     // Draw the rect
 #ifdef DEST_CASIO_CALC
 #ifdef FX9860G
@@ -245,7 +253,8 @@ void playArea::drawBorder(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh
 //  @x, @y [i/o] : coordinates to change
 //  @width, @height : (new) dimensions in pixels of a single block in the choosen area
 //
-void playArea::shitfToZone(uint8_t zoneID, uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height) {
+void playArea::shitfToZone(uint8_t zoneID, uint16_t& x, uint16_t& y,
+    uint16_t& width, uint16_t& height) {
     if (zoneID == ZONE_GAME){
         x = playfield_.pos.x + x * playfield_.boxWidth;
         y = playfield_.pos.y + (PLAYFIELD_HEIGHT - 1 - y) * playfield_.boxWidth;

@@ -16,7 +16,7 @@
 #ifndef __GEE_TOOLS_B_FILE_h__
 #define __GEE_TOOLS_B_FILE_h__      1
 
-#define VERSION_B_FILE_OBJECT       "0.5.3"
+#define _GEEHB_BFILE_VER_    "0.5.6"
 
 #ifdef DEST_CASIO_CALC
 #include <gint/gint.h>
@@ -27,58 +27,7 @@ typedef int SEARCHHANDLE;
 #define BFILE_CHAR_ZERO 0x0000
 
 #else
-#include <cstdio>
-#include <fstream>
-#include <iostream>
-#include <dirent.h>
-#include <filesystem>       // to create a folder
-namespace fs = std::filesystem;
-
-typedef char* FONTCHARACTER;
-typedef DIR* SEARCHHANDLE;
-
-#define BFILE_CHAR_ZERO 0x00
-
-// Error codes
-#define BFile_IllegalParam  -1
-
-// Entry types
-#define BFile_File    1
-#define BFile_Folder  5
-
-// Access modes
-#define BFile_ReadOnly      0x01
-#define BFile_WriteOnly     0x02
-#define BFile_ReadWrite     (BFile_ReadOnly | BFile_WriteOnly)
-#define BFile_Share         0x80
-
-struct BFile_FileInfo
-{
-    uint16_t index;
-    uint16_t type;
-    uint32_t file_size;
-    /* Data size (file size minus the header) */
-    uint32_t data_size;
-    /* Is 0 if the file is complete */
-    uint32_t property;
-    /* Address of first fragment (do not use directly) */
-    void *address;
-};
-
-// Enum. types
-#define BFile_Type_Directory  0x0000
-#define BFile_Type_File       0x0001
-#define BFile_Type_Addin      BFile_Type_File
-#define BFile_Type_Eact       0x0003
-#define BFile_Type_Language   0x0004
-#define BFile_Type_Bitmap     0x0005
-#define BFile_Type_MainMem    0x0006
-#define BFile_Type_Temp       0x0007
-#define BFile_Type_Dot        0x0008
-#define BFile_Type_DotDot     0x0009
-#define BFile_Type_Volume     0x000a
-#define BFile_Type_Archived   BFile_Type_File
-
+#include "bFileLocals.h"
 #endif // #ifndef DEST_CASIO_CALC
 
 // Max lengthof a path  in "FONTCHARACTER"
@@ -87,17 +36,18 @@ struct BFile_FileInfo
 
 // Error codes specific to this class
 //
-#define BFILE_NO_ERROR                  0
-#define BFILE_ERROR_INVALID_PARAMETERS  1   // BFile_IllegalParam ?
-#define BFILE_ERROR_FILE_NOT_OPENED     2
-#define BFILE_ERROR_FILE_OPENED         3
-#define BFILE_ERROR_INVALID_FILENAME    4
-#define BFILE_ERROR_MEMORY              5
-
-#define BFILE_LAST_ERROR_CODE           BFILE_ERROR_MEMORY
+enum BILE_CODE{
+    BFILE_NO_ERROR = 0,
+    BFILE_ERROR_INVALID_PARAMETERS = 1,   // BFile_IllegalParam ?
+    BFILE_ERROR_FILE_NOT_OPENED = 2,
+    BFILE_ERROR_FILE_OPENED = 3,
+    BFILE_ERROR_INVALID_FILENAME = 4,
+    BFILE_ERROR_MEMORY = 5,
+    BFILE_LAST_ERROR_CODE = BFILE_ERROR_MEMORY
+};
 
 //
-// FONTCHARACTER macos
+// FONTCHARACTER macros
 //
 
 // Clear an existing "string"
@@ -125,7 +75,7 @@ public:
     //
     // @return : true if the file or folder exists
     //
-    bool exist(const FONTCHARACTER fName);
+    bool exist(FONTCHARACTER const fName);
 
     // isOpen() : Is the file already open ?
     //
@@ -148,6 +98,9 @@ public:
     // @return : file opened ?
     //
     bool open(FONTCHARACTER const filename, int access);
+#ifdef DEST_CASIO_CALC
+    bool open(char* const filename, int access);
+#endif // #ifdef DEST_CASIO_CALC
 
     // create() : Create a file or a folder
     //
@@ -158,7 +111,7 @@ public:
     //
     // @return : file or folder successfully created ?
     //
-    bool create(const FONTCHARACTER fname, int type, int *size);
+    bool create(FONTCHARACTER const fname, int type, int *size);
 
     // createEx() : Create a file or a folder
     //
@@ -174,7 +127,7 @@ public:
     // @return : file or folder successfully created
     //          - and openend for file ?
     //
-    bool createEx(const FONTCHARACTER fname, int type,
+    bool createEx(FONTCHARACTER const fname, int type,
                     int *size, int access);
 
     // write() : Write data in the current file
@@ -203,8 +156,8 @@ public:
     //
     //  @return : file successfully renamed ?
     //
-    bool rename(const FONTCHARACTER oldPath,
-                const FONTCHARACTER newPath);
+    bool rename(FONTCHARACTER const oldPath,
+                FONTCHARACTER const newPath);
 
     // remove() : Remove a file
     //
@@ -212,7 +165,7 @@ public:
     //
     // @return : file successfully removed ?
     //
-    bool remove(const FONTCHARACTER filename);
+    bool remove(FONTCHARACTER const filename);
 
     // close() : Close the file
     //
@@ -228,7 +181,7 @@ public:
     //
     //  @return :  True on success
     //
-    bool findFirst(const FONTCHARACTER pattern,
+    bool findFirst(FONTCHARACTER const pattern,
                 SEARCHHANDLE*sHandle, FONTCHARACTER foundFile,
                 struct BFile_FileInfo *fileInfo);
 
@@ -272,7 +225,7 @@ public:
     //
     //  @return : pointer to a FONTCHARACTER
     //
-    static bool FC_str2FC(const char* src, FONTCHARACTER dest);
+    static bool FC_str2FC(char* const src, FONTCHARACTER dest);
 
     // FC_FC2str() : Convert a string from FC format to char*
     //
@@ -281,7 +234,7 @@ public:
     //
     //  @return : pointer to a FONTCHARACTER
     //
-    static bool FC_FC2str(const FONTCHARACTER src, char* dest);
+    static bool FC_FC2str(FONTCHARACTER const src, char* dest);
 
     // FC_cpy() : Copy a FONTCHARACTER to another FONTCHARACTER
     //
@@ -290,7 +243,7 @@ public:
     //
     //  @return : pointer to the copy if done  NULL on error
     //
-    static FONTCHARACTER FC_cpy(FONTCHARACTER dest, const FONTCHARACTER src);
+    static FONTCHARACTER FC_cpy(FONTCHARACTER dest, FONTCHARACTER const src);
 
     // FC_cat() : Cancatenate 2 FONTCHARACTER
     //
@@ -299,7 +252,7 @@ public:
     //
     //  @return : pointer to the destination string if done  NULL on error
     //
-    static FONTCHARACTER FC_cat(FONTCHARACTER dest, const FONTCHARACTER add);
+    static FONTCHARACTER FC_cat(FONTCHARACTER dest, FONTCHARACTER const add);
 
     // FC_dup() : Duplicate a FONTCHARACTER
     //
@@ -307,7 +260,7 @@ public:
     //
     //  @return : pointer to the copy or NULL on error
     //
-    static FONTCHARACTER FC_dup(const FONTCHARACTER src);
+    static FONTCHARACTER FC_dup(FONTCHARACTER const src);
 
     // FC_len() : length of a fileName in "char"
     //
@@ -315,7 +268,7 @@ public:
     //
     //  @return : size of fName (O on error)
     //
-    static size_t FC_len(const FONTCHARACTER fName);
+    static size_t FC_len(FONTCHARACTER const fName);
 
 private:
 #ifdef DEST_CASIO_CALC

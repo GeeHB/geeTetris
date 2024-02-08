@@ -68,10 +68,20 @@ class tetrisGame {
             end();
         }
 
-        // Game's parameters
+        // setParameters() : Set game's parameters
+        //
+        //  @params : Struct. containining parameters for the game
+        //    These parameters are choosen by the user
+        //
         void setParameters(tetrisParameters* params);
 
-        // Start the game
+        // start() : Start the tetris game
+        //
+        //  The entire game is handled by this method.
+        //  It retuns on error or when the game is over
+        //
+        //  @return :  false on error(s) or if canceled by user
+        //
         bool start();
 
         // Pause or resume the game
@@ -129,7 +139,11 @@ class tetrisGame {
             return values_[LEVEL_ID].value;
         }
 
-        // Show best scores and current one (if in the list)
+       // _showScores() : Show best scores and current one (if in the list)
+        //
+        //  @score : new score. If equal to -1, the bests scores are shown.
+        //  @lines : # completed lines
+        //  @level : end level
         //
         static void showScores(int32_t score = -1, uint32_t lines = 0, uint32_t level = 0);
 
@@ -222,7 +236,9 @@ class tetrisGame {
         void _drawBackGround();
 
         // Draw a tetramino using the given colour
-        void _drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool inTetrisGame = true, uint8_t specialColourID = COLOUR_ID_NONE);
+        void _drawSinglePiece(uint8_t* datas, uint16_t cornerX,
+                        uint16_t cornerY, bool inTetrisGame = true,
+                        uint8_t specialColourID = COLOUR_ID_NONE);
 
         // Draw the tetrisGame
         void _drawTetrisGame();

@@ -17,7 +17,7 @@
 #include "shared/bFile.h"
 
 #ifdef FXCG50
-extern bopti_image_t img_pause;
+extern bopti_image_t g_imgPause;
 #endif // #ifdef FXCG50
 
 //----------------------------------------------------------------------
@@ -137,7 +137,7 @@ void tetrisGame::setParameters(tetrisParameters* params) {
 //  The entire game is handled by this method.
 //  It retuns on error or when the game is over
 //
-//  @return :  false on error(s) or cancel
+//  @return :  false on error(s) or if canceled by user
 //
 bool tetrisGame::start() {
     // Check the object state
@@ -156,7 +156,9 @@ bool tetrisGame::start() {
 #ifdef DEST_CASIO_CALC
     int seqCount(0);
     uint8_t nextLevel(parameters_.startLevel_);
-    int levelTicks(parameters_.startLevel_==1? GAME_START_TICKS : _getSpeed(GAME_START_TICKS, parameters_.startLevel_ - 1));
+    int levelTicks(parameters_.startLevel_==1?
+            GAME_START_TICKS :
+            _getSpeed(GAME_START_TICKS, parameters_.startLevel_ - 1));
     int tickCount(levelTicks);
 
     // Timer creation
@@ -188,7 +190,8 @@ bool tetrisGame::start() {
 
                 // Change level (if necessary) & accelerate
                 if (nextLevel > values_[LEVEL_ID].value){
-                    levelTicks = (nextLevel < GAME_MAX_ACC_LEVEL?_getSpeed(levelTicks, 1): levelTicks);
+                    levelTicks = (nextLevel < GAME_MAX_ACC_LEVEL?
+                        _getSpeed(levelTicks, 1): levelTicks);
 
                     values_[LEVEL_ID].value = nextLevel;
                     _drawNumValue(LEVEL_ID);
@@ -220,7 +223,7 @@ void tetrisGame::pause(){
 
     // draw the picture
 #ifdef DEST_CASIO_CALC
-    dimage(0, 0, &img_pause);
+    dimage(0, 0, &g_imgPause);
 #endif // #ifdef DEST_CASIO_CALC
     casioDisplay_.update();
 
@@ -270,12 +273,13 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
     if (score != -1 && scores.add(score, lines, level)){
         scoresFile.remove((FONTCHARACTER)SCORES_FILENAME);
 
-        // Try to create the file
+        // Try to create (and open) the file
         int size(SIZE_SCORES_FILE);
-        scoresFile.createEx((FONTCHARACTER)SCORES_FILENAME, BFile_File, &size, BFile_WriteOnly);
+        scoresFile.createEx((FONTCHARACTER)SCORES_FILENAME,
+                    BFile_File, &size, BFile_WriteOnly);
 
         // Save the new list
-        if (scoresFile.getLastError() == 0){
+        if (BFILE_NO_ERROR == scoresFile.getLastError()){
             _list2Scores(scores, data);
             scoresFile.write(data, SIZE_SCORES_FILE);
         }
@@ -366,7 +370,8 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 void tetrisGame::_rotateDisplay(bool first){
 
     // (new) rotation mode
-    casioDisplay_.rotatedDisplay(first?parameters_.rotatedDisplay_:!casioDisplay_.isRotated());
+    casioDisplay_.rotatedDisplay(first?parameters_.rotatedDisplay_:
+                !casioDisplay_.isRotated());
 
     _redraw();
 
@@ -374,8 +379,8 @@ void tetrisGame::_rotateDisplay(bool first){
         // Redraw the piece and it's shadow
         if (-1 != nextPos_.shadowTopPos_) {
             // first : the shadow
-            _drawSinglePiece(_pieceDatas(nextPos_.index_, n
-                    extPos_.rotationIndex_), nextPos_.leftPos_,
+            _drawSinglePiece(_pieceDatas(nextPos_.index_,
+                    nextPos_.rotationIndex_), nextPos_.leftPos_,
                     nextPos_.shadowTopPos_, true, COLOUR_ID_SHADOW);
         }
 
@@ -533,8 +538,8 @@ void tetrisGame::_piecePosChanged() {
 
 // _getSpeed() : Get the game speed in ticks according to the level
 //
-//  The player can move the piece every 'tick' but the piecce will automatically
-//  go down one line every #currentTicks
+//  The player can move the piece every 'tick' but the piecce will
+//  automatically go down one line every #currentTicks
 //
 //  This 'speed' is linked to the level in the game
 //
@@ -627,7 +632,9 @@ bool tetrisGame::_canMove(int8_t leftPos, uint8_t  topPos) {
     uint8_t* datas = tetraminos_[nextPos_.index_].currentDatas();
 
     // Max index visible on desk
-    uint8_t maxY = (topPos >= PLAYFIELD_HEIGHT) ? PIECE_HEIGHT - 1 + PLAYFIELD_HEIGHT - topPos : PIECE_HEIGHT - 1;
+    uint8_t maxY = (topPos >= PLAYFIELD_HEIGHT) ?
+            PIECE_HEIGHT - 1 + PLAYFIELD_HEIGHT - topPos :
+            PIECE_HEIGHT - 1;
 
     // Test all the contained blocks starting from bottom
     int8_t realX(0), realY(0);
@@ -644,7 +651,8 @@ bool tetrisGame::_canMove(int8_t leftPos, uint8_t  topPos) {
                 }
 
                 // Is there a block at this place ?
-                if (realY < PLAYFIELD_HEIGHT && playField_[realY][realX] != COLOUR_ID_BOARD) {
+                if (realY < PLAYFIELD_HEIGHT &&
+                        playField_[realY][realX] != COLOUR_ID_BOARD) {
                     return false;
                 }
             }

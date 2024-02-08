@@ -1,19 +1,11 @@
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
-//--	File	: window.cpp
+//--    window.cpp
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
-//--
-//--	Project	:
-//--
-//---------------------------------------------------------------------------
-//--
-//--	Description:
-//--
-//--			Definition of window object - Show a "window" on
+//--            Definition of window object - Show a "window" on
 //--            top of the screen
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 #include "window.h"
 
@@ -22,13 +14,13 @@
 #include <cstring>
 #include <cstdlib>
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //-- window::_winInfo structure
 //--
 //--    Informations concerning a window object
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 // Construction
 //
@@ -69,13 +61,13 @@ void window::winInfo::copy(_winInfo& src){
     textColour = (src.textColour < 0?COLOUR_BLACK:src.textColour);
 }
 
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 //--
 //-- window object
 //--
 //--    "window" displayed on top of the screen
 //--
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 // Construction
 //
@@ -160,7 +152,10 @@ bool window::create(winInfo& info){
         }
 
         // Center the title (or part of the title that fit window size)
-        dtext_opt(client_.x + (client_.w - width)/2 + WIN_BORDER_WIDTH, client_.y + WIN_BORDER_WIDTH, infos_.textColour, infos_.bkColour, DTEXT_LEFT, DTEXT_TOP, infos_.title, nLen);
+        dtext_opt(client_.x + (client_.w - width)/2 + WIN_BORDER_WIDTH, c
+                    lient_.y + WIN_BORDER_WIDTH, infos_.textColour,
+                    infos_.bkColour, DTEXT_LEFT, DTEXT_TOP,
+                    infos_.title, nLen);
 
         // New client dims with a title
         client_.y += height;
@@ -234,7 +229,9 @@ void window::drawText(const char* text, int x, int y, int tCol, int bCol){
         win2Screen(dest);   // Change origin
         if (text && text[0]){
 #ifdef DEST_CASIO_CALC
-            dtext_opt(dest.x, dest.y, (tCol==-1)?infos_.textColour:tCol, (bCol==-1)?infos_.bkColour:bCol, DTEXT_LEFT, DTEXT_TOP, text);
+            dtext_opt(dest.x, dest.y, (
+                tCol==-1)?infos_.textColour:tCol, (bCol==-1)?
+                infos_.bkColour:bCol, DTEXT_LEFT, DTEXT_TOP, text);
 #else
             std::cout << "\t- " << text << std::endl;
 #endif // #ifdef DEST_CASIO_CALC

@@ -6,24 +6,14 @@
 //--
 //----------------------------------------------------------------------
 
-#include "consts.h"
-
-#include "shared/tabs.h"
-#include "tetrisTabs.h"
-#include "tetrisGame.h"
-
-#include "shared/keyboard.h"
-#include "shared/trace.h"
-
-#ifdef TRACE_MODE
-scrCapture  gCapture;           // Screen capture
-#endif //#ifdef TRACE_MODE
+#include "tetrisMenu.h"
 
 // Program entry point
 //
 int main(){
     tetrisParameters params;
     tabKeyboard keys;
+    scrCapture  capture;           // Screen capture
 
     // Create tabs
     //
@@ -103,18 +93,16 @@ int main(){
                     tetrisGame::showScores();
                     currentTab->select();
                 }
-#ifdef TRACE_MODE
                 else{
                     if (KEY_CODE_CAPTURE == car  && keys.isPressed(MOD_SHIFT)){
-                        if (!gCapture.isSet()){
-                            gCapture.install();
+                        if (!capture.isSet()){
+                            capture.install();
                         }
                         else{
-                            gCapture.remove();
+                            capture.remove();
                         }
                     }
                 }
-#endif // #ifdef TRACE_MODE
             }
         }
 

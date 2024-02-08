@@ -11,9 +11,8 @@ set(SOURCES
   src/shared/scrCapture.cpp
   src/shared/keyboard.cpp
   src/shared/bFile.cpp
-  src/shared/tabs.cpp
+  src/shared/menuBar.cpp
   src/shared/window.cpp
-  src/tetrisTabs.cpp
   src/tetrisGame.cpp
   src/piece.cpp
   src/playArea.cpp
@@ -31,13 +30,14 @@ set(ASSETS
 set(ASSETS_cg
   assets-cg/coloured.png
   assets-cg/pause.png
+  assets-cg/menu.png
 )
 
 fxconv_declare_assets(${ASSETS} ${ASSETS_fx} ${ASSETS_cg} WITH_METADATA)
 
 add_executable(geeTetris ${SOURCES} ${ASSETS} ${ASSETS_${FXSDK_PLATFORM}})
 target_compile_options(geeTetris PRIVATE -Wall -Wextra -Os -D=DEST_CASIO_CALC -D=NO_CAPTURE)
-target_link_libraries(geeTetris Gint::Gint -lstdc++)
+target_link_libraries(geeTetris Gint::Gint)
 
 if("${FXSDK_PLATFORM_LONG}" STREQUAL fx9860G)
   generate_g1a(TARGET geeTetris OUTPUT "geeTetris.g1a"
