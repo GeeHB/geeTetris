@@ -16,7 +16,6 @@ int main(){
     appMenu.about();    // Show about as splash screen
     appMenu.run();
 
-    // Free memory
 #ifdef DEST_CASIO_CALC
     gint_setrestart(1);
     //gint_osmenu();

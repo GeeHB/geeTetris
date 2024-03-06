@@ -4,7 +4,7 @@
 //--
 //--            Definition of sList objet
 //--                A (very) simple linked list for scores.
-//--                Since this list will only have around ten elements,
+//--                Since this list will only have about ten elements,
 //--                we don't need to use std lists
 //--
 //----------------------------------------------------------------------

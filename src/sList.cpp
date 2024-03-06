@@ -4,7 +4,7 @@
 //--
 //--            Definition of sList objet
 //--                A (very) simple linked list for scores.
-//--                Since this list will only have around ten elements,
+//--                Since this list will only have about ten elements,
 //--                we don't need to use std lists
 //--
 //----------------------------------------------------------------------
@@ -35,18 +35,24 @@ int8_t sList::_node::compare(_node* other){
     }
 
     if (other->record.score < record.score
-        || (other->record.score == record.score && other->record.lines < record.lines)
+        || (other->record.score == record.score &&
+            other->record.lines < record.lines)
 #ifndef FX9860G
-        || (other->record.score == record.score && other->record.lines == record.lines && other->record.level < record.level )
+        || (other->record.score == record.score &&
+            other->record.lines == record.lines &&
+            other->record.level < record.level )
 #endif // #ifndef FX9860G
         ){
         return -1;
     }
 
     if (other->record.score > record.score
-        || (other->record.score == record.score && other->record.lines > record.lines)
+        || (other->record.score == record.score &&
+            other->record.lines > record.lines)
 #ifndef FX9860G
-        || (other->record.score == record.score && other->record.lines == record.lines && other->record.level > record.level )
+        || (other->record.score == record.score &&
+            other->record.lines == record.lines &&
+            other->record.level > record.level )
 #endif // #ifndef FX9860G
         ){
         return 1;

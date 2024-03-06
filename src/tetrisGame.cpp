@@ -114,7 +114,7 @@ void tetrisGame::setParameters(tetrisParameters* params) {
     }
 
     //  Screen rotation
-    casioDisplay_.rotatedDisplay(params->rotatedDisplay_ == TRUE, true);
+    casioDisplay_.rotatedDisplay(params->rotatedDisplay_, true);
 
     // Empty the playset
     _emptyTetrisGame();

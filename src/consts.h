@@ -125,10 +125,27 @@ enum GAME_KEY{
 #define MIN_DIRTY_LINES   0
 #define MAX_DIRTY_LINES   8
 
-#ifndef FALSE
-#define FALSE   0
-#define TRUE    !FALSE
-#endif // #ifndef FALSE
+#define DEF_SHADOW      1  // 1 == true
+
+//
+// Value of parameters
+//
+#define VAL_RANGE_BOX_WIDTH     15
+
+#define VAL_RANGE_COMMENT_X     10
+#define VAL_COMMENT_Y_OFFSET    15
+
+#define VAL_COL_BORDER          COLOUR_BLACK
+#define VAL_COL_TXT_SEL         COLOUR_WHITE
+#define VAL_COL_BK_SEL          COLOUR_LT_BLUE
+
+#define VAL_COL_TXT_UNSEL       COLOUR_BLACK
+#define VAL_COL_BK_UNSEL        COLOUR_WHITE
+
+// Blinking
+//
+#define BLINK_TICK_DURATION     100 //  in ms
+#define BLINK_TICKCOUNT         4   // "duration" of blinking in ticks
 
 //----------------------------------------------------------------------
 //--
@@ -147,8 +164,8 @@ class tetrisParameters {
             // Set default parameters
             startLevel_ = MIN_LEVEL;
             dirtyLines_ = MIN_DIRTY_LINES;
-            shadow_ = TRUE;
-            rotatedDisplay_ = FALSE;    // by default, no screen rotation
+            shadow_ = (DEF_SHADOW == 1);
+            rotatedDisplay_ = false; // by default, no screen rotation
         }
 
         // recopy
@@ -166,8 +183,8 @@ class tetrisParameters {
     public:
         int startLevel_;
         int dirtyLines_;
-        int shadow_;
-        int rotatedDisplay_;
+        bool shadow_;
+        bool rotatedDisplay_;
 };
 
 // A single unsigned value (and its previous val if exists)

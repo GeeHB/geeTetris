@@ -15,8 +15,10 @@
 extern "C" {
 #endif // #ifdef __cplusplus
 
+//
 // Main menu-bar
 //
+
 #define IDM_START               1
 #ifdef FX9860G
 #define IDS_START               "Go"
@@ -49,6 +51,23 @@ extern "C" {
 #define IDM_PARAMS_LEVEL        23
 #define IDS_PARAMS_LEVEL        "Level"
 #define COMMENT_PARAMS_LEVEL    "Starting level"
+
+//
+// Parameters' menu
+//
+
+#define IDM_PARAMS_OK           201
+#define IDS_PARAMS_OK           "Ok"
+
+#define IDM_PARAMS_PREV         202
+#define IDS_PARAMS_PREV         "<<"
+
+#define IDM_PARAMS_NEXT         203
+#define IDS_PARAMS_NEXT         ">>"
+
+#define IDM_PARAMS_CANCEL       204
+#define IDS_PARAMS_CANCEL       "Cancel"
+
 
 #ifdef __cplusplus
 }
