@@ -226,8 +226,8 @@ void playArea::drawRectangle(uint16_t x, uint16_t y, uint16_t width,
 //   @width, @height : dimensions
 //   @borderColour : Colour of the border
 //
-void playArea::drawBorder(uint16_t x, uint16_t y, u
-    int16_t width, uint16_t height, int borderColour){
+void playArea::drawBorder(uint16_t x, uint16_t y,
+        uint16_t width, uint16_t height, int borderColour){
     // Draw the rect
 #ifdef DEST_CASIO_CALC
 #ifdef FX9860G

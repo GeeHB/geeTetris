@@ -13,6 +13,7 @@
 #define __GEE_TETRIS_SIMPLE_LIST_h__    1
 
 #include <cstdint>
+#include <cstdlib>
 
 #ifdef __cplusplus
 extern "C" {
@@ -79,9 +80,9 @@ class sList{
 
     // Internal node
     typedef struct _node{
-        // Construction
-        _node(uint32_t escore = 0, uint16_t elines = 0, uint16_t elevel = 0);
-        _node(RECORD& score);
+        // Set values
+        void setValues(uint32_t escore = 0, uint16_t elines = 0,
+                uint16_t elevel = 0);
 
         // compare() : Comparison between current node and other node
         //
@@ -108,7 +109,7 @@ class sList{
 
         // Construction
         sList(){
-            head_ = tail_ = nullptr;    // The list is empty
+            head_ = tail_ = NULL;    // The list is empty
         }
 
         // Destruction

@@ -2,6 +2,7 @@
 /*.g3a*
 /*.g1a
 project.md
+*.base.*
 
 # Python bytecode
 __pycache__/

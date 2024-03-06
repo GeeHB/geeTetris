@@ -298,9 +298,9 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
     window::winInfo wInf;
     wInf.title = (char*)"Best scores";
     wInf.style = WIN_STYLE_DBORDER | WIN_STYLE_HCENTER;
-    wInf.position.y = WIN_X;
-    wInf.position.w = WIN_WIDTH;
-    wInf.position.h = WIN_HEIGHT;
+    wInf.pos.y = WIN_X;
+    wInf.pos.w = WIN_WIDTH;
+    wInf.pos.h = WIN_HEIGHT;
 #ifndef FX9860G
     wInf.bkColour = COLOUR_LT_GREY;
 #endif // #ifdef FX9860G

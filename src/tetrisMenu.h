@@ -11,7 +11,7 @@
 
 #include "consts.h"
 
-#include "menu.h"
+#include "menus.h"
 #include "shared/scrCapture.h"
 
 #include "tetrisGame.h"
@@ -31,12 +31,30 @@ public:
     // Construction
     tetrisMenu();
 
+    // clearScreen() : Clear the whole screen
+    //
+    void clearScreen();
+
     // about() : Show "About params."
     //.
-    void about();
+    void about(){
+        _onAbout();
+    }
+
+    // run() : start/run the app.
+    //
+    void run();
 
     // Internal methods
 private:
+
+    // _createMenu() : Create app. menu bar
+    //
+    void _createMenu();
+
+    // _onAbout() : Show "about" informations
+    //
+    void _onAbout();
 
     // _onStart() : start a new game with current params
     //

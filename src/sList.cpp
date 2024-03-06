@@ -11,24 +11,16 @@
 
 #include "sList.h"
 
-// Construction
+// Set values
 //
-sList::_node::_node(uint32_t escore, uint16_t elines, [[maybe_unused]] uint16_t elevel){
+void sList::_node::setValues(uint32_t escore, uint16_t elines,
+                [[maybe_unused]] uint16_t elevel){
     record.score = escore;
     record.lines = elines;
 #ifndef FX9860G
     record.level = elevel;
 #endif // #ifndef FX9860G
-    next = nullptr;
-}
-
-sList::_node::_node(RECORD& score){
-    record.score = score.score;
-    record.lines = score.lines;
-#ifndef FX9860G
-    record.level = score.level;
-#endif // #ifndef FX9860G
-    next = nullptr;
+    next = NULL;
 }
 
 // Node comparison
@@ -38,7 +30,7 @@ sList::_node::_node(RECORD& score){
 //   1 : *other > *this
 //
 int8_t sList::_node::compare(_node* other){
-    if (nullptr == other){
+    if (NULL == other){
         return -2;
     }
 
@@ -75,12 +67,14 @@ int8_t sList::_node::compare(_node* other){
 // Add a score
 //
 bool sList::add(uint32_t score, uint16_t lines, uint16_t level){
-    sList::PNODE current(head_), prev(nullptr), node(nullptr);
+    sList::PNODE current(head_), prev(NULL), node(NULL);
 
-    node = new sList::NODE(score, lines, level);
-    if (nullptr == node){
+    node = (sList::PNODE)malloc(sizeof(sList::NODE));
+    if (NULL == node){
         return false;   // Memory error
     }
+
+    node->setValues(score, lines, level);
 
     // Search position
     int8_t c;
@@ -105,7 +99,7 @@ bool sList::add(uint32_t score, uint16_t lines, uint16_t level){
 
         // Deep equal ???
         if (!c){
-            delete node;
+            free(node);
             return false;   // already stored
         }
 
@@ -129,10 +123,12 @@ bool sList::add(uint32_t score, uint16_t lines, uint16_t level){
 // Append a score
 //
 bool sList::append(uint32_t score, uint16_t lines, uint16_t level){
-    sList::PNODE node = new sList::NODE(score, lines, level);
-    if (nullptr == node){
+    sList::PNODE node = (sList::PNODE)malloc(sizeof(sList::NODE));
+    if (NULL == node){
         return false;   // Memory error
     }
+
+    node->setValues(score, lines, level);
 
     // Append to the tail
     if (tail_){
@@ -151,16 +147,16 @@ bool sList::append(uint32_t score, uint16_t lines, uint16_t level){
 // Empty the list
 //
 void sList::clear(){
-    sList::PNODE pnode(head_), next(nullptr);
+    sList::PNODE pnode(head_), next(NULL);
 
     // browse and delete ...
     while (pnode){
         next = pnode->next;
-        delete pnode;
+        free(pnode);
         pnode = next;   // forward
     }
 
-    head_ = tail_ = nullptr;    // The list is now empty
+    head_ = tail_ = NULL;    // The list is now empty
 }
 
 // EOF
