@@ -17,11 +17,10 @@
 using namespace std;
 #else
 // Background image
-//
 extern bopti_image_t g_menuImgs;
 
 // Images index in the image
-enum IMAGE_INDEXES{
+enum MENU_IMG_INDEX{
     MENU_IMG_BACK_ID = 0,
     MENU_IMG_CHECKED_ID = 1,
     MENU_IMG_UNCHECKED_ID = 2
@@ -75,7 +74,6 @@ int menuBar::setColour(uint8_t index, int colour){
     visible_->colours[index] = colour;
     return actual;
 }
-
 
 //
 // Dimensions
@@ -175,6 +173,18 @@ bool menuBar::activateItem(int searchedID, int searchMode, bool activated){
     return false;
 }
 
+// isMenuItemActivated() : Check wether an item is activated or not
+//
+//  @id : item id
+//  @searchMode : type of search (SEARCH_BY_ID or SEARCH_BY_INDEX)
+//
+//  return : true if the item is activted
+//
+bool menuBar::isMenuItemActivated(int id, int searchMode){
+    PMENUITEM item(_findItem(&current_, id, searchMode));
+    return (item && !isBitSet(item->state, ITEM_STATE_INACTIVE));
+}
+
 //  freeMenuItem() : Free memory used by a menu item
 //
 //  @item : Pointer to the menu item to be released
@@ -200,7 +210,7 @@ MENUACTION menuBar::handleKeyboard(){
     uint8_t kID(0);
     keyboard kb;
     PMENUITEM item(NULL);
-    MENUACTION ret = {0, MOD_NONE, ACTION_KEYBOARD};
+    MENUACTION ret = {0, ITEM_STATE_DEFAULT, MOD_NONE, ACTION_KEYBOARD};
     bool readKeyboard(true);
 
     if (readKeyboard){
@@ -227,11 +237,6 @@ MENUACTION menuBar::handleKeyboard(){
                         showParentBar();
                     }
                     else{
-                        // a selectable item ...
-                        ret.value = item->id;
-                        ret.type = ACTION_MENU;
-                        readKeyboard = false;
-
                         // select the item
                         if (kID != visible_->selIndex){
                             _selectByIndex(kID, true, true);
@@ -246,6 +251,12 @@ MENUACTION menuBar::handleKeyboard(){
                                 setBit(item->state, ITEM_STATE_CHECKED);
                             }
                         }
+
+                        // a selectable item ...
+                        ret.value = item->id;
+                        ret.type = ACTION_MENU;
+                        ret.state = item->state;
+                        readKeyboard = false;
                     }
                 }
             }
@@ -396,7 +407,7 @@ bool menuBar::defDrawItem(PMENUBAR const bar, PMENUITEM const item,
         }
     } // if (item)
 
-    if (isBitSet(style, MENU_DRAW_BORDERS && !selected)){
+    if (isBitSet(style, MENU_DRAW_BORDERS) && !selected){
         dline(anchor->x, anchor->y,
                 anchor->x + anchor->w -1, anchor->y,
                 bar->colours[ITEM_BORDER]);
@@ -422,12 +433,6 @@ bool menuBar::defDrawItem(PMENUBAR const bar, PMENUITEM const item,
             cout << "[no text]";
         }
 
-        /*
-        if (item->ownerData){
-            cout << "[" << (int)item->ownerData << "]";
-        }
-        */
-
         cout << (isBitSet(item->state,ITEM_STATE_SELECTED)?"<" : " ");
         cout << "|";
     }
@@ -443,13 +448,15 @@ bool menuBar::defDrawItem(PMENUBAR const bar, PMENUITEM const item,
 //  @id : checkbox item id
 //  @searchMode : type of search (SEARCH_BY_ID or SEARCH_BY_INDEX)
 //
-//  return : ITEM_CHECKED if the item is checked, ITEM_UNCHECKED if the item is not cheched
-//          ITEM_ERROR on error (invalid id, not a check box, ...)
+//  return : ITEM_CHECKED if the item is checked, ITEM_UNCHECKED
+//          if the item is not cheched ITEM_ERROR
+//          on error (invalid id, not a check box, ...)
 //
 int menuBar::isMenuItemChecked(int id, int searchMode){
     PMENUITEM item(_findItem(&current_, id, searchMode));
     if (item && isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
-        return (isBitSet(item->state, ITEM_STATE_CHECKED)?ITEM_CHECKED:ITEM_UNCHECKED);
+        return (isBitSet(item->state,
+                ITEM_STATE_CHECKED)?ITEM_CHECKED:ITEM_UNCHECKED);
     }
 
     // Not found or not a checkbox
@@ -462,13 +469,13 @@ int menuBar::isMenuItemChecked(int id, int searchMode){
 //  @searchMode : type of search (SEARCH_BY_ID or SEARCH_BY_INDEX)
 //  @checkState : ITEM_CHECKED if item should be checked or ITEM_UNCHECKED
 //
-//  return : ITEM_CHECKED it item is checked, ITEM_UNCHECKED if not checked
+//  return : ITEM_CHECKED if item is checked, ITEM_UNCHECKED if not checked
 //           and ITEM_ERROR on error
 //
-int menuBar::checkMenuItem(int id, int searchMode, int check){
+int menuBar::checkMenuItem(int id, int searchMode, int checkState){
     PMENUITEM item(_findItem(&current_, id, searchMode));
     if (item && isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
-        if (1 == check){
+        if (ITEM_CHECKED == checkState){
             setBit(item->state, ITEM_STATE_CHECKED);
         }
         else{
@@ -476,7 +483,8 @@ int menuBar::checkMenuItem(int id, int searchMode, int check){
         }
 
         // return tatus of bit
-        return (isBitSet(item->state, ITEM_STATE_CHECKED)?ITEM_CHECKED:ITEM_UNCHECKED);
+        return (isBitSet(item->state,
+                ITEM_STATE_CHECKED)?ITEM_CHECKED:ITEM_UNCHECKED);
     }
 
     // Not found or not a checkbox
@@ -634,7 +642,7 @@ PMENUITEM menuBar::_addItem(PMENUBAR const bar, uint8_t index, int id,
     if (!bar ||
         index >= MENU_MAX_ITEM_COUNT ||
         NULL != bar->items[index] ||
-        _findItem(bar, id, SEARCH_BY_ID) ||    // this ID is already handled
+        _findItem(bar, id, SEARCH_BY_ID) ||    // already handled
         current_.itemCount >= MENU_MAX_ITEM_COUNT /*||
         !text || !(len = strlen(text))*/){
         return NULL;

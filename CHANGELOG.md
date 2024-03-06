@@ -1,5 +1,5 @@
 #### v0.7
-* xxx janv. 2024
+* xxx fev. 2024
 * version sans lib. c++ (pour un binaire moins volumineux)
     * retrait des onglet (tabManager, tetrisTab, tabs, ...)
     * remplacement par `src/shared/menuBar` (classe sans héritage et sans stl)

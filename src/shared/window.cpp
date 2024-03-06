@@ -147,7 +147,7 @@ bool window::create(winInfo& info){
         }
 
         // Center the title (or part of the title that fit window size)
-        dtext_opt(client_.x + (client_.w - width)/2 + WIN_BORDER_WIDTH,
+        dtext_opt(client_.x + (client_.w - width)/2,
                     client_.y + WIN_BORDER_WIDTH, infos_.textColour,
                     infos_.bkColour, DTEXT_LEFT, DTEXT_TOP,
                     infos_.title, nLen);
@@ -204,33 +204,26 @@ void window::update(){
 //          the default ground colour will be used
 //
 void window::drawText(const char* text, int x, int y, int tCol, int bCol){
-    if (activated_){
-        /*
-        POINT dest;
-        if (x < 0 ){
-
-        }
-        else{
-            dest.x = x;
-        }
-
-        if (y < 0){
-        }
-        else{
-            dest.y = y;
-        }
-        */
-        POINT dest(x, y);
-        win2Screen(dest);   // Change origin
-        if (text && text[0]){
+    if (activated_ && text && text[0]){
 #ifdef DEST_CASIO_CALC
-            dtext_opt(dest.x, dest.y, (
-                tCol==-1)?infos_.textColour:tCol, (bCol==-1)?
-                infos_.bkColour:bCol, DTEXT_LEFT, DTEXT_TOP, text);
-#else
-            std::cout << "\t- " << text << std::endl;
-#endif // #ifdef DEST_CASIO_CALC
+        POINT dest;
+        int w(0), h(0);
+        if (x < 0 || y < 0){
+            dsize(text, NULL, &w, &h);  // Need text dims to center
         }
+
+        // Center text (or not ...)
+        dest.x = client_.x + ((x<0)?((client_.w - w)/2):x);
+        dest.y = client_.y + ((y<0)?((client_.h - h)/2):y);
+
+        dtext_opt(dest.x, dest.y,
+            (tCol==-1)?infos_.textColour:tCol,
+            (bCol==-1)?infos_.bkColour:bCol,
+            DTEXT_LEFT, DTEXT_TOP,
+            text);
+#else
+        std::cout << "\t- " << text << std::endl;
+#endif // #ifdef DEST_CASIO_CALC
     } // if (activated_)
 }
 

@@ -12,7 +12,7 @@
 #include "casioCalcs.h"
 #include "keyboard.h"
 
-#define _GEEHB_MENU_VER_        "0.5.1"
+#define _GEEHB_MENU_VER_        "0.5.3"
 
 #define MENU_MAX_ITEM_COUNT     6   // ie. "F" buttons count
 
@@ -28,7 +28,7 @@
 #define MENU_IMG_WIDTH          12
 #define MENU_IMG_HEIGHT         12
 
-#define ITEM_ROUNDED_DIM         4
+#define ITEM_ROUNDED_DIM        4
 
 //
 // Item pos is a menu bar
@@ -118,7 +118,7 @@ typedef struct _menuItem{
     int status;
     char text[ITEM_NAME_LEN + 1];
     void* subMenu;  // if item is a submenu, points to the submenu
-    int ownerData;  // Can ba anything ...
+    int ownerData;  // Can be anything ...
 } MENUITEM,* PMENUITEM;
 
 // A menu bar
@@ -136,9 +136,17 @@ typedef struct _menuBar{
 //
 typedef struct _menuAction{
     int value;
+    int state;
     uint modifier;
     uint8_t type;
 } MENUACTION;
+
+// Types of actions
+//
+enum MENU_ACTION{
+    ACTION_MENU = 0,    // value is a menu ID
+    ACTION_KEYBOARD = 1 // value is a keycode
+};
 
 // Ownerdraw's function prototype
 //
@@ -148,12 +156,6 @@ typedef bool (*MENUDRAWINGCALLBACK)(
             RECT* const,        // Drawing rect for item
             int style);         // Elements (in item) to draw
 
-// Types of actions
-//
-enum MENU_ACTION{
-    ACTION_MENU = 0,    // value is a menu ID
-    ACTION_KEYBOARD = 1 // value is a keycode
-};
 
 // Types of search modes
 //
@@ -375,11 +377,11 @@ public:
     //  @searchMode : type of search (SEARCH_BY_ID or SEARCH_BY_INDEX)
     //  @checkState : ITEM_CHECKED if item should be checked or ITEM_UNCHECKED
     //
-    //  return : ITEM_CHECKED it item is checked, ITEM_UNCHECKED if not checked
+    //  return : ITEM_CHECKED if item is checked, ITEM_UNCHECKED if not checked
     //           and ITEM_ERROR on error
     //
     int checkMenuItem(int id, int searchMode = SEARCH_BY_ID,
-                    int check = ITEM_CHECKED);
+                    int checkState = ITEM_CHECKED);
 
     //  removeItem() : Remove an item from the current menu bar
     //      Remove the item menu or the submenu
@@ -444,18 +446,23 @@ public:
         return activateItem(searchedID, searchMode, activated);
     }
 
+    // isMenuItemActivated() : Check wether an item is activated or not
+    //
+    //  @id : item id
+    //  @searchMode : type of search (SEARCH_BY_ID or SEARCH_BY_INDEX)
+    //
+    //  return : true if the item is activted
+    //
+    bool isMenuItemActivated(int id, int searchMode = SEARCH_BY_ID);
+
     //
     // Item access and modifications
     //
 
-    bool getItem(int searchID, int searchMode, PMENUITEM* pItem);
-    bool setItem(int searchID, int searchMode, PMENUITEM pItem, int Mask);
-
-    //  findItem() : Find an item in the menu bar and its submenus
+    //  getItem() : Find an item in the menu bar and its submenus
     //
     //  @searchedID : id or index of the searched item
     //  @searchMode : Type of search (SEARCH_BY_ID or SEARCH_BY_INDEX)
-    //
     //  @containerBar : pointer to a PMENUBAR. when not NULL,
     //          if item is found, containerBar will point to the bar
     //          containing the item
@@ -463,11 +470,32 @@ public:
     //
     //  @return : pointer to the item if found or NULL
     //
-    PMENUITEM findItem(int searchedID, int searchMode,
+    PMENUITEM getItem(int searchedID, int searchMode,
                 PMENUBAR* containerBar = NULL,
                 uint8_t* pIndex = NULL){
         return _findItem(&current_, searchedID, searchMode,
                         containerBar, pIndex);
+    }
+
+    //  setItem() : Modify an item in the menu bar and its submenus
+    //
+    //  @pItem : Pointer to the modified menu item
+    //  @searchedID : id or index of the searched item
+    //  @searchMode : Type of search (SEARCH_BY_ID or SEARCH_BY_INDEX)
+    //  @mask : Mask to identify modified fields in the MENUITEM struct
+    //
+    //  @return : true if successfully applied
+    //
+    bool setItem(PMENUITEM pItem, int searchID, int searchMode, int Mask);
+
+    //  findItem() : Find an item in the menu bar and its submenus
+    //
+    //  Use getItem
+    //
+    PMENUITEM findItem(int searchedID, int searchMode,
+                PMENUBAR* containerBar = NULL,
+                uint8_t* pIndex = NULL){
+        return getItem(searchedID, searchMode, containerBar, pIndex);
     }
 
     //  freeMenuItem() : Free memory used by a menu item
