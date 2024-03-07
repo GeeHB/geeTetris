@@ -1,8 +1,10 @@
 #### v0.7
-* xxx fev. 2024
-* version sans lib. c++ (pour un binaire moins volumineux)
+* xxx mars. 2024
+* Taille réduite du binaire
+    * version sans lib. c++
     * retrait des onglet (tabManager, tetrisTab, tabs, ...)
     * remplacement par `src/shared/menuBar` (classe sans héritage et sans stl)
+    * image "pause" regenérée (// sudoSolver)
 * Utilisation des versions + récentes et corrigées pour les classes
     * `src/shared/bFile`
     * `src/shared/keyboard`

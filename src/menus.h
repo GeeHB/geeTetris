@@ -46,11 +46,11 @@ extern "C" {
 
 #define IDM_PARAMS_LINES        22
 #define IDS_PARAMS_LINES        "Lines"
-#define COMMENT_PARAMS_LINES    "'Dirty' lines"
+#define COMMENT_PARAMS_LINES    "'Dirty' lines :"
 
 #define IDM_PARAMS_LEVEL        23
 #define IDS_PARAMS_LEVEL        "Level"
-#define COMMENT_PARAMS_LEVEL    "Starting level"
+#define COMMENT_PARAMS_LEVEL    "Starting level :"
 
 //
 // Parameters' menu

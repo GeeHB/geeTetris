@@ -127,6 +127,9 @@ enum GAME_KEY{
 
 #define DEF_SHADOW      1  // 1 == true
 
+// Ensure value is in the range
+#define IN_RANGE(val, min, max) ((val < min)?min:((val > max)?max:val))
+
 //
 // Value of parameters
 //
@@ -145,7 +148,14 @@ enum GAME_KEY{
 // Blinking
 //
 #define BLINK_TICK_DURATION     100 //  in ms
-#define BLINK_TICKCOUNT         4   // "duration" of blinking in ticks
+#define BLINK_TICKCOUNT         5   // "duration" of blinking in ticks
+
+// "pause" image
+//
+#define IMG_PAUSE_W         CASIO_WIDTH
+#define IMG_PAUSE_H         70
+#define IMG_PAUSE_COPY_Y    46
+#define IMG_PAUSE_LINES     (CASIO_HEIGHT - IMG_PAUSE_H)
 
 //----------------------------------------------------------------------
 //--

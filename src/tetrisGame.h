@@ -224,7 +224,7 @@ class tetrisGame {
         void _redraw();
 
         // Display the next piece
-        void _drawNextPiece(int8_t pieceIndex);
+        void _drawNextPiece();
 
         // Erase the "next piece" tetramino
         void _eraseNextPiece();

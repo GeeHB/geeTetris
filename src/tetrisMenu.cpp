@@ -35,6 +35,7 @@ void tetrisMenu::run(){
                 // Start a new game
                 case IDM_START:
                     _onStart();
+                    menu_.selectByIndex(0, true, true); // redraw menu
                     break;
 
                 // About
@@ -61,6 +62,8 @@ void tetrisMenu::run(){
                     if (newVal != -1){
                         params_.dirtyLines_ = newVal;
                     }
+
+                    menu_.update();
                     break;
                 }
 
@@ -73,6 +76,8 @@ void tetrisMenu::run(){
                     if (newVal != -1){
                         params_.startLevel_ = newVal;
                     }
+
+                    menu_.update();
                     break;
                 }
 
@@ -107,7 +112,7 @@ void tetrisMenu::_createMenu(){
     paramsMenu.appendItem(IDM_PARAMS_LEVEL, IDS_PARAMS_LEVEL);
     menu_.appendSubMenu(&paramsMenu, IDM_PARAMS, IDS_PARAMS);
 
-    menu_.appendItem(IDM_ABOUT, IDS_ABOUT);
+    menu_.appendItem(IDM_ABOUT, IDS_ABOUT, ITEM_STATE_SELECTED);
     menu_.addItem(MENU_POS_RIGHT, IDM_QUIT, IDS_QUIT);
 
     menu_.update();
@@ -124,6 +129,9 @@ void tetrisMenu::_onStart(){
         game.showScores(game.score(),
             game.lines(), game.level());  // Show final score
     }
+
+    menu_.selectByIndex(0, true);
+    menu_.update();
 }
 
 // _onAbout() : Show "about" informations
@@ -206,13 +214,6 @@ int8_t tetrisMenu::_onChangeNumParam(uint8_t value,
     if (timerID >= 0){
         timer_start(timerID);   // set the timer
     }
-#endif // #ifdef DEST_CASIO_CALC
-
-#ifdef DEST_CASIO_CALC
-    if (timerID >= 0){
-        timer_stop(timerID);    // stop the timer
-    }
-
     // Install parameters' specific menu-bar
     menuBar menu;
     MENUACTION action;
@@ -229,7 +230,7 @@ int8_t tetrisMenu::_onChangeNumParam(uint8_t value,
             tick = 0;
 
             // Time to blink ?
-            if (!(--tickCount)){
+            if (!(tickCount--)){
                 // Blink
                 showSelected = !showSelected;
                 tickCount = BLINK_TICKCOUNT;
@@ -240,6 +241,29 @@ int8_t tetrisMenu::_onChangeNumParam(uint8_t value,
         // A keyboard event ?
         action = menu.handleKeyboard();
         switch (action.value){
+
+            // Prev. value
+            case KEY_CODE_LEFT:
+            case IDM_PARAMS_PREV:
+                --newVal;
+                newVal = IN_RANGE(newVal, min, max);
+                menu.selectByIndex(2, true, true);
+                break;
+
+            // Next value
+            case KEY_CODE_RIGHT:
+            case IDM_PARAMS_NEXT:
+                ++newVal;
+                newVal = IN_RANGE(newVal, min, max);
+                menu.selectByIndex(3, true, true);
+                break;
+
+            // End
+            case IDM_PARAMS_CANCEL:
+            case IDM_PARAMS_OK:
+                cont = false;
+                break;
+
             default:
                 break;
         } // switch(action.value)
@@ -251,16 +275,29 @@ int8_t tetrisMenu::_onChangeNumParam(uint8_t value,
             }
 
             _selectValue(newVal, min, max, xPos, yPos, showSelected);
-
             dupdate();
             oldVal = newVal;
             redraw = false;
          }
-
     }   // while(cont)
 
-    // Return -1 if canceled
-    return (action.value == IDM_PARAMS_OK)?newVal:-1;
+    if (action.value == IDM_PARAMS_OK){
+        _selectValue(newVal, min, max, xPos, yPos, true);
+        dupdate();
+
+        return newVal;
+    }
+
+    if (timerID >= 0){
+        timer_stop(timerID);    // stop the timer
+    }
+
+    // Canceled
+    _selectValue(newVal, min, max, xPos, yPos, false);
+    _selectValue(value, min, max, xPos, yPos, true);
+    dupdate();
+
+    return -1;
 #endif // #ifdef DEST_CASIO_CALC
 
     return -1;  // !!!
@@ -306,7 +343,7 @@ void tetrisMenu::_selectValue(int8_t value, uint8_t min, uint8_t max,
 void tetrisMenu::_createParamMenu(menuBar& menu){
     menu.appendItem(IDM_PARAMS_OK, IDS_PARAMS_OK);
     menu.addItem(2, IDM_PARAMS_PREV, IDS_PARAMS_PREV);
-    menu.addItem(4, IDM_PARAMS_NEXT, IDS_PARAMS_NEXT);
+    menu.addItem(3, IDM_PARAMS_NEXT, IDS_PARAMS_NEXT);
     menu.addItem(MENU_POS_RIGHT, IDM_PARAMS_CANCEL, IDS_PARAMS_CANCEL);
 }
 

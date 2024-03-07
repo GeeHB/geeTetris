@@ -211,6 +211,8 @@ bool tetrisGame::start() {
         _rotateDisplay(); // Cancel rotation if any
     }
 
+    casioDisplay_.defaultFont();
+
     return (!isCancelled());
 }
 
@@ -222,9 +224,28 @@ void tetrisGame::pause(){
     bool paused(true);
 
     // draw the picture
-#ifdef DEST_CASIO_CALC
-    dimage(0, 0, &g_imgPause);
-#endif // #ifdef DEST_CASIO_CALC
+    //
+
+    // Top of image
+    dsubimage(0, 0, &g_imgPause,
+            0, 0, IMG_PAUSE_W, IMG_PAUSE_COPY_Y, DIMAGE_NOCLIP);
+
+    // "middle"
+    uint16_t y;
+    for (y = IMG_PAUSE_COPY_Y;
+        y < (IMG_PAUSE_COPY_Y + IMG_PAUSE_LINES); y++){
+        dsubimage(0, y, &g_imgPause,
+            0, IMG_PAUSE_COPY_Y,
+            IMG_PAUSE_W, 1, DIMAGE_NOCLIP);
+    }
+
+    // bottom
+    y = CASIO_HEIGHT - IMG_PAUSE_H + IMG_PAUSE_COPY_Y - 1;
+    dsubimage(0, y, &g_imgPause,
+            0, IMG_PAUSE_COPY_Y + 1,
+            IMG_PAUSE_W, IMG_PAUSE_H - IMG_PAUSE_COPY_Y - 1,
+            DIMAGE_NOCLIP);
+
     casioDisplay_.update();
 
     // status_ = STATUS_PAUSED;
@@ -234,6 +255,7 @@ void tetrisGame::pause(){
         // Resume ?
         if (casioDisplay_.keyPause_== car){
             _redraw();
+            _drawNextPiece();   // !!!
             updateDisplay();
             paused = false;
         }
@@ -391,7 +413,7 @@ void tetrisGame::_rotateDisplay(bool first){
     }
 
     // The next pice
-    _drawNextPiece(nextIndex_);
+    _drawNextPiece();
 
     // go !!!
     updateDisplay();
@@ -699,7 +721,7 @@ void tetrisGame::_newPiece() {
     tetraminos_[nextPos_.index_].rotateBack();
 
     // Next piece
-    _drawNextPiece(nextIndex_);
+    _drawNextPiece();
 
     // Can I go on line down ?
     if (!_down(true)) {
@@ -945,14 +967,12 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX,
 //  The next piece will be drawn in the preview box.
 //  This zone, prior to drawinings, will be erased
 //
-//  @pieceIndex : index of the piece
-//
-void tetrisGame::_drawNextPiece(int8_t pieceIndex) {
+void tetrisGame::_drawNextPiece() {
     // Erase the "previous" next piece
     _eraseNextPiece();
 
     // ... and then draw the new one
-    if (-1 != pieceIndex) {
+    if (-1 != nextIndex_) {
         _drawSinglePiece(_nextPieceDatas(), 0, 0, false);
     }
 }

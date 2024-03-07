@@ -52,16 +52,14 @@ playArea::playArea(){
 //
 playArea::~playArea(){
     // Return to default font
-#ifdef DEST_CASIO_CALC
-    dfont(dfont_default());
+    defaultFont();
 
     // Stop the gray engine
-    #ifdef FX9860G
-        #ifdef GRAY_ENGINE_ON
-            dgray(DGRAY_OFF);
-        #endif // #ifdef GRAY_ENGINE_ON
-    #endif // #ifdef FX9860G
-#endif // #ifdef DEST_CASIO_CALC
+#ifdef FX9860G
+    #ifdef GRAY_ENGINE_ON
+    dgray(DGRAY_OFF);
+    #endif // #ifdef GRAY_ENGINE_ON
+#endif // #ifdef FX9860G
 }
 
 // (trigonometric) rotations

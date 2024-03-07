@@ -105,6 +105,14 @@ class playArea{
 #endif // #ifdef DEST_CASIO_CALC
         }
 
+        // defaultFont() : return to default font
+        //
+        void defaultFont(){
+#ifdef DEST_CASIO_CALC
+            dfont(dfont_default());
+#endif // #ifdef DEST_CASIO_CALC
+        }
+
         // clear() : Clear the screen with the given colour
         //
         void clear(int color){
