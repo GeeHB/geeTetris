@@ -12,7 +12,7 @@
 #include "casioCalcs.h"
 #include "keyboard.h"
 
-#define _GEEHB_MENU_VER_        "0.5.4"
+#define _GEEHB_MENU_VER_        "0.5.6"
 
 #define MENU_MAX_ITEM_COUNT     6   // ie. "F" buttons count
 
@@ -400,6 +400,12 @@ public:
     // Selection & activation
     //
 
+    //  _unSelectItems() : Unselect item(s)
+    //
+    void unSelectItems(){
+        _unSelectItems(visible_);
+    }
+
     //  selectByIndex() : Select an item by index in the current bar
     //
     //  @index : index of menu item to select or unselect
@@ -597,11 +603,11 @@ private:
     //
     void _freeMenuBar(PMENUBAR bar, bool freeAll);
 
-    //  _unSelItems() : Unselect item(s)
+    //  _unSelectItems() : Unselect item(s)
     //
     //  @bar : Pointer to the bar
     //
-    void _unSelItems(PMENUBAR bar);
+    void _unSelectItems(PMENUBAR bar);
 
     //
     // menu items management

@@ -622,11 +622,11 @@ void menuBar::_freeMenuBar(PMENUBAR bar, bool freeAll){
     }
 }
 
-//  _unSelItems() : Unselect item(s)
+//  _unSelectItems() : Unselect item(s)
 //
 //  @bar : Pointer to the bar
 //
-void menuBar::_unSelItems(PMENUBAR bar){
+void menuBar::_unSelectItems(PMENUBAR bar){
     if (bar){
         PMENUITEM item;
         for (uint8_t index(0); index < MENU_MAX_ITEM_COUNT; index++){
@@ -899,7 +899,7 @@ bool menuBar::_selectByIndex(int8_t index, bool selected, bool redraw){
                 removeBit(item->state, ITEM_STATE_SELECTED);
             }
             */
-            _unSelItems(visible_);
+            _unSelectItems(visible_);
 
              setBit(item->state, ITEM_STATE_SELECTED);
             visible_->selIndex = index;
