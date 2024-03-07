@@ -417,7 +417,7 @@ public:
     //
     bool selectByIndex(int8_t index, bool selected = true,
                     bool redraw = false){
-        return _selectByIndex(index, selected, redraw);    // Redraw items
+        return _selectByIndex(index, selected, redraw);
     }
 
     //  getSelectedIndex() : Index of selected item in the current bar
