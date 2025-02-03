@@ -7,4 +7,4 @@
 - [ ] Image de l'ecran d'accueil + "tetris like" (dde de blackium)
 - [ ] Fin de l'app - ancien écran tjrs en mémoire
 - [ ] Revoir les captures pour README.md
-- [ ] Optimisation de la taille du binaire
+- [x] Optimisation de la taille du binaire

@@ -13,7 +13,7 @@ Il permet aussi de jouer avec la calculatrice en mode horizontal (position stand
 |----- |-------------------------------------|
 | **Date** | 7 mars 2024 |
 | **Version stable** | **0\.7.1** - branche `main` |
-| **Dépendances** |  **Casio / gint** : `-lstdc++`|
+| **Dépendances** |  **Casio / gint** |
 | **Testé sur** | *Linux* (Fedora 39) avec `code::blocks`|
 || *Casio Graph90+E*  et Casio Grapg35+E ii avec `gint`|
 
