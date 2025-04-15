@@ -10,8 +10,8 @@ set(SOURCES
   src/geeTetris.c
   src/shared/casioCalcs.c
   src/shared/menu.c
+  src/shared/keys.c
   src/tetrisMenu.cpp
-  src/shared/keyboard.cpp
   src/shared/bFile.cpp
   src/shared/window.cpp
   src/tetrisGame.cpp
