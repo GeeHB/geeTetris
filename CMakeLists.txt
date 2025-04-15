@@ -8,11 +8,11 @@ find_package(Gint 2.9 REQUIRED)
 
 set(SOURCES
   src/geeTetris.c
+  src/shared/casioCalcs.c
+  src/shared/menu.c
   src/tetrisMenu.cpp
-  src/shared/scrCapture.cpp
   src/shared/keyboard.cpp
   src/shared/bFile.cpp
-  src/shared/menuBar.cpp
   src/shared/window.cpp
   src/tetrisGame.cpp
   src/piece.cpp

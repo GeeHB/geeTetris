@@ -1,15 +1,15 @@
 //----------------------------------------------------------------------
 //--
-//--    menus.h
+//--    menuConsts.h
 //--
-//--        Definition of constants for menu bars
+//--        Definition of constants for menus
 //--
 //----------------------------------------------------------------------
 
 #ifndef __GEETETRIS_SUB_MENU_h__
 #define __GEETETRIS_SUB_MENU_h__    1
 
-#include "shared/menuBar.h"
+#include "shared/menu.h"
 
 #ifdef __cplusplus
 extern "C" {

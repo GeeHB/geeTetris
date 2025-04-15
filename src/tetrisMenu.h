@@ -11,7 +11,7 @@
 
 #include "consts.h"
 
-#include "menus.h"
+#include "menuConsts.h"
 #include "shared/scrCapture.h"
 
 #include "tetrisGame.h"
