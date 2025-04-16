@@ -252,6 +252,14 @@ char* __itoa(int num, BOOL format, char *str);
 //
 void __strrev(char *str);
 
+//
+// State & status - bitwise manips
+//
+
+BOOL isBitSet(int value, int bit);
+int setBit(int value, int bit);
+int removeBit(int value, int bit);
+
 #endif // #ifndef __GEE_CASIO_CALCS_h__
 
 // EOF

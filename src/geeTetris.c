@@ -1,12 +1,19 @@
 //----------------------------------------------------------------------
 //--
-//--    geeTetris.cpp
+//--    geeTetris.c
 //--
-//--        Entry point
+//--        App. entry point
 //--
 //----------------------------------------------------------------------
 
-#include "tetrisMenu.h"
+#include "consts.h"
+#include "tetrisParameters.h"
+
+#include "menuConsts.h"
+
+#include "tetrisGame.h"
+
+
 
 // Program entry point
 //

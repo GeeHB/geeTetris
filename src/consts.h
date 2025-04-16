@@ -10,8 +10,9 @@
 #ifndef __GEE_TETRIS_CONSTS_h__
 #define __GEE_TETRIS_CONSTS_h__    1
 
-#include "shared/casioCalcs.h"  // Choose dest. format
+#include "shared/casioCalcs.h"
 
+/*
 #ifdef DEST_CASIO_CALC
 #include <gint/keyboard.h>
 #else
@@ -22,6 +23,7 @@
 
 #include <cstring>
 #include <cstdlib>
+*/
 
 #ifdef __cplusplus
 extern "C" {
@@ -116,21 +118,6 @@ enum GAME_KEY{
 #endif // #ifdef DEST_CASIO_CALC
 
 //
-// Min / max values for parameters
-//
-
-#define MIN_LEVEL   1
-#define MAX_LEVEL   8
-
-#define MIN_DIRTY_LINES   0
-#define MAX_DIRTY_LINES   8
-
-#define DEF_SHADOW      1  // 1 == true
-
-// Ensure value is in the range
-#define IN_RANGE(val, min, max) ((val < min)?min:((val > max)?max:val))
-
-//
 // Value of parameters
 //
 #define VAL_RANGE_BOX_WIDTH     15
@@ -157,57 +144,18 @@ enum GAME_KEY{
 #define IMG_PAUSE_COPY_Y    46
 #define IMG_PAUSE_LINES     (CASIO_HEIGHT - IMG_PAUSE_H)
 
-//----------------------------------------------------------------------
-//--
-//-- tetrisParameters object
-//--
-//--    All the game's parameters
-//--    could be a simple interface / struct
-//--
-//----------------------------------------------------------------------
-
-class tetrisParameters {
-    public:
-        // Construction
-        //
-        tetrisParameters() {
-            // Set default parameters
-            startLevel_ = MIN_LEVEL;
-            dirtyLines_ = MIN_DIRTY_LINES;
-            shadow_ = (DEF_SHADOW == 1);
-            rotatedDisplay_ = false; // by default, no screen rotation
-        }
-
-        // recopy
-        void copy(tetrisParameters* other) {
-            if (other){
-                startLevel_ = other->startLevel_;
-                dirtyLines_ = other->dirtyLines_;
-                shadow_ = other->shadow_;
-                rotatedDisplay_ = other->rotatedDisplay_;
-            }
-        }
-
-    // Members
-    //
-    public:
-        int startLevel_;
-        int dirtyLines_;
-        bool shadow_;
-        bool rotatedDisplay_;
-};
-
 // A single unsigned value (and its previous val if exists)
 //
 #define MAX_VALUE_NAME  20
 typedef struct __uvalue{
-
+    /*
     // Construction
     __uvalue(){
         name[0] = '\0';
         value = 0;
         previous = -1; //  value is not (yet) used
     }
+    */
 
     char       name[MAX_VALUE_NAME+1];
     uint32_t   value;

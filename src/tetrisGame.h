@@ -13,7 +13,7 @@
 #include "templates.h"
 #include "playArea.h"
 #include "sList.h"
-#include "shared/keyboard.h"
+#include "shared/keys.h"
 
 #ifdef DEST_CASIO_CALC
 #include <gint/timer.h>

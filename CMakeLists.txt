@@ -7,17 +7,18 @@ include(Fxconv)
 find_package(Gint 2.9 REQUIRED)
 
 set(SOURCES
-  src/geeTetris.c
   src/shared/casioCalcs.c
   src/shared/menu.c
   src/shared/keys.c
+  src/tetrisParameters.c
+  src/piece.c
   src/tetrisMenu.cpp
   src/shared/bFile.cpp
   src/shared/window.cpp
   src/tetrisGame.cpp
-  src/piece.cpp
   src/playArea.cpp
   src/sList.cpp
+  src/geeTetris.c
 )
 # Shared assets, fx-9860G-only assets and fx-CG-50-only assets
 set(ASSETS

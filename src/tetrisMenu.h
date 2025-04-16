@@ -9,12 +9,7 @@
 #ifndef __GEE_TETRIS_CASIO_TETRIS_MENU_h__
 #define __GEE_TETRIS_CASIO_TETRIS_MENU_h__    1
 
-#include "consts.h"
 
-#include "menuConsts.h"
-#include "shared/scrCapture.h"
-
-#include "tetrisGame.h"
 
 #ifdef __cplusplus
 extern "C" {

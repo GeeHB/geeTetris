@@ -306,4 +306,18 @@ void __strrev(char *str){
     }
 }
 
+//
+// State & status - bitwise manips
+//
+
+BOOL isBitSet(int value, int bit){
+    return (bit == (value & bit));
+ }
+int setBit(int value, int bit){
+    return (value |= bit);
+}
+int removeBit(int value, int bit){
+    return (value & ~bit);
+}
+
 // EOF
