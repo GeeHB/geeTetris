@@ -19,7 +19,6 @@ extern "C" {
 // Constants
 //
 
-
 // Box dimensions in pixels
 //
 
@@ -63,175 +62,119 @@ extern "C" {
 #define CASIO_INFO_DY       23
 #endif // #ifdef FX9860G
 
-// During games draings appends in 2 zones :
+// 2 zones to draw in :
 //      game zone and next-piece (ie. preview) zone
 //
 typedef struct __zone{
     uint8_t    boxWidth;    // Single box width in pixels
     RECT       pos;         // Position and dimensions
-} ZONE;
+} ZONE, * PZONE;
 
 // Prefined zones
 enum ZONE_ID{
     ZONE_GAME = 0,
+    ZONE_PLAYFIELD = 0,
     ZONE_NEXTPIECE = 1,
-    ZONE_PREVIEW = 1
+    ZONE_PREVIEW = 1,
+    ZONE_COUNT
 };
 
-//----------------------------------------------------------------------
-//--
-//-- playArea object
-//--
-//--    methods, constants (coordinates, dimensions) for the casio calcs
-//--
-//----------------------------------------------------------------------
+// Keys index
+enum KEY_ID{
+  KEY_RIGHT, KEY_LEFT,
+  KEY_ROTATE, KEY_DOWN,
+  KEY_FALL, KEY_PAUSE,
+  KEY_ROTATE_DISPLAY, KEY_QUIT,
+  KEY_COUNT
+};
 
-class playArea{
-
-    // Public methods
-    //
-    public:
-        // Construction
-        playArea();
-
-        // Destruction
-        ~playArea();
-
-        // update() : Update display
-        //
-        void update(){
+//
+// playArea
+//
+//  Text and rect. drawing in both modes (vertical et horizontal)
+//
+typedef struct __playArea{
+    POINT texts[VAL_COUNT];      // Positions of texts
+    char keys[KEY_COUNT];
+    CALC_ORIENTATION orientation;
+    ZONE zones[ZONE_COUNT];
 #ifdef DEST_CASIO_CALC
-            dupdate();
-#endif // #ifdef DEST_CASIO_CALC
-        }
-
-        // defaultFont() : return to default font
-        //
-        void defaultFont(){
-#ifdef DEST_CASIO_CALC
-            dfont(dfont_default());
-#endif // #ifdef DEST_CASIO_CALC
-        }
-
-        // clear() : Clear the screen with the given colour
-        //
-        void clear(int color){
-#ifdef DEST_CASIO_CALC
-#ifdef FX9860G
-            dclear((color_t)color);
-#else
-            dclear(color);
-#endif // #ifdef FX9860G
-#endif // #ifdef DEST_CASIO_CALC
-        }
-
-        //
-        // Displays orientations
-        //
-
-        // Update members on rotation
-        void rotatedDisplay(bool doRotate, bool force = false){
-            _rotatedDisplay(doRotate, force);
-        }
-
-        // (trigonometric) rotations
-        //  ... of a single point
-        void rotate(int16_t& x, int16_t& y);
-
-        // ... of a rect
-        void rotate(int16_t& xFrom, int16_t& yFrom, int16_t& xTo, int16_t& yTo);
-
-        bool isRotated(){
-            return rotatedDisplay_;
-        }
-
-        //
-        // Drawings methods
-        //
-
-        // Draw a line of text
-        void dtext(int x, int y, int fg, const char* text);
-
-        // drawRectangle() : Draw a single coloured rectangle
-        //
-        //   @x,@y : top left starting point
-        //   @width, @height : dimensions
-        //   @fillColour : Filling colour NO_COLOR (-1) if none
-        //   @borderColour : Colour of the border NO_COLOR (-1) if none
-        //
-        void drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int fillColour = NO_COLOR, int borderColour = NO_COLOR);
-
-        // drawBorder() : Draw a border around a rectangle
-        //
-        //   @x,@y : top left starting point
-        //   @width, @height : dimensions
-        //   @borderColour : Colour of the border
-        //
-        void drawBorder(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int borderColour);
-
-        // _shitfToZone() : Change the origin and the coordinate system
-        //          according to a selected drawing zone
-        //
-        //  @zoneID  : ID of the desintation zone
-        //  @x, @y [i/o] : coordinates to change
-        //  @width, @height : (new) dimensions in pixels of a single block in the choosen area
-        //
-        void shitfToZone(uint8_t zoneID, uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height);
-
-        // Zones
-        //
-        ZONE* playfield(){
-            return &playfield_;
-        }
-        ZONE* nextPiece(){
-            return &nextPiece_;
-        }
-
-        // Strings manipulations
-        static char* __valtoa(int num, const char* name, char* str, size_t rLength = 0);
-        static void __strrev(char *str);
-        static char* __strdrag(char *str, int rightChars);
-
-        // Fonts
-        //
-#ifdef DEST_CASIO_CALC
-        font_t* font(bool horz = true){
-            return (horz?hFont_:vFont_);
-        }
-#endif // #ifdef DEST_CASIO_CALC
-
-        //
-        // Members
-        //
-
-        // Texts
-        POINT       textsPos_[VAL_COUNT];      // Positions of texts
-
-        // Keyboard
-        char        keyLeft_, keyRight_, keyRotatePiece_, keyDown_, keyFall_;
-        char        keyPause_, keyRotateDisplay_;
-        char        keyQuit_;
-
-        // Private methods
-    private:
-
-        // Draw a line of text vertically
-        void _dtextV(int x, int y, int fg, const char* text);
-
-        // Update members on rotation
-        void _rotatedDisplay(bool doRotate, bool force);
-
-    protected:
-        // Screen & display parameters
-        bool        rotatedDisplay_;    // Rotate all displays (default = False) ?
-
-        ZONE        playfield_;
-        ZONE        nextPiece_;
-
-#ifdef DEST_CASIO_CALC
-        font_t     *hFont_, *vFont_;    // Fonts
+    font_t* hFont, *vFont;
 #endif //#ifdef DEST_CASIO_CALC
-};
+} playArea, PLAYAREA, * PPLAYAREA;
+
+// playArea_init() : Intialize the playArea
+//
+//  @area : pointer to an area
+//
+//  @return : TRUE if successfull
+//
+BOOL playArea_init(PPLAYAREA area);
+
+// playArea_clear() : Clear | delete the playArea
+//
+//  @area : pointer to an area
+//
+void playArea_clear(PPLAYAREA area);
+
+// defaultFont() : return to default font
+//
+void playArea_defaultFont();
+
+// playArea_clearScreen() : Clear the screen with the given colour
+//
+//  @color : color to use to fill the screen
+//
+void playArea_clearScreen(int color);
+
+// playArea_rotatedDisplay() : Update members on rotation
+//
+//  @area : Pointer to the area
+//  @orientation : New area orientation
+//
+void playArea_rotatedDisplay(PPLAYAREA const area, CALC_ORIENTATION orientation);
+
+// playArea_dtext() : Draw a line of text horizontally or vertically
+//          according to the display orientation
+//
+//  @area : Pointer to the area
+//  @x, @y : Anchor point coordinates
+//  @fg : font colour
+//  @text : string to draw
+//
+void playArea_dtext(PPLAYAREA const area, int x, int y, int fg, const char* text);
+
+// playArea_dtextV() : Draw a line of text vertically
+//
+// used when calc orientation is HORIZONTAL ...
+//
+//  @area : Pointer to the area
+//  @x, @y : Anchor point coordinates
+//  @fg : font colour
+//  @text : string to draw
+//
+void playArea_dtextV(PPLAYAREA const area, int x, int y, int fg, const char* text);
+
+// playArea_drawRectangle() : Draw a single coloured rectangle
+//
+//  @area : Pointer to the area
+//  @x,@y : top left starting point
+//  @width, @height : dimensions
+//  @fillColour : Filling colour or NO_COLOR (-1) if none
+//  @borderColour : Colour of the border or NO_COLOR (-1) if none
+//
+void playArea_drawRectangle(PPLAYAREA const area, uint16_t x, uint16_t y, uint16_t width,
+    uint16_t height, int fillColour, [[maybe_unused]]  int borderColour);
+
+// playArea_drawBorder() : Draw a border around a rectangle
+//
+//  @area : Pointer to the area
+//  @x,@y : top left starting point
+//  @width, @height : dimensions
+//  @borderColour : Colour of the border
+//
+void playArea_drawBorder(PPLAYAREA const area, uint16_t x, uint16_t y,
+        uint16_t width, uint16_t height, int borderColour);
 
 #ifdef __cplusplus
 }

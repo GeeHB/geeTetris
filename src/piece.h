@@ -35,7 +35,7 @@ extern "C" {
 //   All the informations concerning a tetramino :
 //   index, rotation, position ...
 //
-typedef struct _pieceStatus{
+typedef struct __pieceStatus{
     BOOL valid;
     int8_t index;      // Index of the piece (-1 = don't draw)
     int8_t leftPos;    // Initial pos.
@@ -55,7 +55,7 @@ BOOL pieceStatus_equal(PPIECESTATUS const status, PPIECESTATUS const other);
 //      a tetramino and all it's rotation states
 //
 
-typedef struct _piece{
+typedef struct __piece{
     uint8_t** points;      // Matrix of the piece whith all possible rotations (each rotation is a line)
     uint8_t rotateID;      // rotation index (ie. index of the piece to draw)
     uint8_t maxRotate;     // max. rotation(s) allowed for the piece ( = 360°)
@@ -69,7 +69,7 @@ typedef struct _piece{
 //
 //  @piece : pointer to a piece
 //
-//  @return : TRUE if the rotation has been successfully added
+//  @return : TRUE if successfull
 //
 BOOL piece_init(PPIECE const piece);
 

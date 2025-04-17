@@ -63,7 +63,7 @@ BOOL pieceStatus_equal(PPIECESTATUS const status, PPIECESTATUS const other){
 //
 //  @piece : pointer to a piece
 //
-//  @return : TRUE if the rotation has been successfully added
+//  @return : TRUE if successfull
 //
 BOOL piece_init(PPIECE const piece){
     if (piece){
@@ -84,7 +84,7 @@ BOOL piece_init(PPIECE const piece){
 //  @piece : pointer to a piece
 //  @tempPiece : List a strings defining a tetramino from a template
 //
-//  @return : TRUE if the rotation has been successfully added
+//  @return : TRUE if successfull
 //
 BOOL piece_addRotation(PPIECE const piece, const char* tempPiece){
     if (!piece || !tempPiece) {

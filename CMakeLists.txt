@@ -12,11 +12,10 @@ set(SOURCES
   src/shared/keys.c
   src/tetrisParameters.c
   src/piece.c
+  src/playArea.c
   src/tetrisMenu.cpp
-  src/shared/bFile.cpp
   src/shared/window.cpp
   src/tetrisGame.cpp
-  src/playArea.cpp
   src/sList.cpp
   src/geeTetris.c
 )

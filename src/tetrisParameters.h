@@ -29,7 +29,7 @@ extern "C" {
 
 // Tetris parameters
 //
-typedef struct _tetrisParameters{
+typedef struct __tetrisParameters{
     int startLevel;
     int dirtyLines;
     BOOL shadow;
