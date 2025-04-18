@@ -12,6 +12,7 @@
 #ifndef __GEE_TETRIS_SIMPLE_LIST_h__
 #define __GEE_TETRIS_SIMPLE_LIST_h__    1
 
+#include "shared/keys.h"
 #include "consts.h"
 
 #ifdef __cplusplus

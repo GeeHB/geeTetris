@@ -204,7 +204,7 @@ void tetrisGame_setParameters(PTETRISGAME const tetris, PPARAMS const params){
 #ifdef DEST_CASIO_CALC
 void tetrisGame_pause(PTETRISGAME const tetris){
     if (tetris){
-        char car = KEY_CODE_NONE;
+        char car = KEY_NONE;
         BOOL paused = TRUE;
 
         // draw the picture
@@ -237,16 +237,16 @@ void tetrisGame_pause(PTETRISGAME const tetris){
             car = getKey();
 
             // Resume ?
-            if (tetris->casioDisplay.keys[KEY_PAUSE] == car){
-                tetrisGame_redraw(tetris);
-                tetrisGame_drawNextPiece(tetris);
+            if (tetris->casioDisplay.keys[KEY_ID_PAUSE] == car){
+                _redraw(tetris);
+                _drawNextPiece(tetris);
                 dupdate();
                 paused = FALSE;
             }
             else{
                 // Exit ?
-                if (tetris->casioDisplay.keys[KEY_QUIT] == car){
-                    cancel(tetris);
+                if (tetris->casioDisplay.keys[KEY_ID_QUIT] == car){
+                    _cancel(tetris);
                     paused = FALSE;
                 }
             }
@@ -264,6 +264,12 @@ void tetrisGame_pause(PTETRISGAME const tetris){
 //--
 //----------------------------------------------------------------------
 
+#ifdef DEST_CASIO_CALC
+static int __callbackTick(volatile int * pTick){
+    *pTick = 1;
+    return TIMER_CONTINUE;
+}
+#endif // #ifdef DEST_CASIO_CALC
 
 // start() : Start the tetris game
 //
@@ -312,7 +318,7 @@ BOOL tetrisGame_start(PTETRISGAME const tetris){
         }
         tick = 0;
 
-        _handleGameKeys();
+        _handleGameKeys(tetris);
 
         if (!(tickCount--)){
             _down(tetris, FALSE);    // One line down ...
@@ -598,7 +604,7 @@ void _rotateDisplay(PTETRISGAME const tetris, BOOL start){
 
         // go !!!
 #ifdef DEST_CASIO_CALC
-        dupdae();
+        dupdate();
 #endif // #ifdef DEST_CASIO_CALC
     }
 }
@@ -762,44 +768,44 @@ void _handleGameKeys(PTETRISGAME const tetris){
     char car = getKey();
 
     if(car != KEY_NONE) {
-        if (tetris->casioDisplay.keys[KEY_QUIT] == car){
+        if (tetris->casioDisplay.keys[KEY_ID_QUIT] == car){
             _cancel(tetris);
             return;
         }
 
 #ifdef DEST_CASIO_CALC
-        if (tetris->casioDisplay.keys[KEY_PAUSE] == car){
-            pause(tetris);
+        if (tetris->casioDisplay.keys[KEY_ID_PAUSE] == car){
+            tetrisGame_pause(tetris);
             return;
         }
 #endif // #ifdef DEST_CASIO_CALC
 
-        if (tetris->casioDisplay.keys[KEY_ROTATE_DISPLAY] == car){
+        if (tetris->casioDisplay.keys[KEY_ID_ROTATE_DISPLAY] == car){
             _rotateDisplay(tetris, FALSE);
             return;
         }
 
-        if (tetris->casioDisplay.keys[KEY_LEFT] == car){
+        if (tetris->casioDisplay.keys[KEY_ID_LEFT] == car){
             _left(tetris);
             return;
         }
 
-        if (tetris->casioDisplay.keys[KEY_RIGHT] == car){
+        if (tetris->casioDisplay.keys[KEY_ID_RIGHT] == car){
             _right(tetris);
             return;
         }
 
-        if (tetris->casioDisplay.keys[KEY_ROTATE] == car){
+        if (tetris->casioDisplay.keys[KEY_ID_ROTATE] == car){
             _rotateLeft(tetris);
             return;
         }
 
-        if (tetris->casioDisplay.keys[KEY_DOWN] == car){
+        if (tetris->casioDisplay.keys[KEY_ID_DOWN] == car){
             _down(tetris, FALSE);
             return;
         }
 
-        if (tetris->casioDisplay.keys[KEY_FALL] == car){
+        if (tetris->casioDisplay.keys[KEY_ID_FALL] == car){
             _fall(tetris);
             return;
         }

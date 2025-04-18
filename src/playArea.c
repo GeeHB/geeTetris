@@ -45,10 +45,10 @@ BOOL playArea_init(PPLAYAREA area){
 #endif // #ifdef DEST_CASIO_CALC
 
         // Theses keys won't change with screen rotation
-        area->keys[KEY_FALL] = KEY_CODE_FALL;
-        area->keys[KEY_PAUSE] = KEY_CODE_PAUSE;
-        area->keys[KEY_ROTATE_DISPLAY] = KEY_CODE_ROTATE_DISPLAY;
-        area->keys[KEY_QUIT] =  KEY_CODE_EXIT;
+        area->keys[KEY_ID_FALL] = KEY_CODE_FALL;
+        area->keys[KEY_ID_PAUSE] = KEY_CODE_PAUSE;
+        area->keys[KEY_ID_ROTATE_DISPLAY] = KEY_CODE_ROTATE_DISPLAY;
+        area->keys[KEY_ID_QUIT] =  KEY_CODE_EXIT;
 
         return TRUE;
     }
@@ -120,14 +120,14 @@ void playArea_rotateDisplay(PPLAYAREA const area, CALC_ORIENTATION orientation){
                     4 * area->zones[ZONE_NEXTPIECE].boxWidth + 2 * CASIO_INFO_GAP;
 
             // Keys
-            area->keys[KEY_LEFT] = KEY_CODE_LEFT;
-            area->keys[KEY_RIGHT] = KEY_CODE_RIGHT;
-            area->keys[KEY_ROTATE] = KEY_CODE_UP;
-            area->keys[KEY_DOWN] = KEY_CODE_DOWN;
+            area->keys[KEY_ID_LEFT] = KEY_CODE_LEFT;
+            area->keys[KEY_ID_RIGHT] = KEY_CODE_RIGHT;
+            area->keys[KEY_ID_ROTATE] = KEY_CODE_UP;
+            area->keys[KEY_ID_DOWN] = KEY_CODE_DOWN;
 
             // Use "default" font
 #ifdef DEST_CASIO_CALC
-            dfont(hFont_);
+            dfont(area->hFont);
 #endif // #ifdef DEST_CASIO_CALC
         }
         else {
@@ -148,15 +148,15 @@ void playArea_rotateDisplay(PPLAYAREA const area, CALC_ORIENTATION orientation){
             area->zones[ZONE_NEXTPIECE].pos.y = CASIO_INFO_TOP;
 
             // Keys
-            area->keys[KEY_LEFT] = KEY_CODE_DOWN;
-            area->keys[KEY_RIGHT] = KEY_CODE_UP;
-            area->keys[KEY_ROTATE] = KEY_CODE_LEFT;
-            area->keys[KEY_DOWN] = KEY_CODE_RIGHT;
+            area->keys[KEY_ID_LEFT] = KEY_CODE_DOWN;
+            area->keys[KEY_ID_RIGHT] = KEY_CODE_UP;
+            area->keys[KEY_ID_ROTATE] = KEY_CODE_LEFT;
+            area->keys[KEY_ID_DOWN] = KEY_CODE_RIGHT;
 
 
             // Install my font
 #ifdef DEST_CASIO_CALC
-            dfont(vFont_);
+            dfont(area->vFont);
 #endif // #ifdef DEST_CASIO_CALC
         }
 
@@ -213,7 +213,7 @@ void playArea_dtextV(PPLAYAREA const area, int x, int y, int fg, const char* tex
         char* current = (char*)text;
         int w, h;
 #ifdef DEST_CASIO_CALC
-        dnsize(current, 1, font(false), &pos.w, &pos.hh);
+        dnsize(current, 1, area->vFont, &w, &h);
 #else
         w = h = 10; // for debug tests
 #endif // #ifdef DEST_CASIO_CALC
@@ -224,8 +224,8 @@ void playArea_dtextV(PPLAYAREA const area, int x, int y, int fg, const char* tex
         // Draw the string (char. by char.)
         while (*current){
 #ifdef DEST_CASIO_CALC
-            dtext_opt(rect.x, rect.y,  fg, C_NONE, DTEXT_RIGHT, DTEXT_BOTTOM, current, 1);
-            dnsize(current, 1, font(false), &w, &h);
+            dtext_opt(pos.x, pos.y,  fg, C_NONE, DTEXT_RIGHT, DTEXT_BOTTOM, current, 1);
+            dnsize(current, 1, area->vFont, &w, &h);
 #endif // #ifdef DEST_CASIO_CALC
 
             // Update anchor pos.
@@ -290,15 +290,7 @@ void playArea_drawBorder(PPLAYAREA const area, uint16_t x, uint16_t y,
     }
 
 #ifdef DEST_CASIO_CALC
-    int16_t xTo = pos.x + pos.w - 1;
-    int16_t yTo = pos.y + pos.h - 1;
-
-    // Horizontal display ?
-    if (isRotated()){
-        rotate(xFrom, yFrom, xTo, yTo);
-    }
-
-    drect_border(pos.x, pos.y, xTo, yTo, C_NONE, 1, borderColour);
+    drect_border(pos.x, pos.y, pos.x + pos.w -1, pos.y + pos.h - 1, C_NONE, 1, borderColour);
 #endif // #ifdef FX9860G
 }
 
@@ -314,8 +306,8 @@ void playArea_shitfToZone(PPLAYAREA const area, uint8_t zoneID, uint16_t* x, uin
     uint16_t* width, uint16_t* height){
     if (area){
         if (zoneID == ZONE_GAME){
-            *x = area->zones[ZONE_PLAYFIELD].pos.x + x * area->zones[ZONE_PLAYFIELD].boxWidth;
-            *y = area->zones[ZONE_PLAYFIELD].pos.y + (PLAYFIELD_HEIGHT - 1 - y) * area->zones[ZONE_PLAYFIELD].boxWidth;
+            *x = area->zones[ZONE_PLAYFIELD].pos.x + *x * area->zones[ZONE_PLAYFIELD].boxWidth;
+            *y = area->zones[ZONE_PLAYFIELD].pos.y + (PLAYFIELD_HEIGHT - 1 - *y) * area->zones[ZONE_PLAYFIELD].boxWidth;
             *width = *height = area->zones[ZONE_PLAYFIELD].boxWidth;
         }
         else{

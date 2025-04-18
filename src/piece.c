@@ -7,11 +7,11 @@
 //--
 //----------------------------------------------------------------------
 
+#include "shared/keys.h"
 #include "piece.h"
 #include "consts.h"
 
 #include <string.h>
-
 //
 // pieceStatus
 //   All the informations concerning a tetramino :

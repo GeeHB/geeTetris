@@ -9,6 +9,7 @@
 #ifndef __GEE_TETRIS_CASIO_FXCG50_h__
 #define __GEE_TETRIS_CASIO_FXCG50_h__    1
 
+#include "shared/keys.h"
 #include "consts.h"
 
 #ifdef __cplusplus
@@ -60,10 +61,10 @@ enum ZONE_ID{
 
 // Keys index
 enum KEY_ID{
-  KEY_RIGHT, KEY_LEFT,
-  KEY_ROTATE, KEY_DOWN,
-  KEY_FALL, KEY_PAUSE,
-  KEY_ROTATE_DISPLAY, KEY_QUIT,
+  KEY_ID_RIGHT, KEY_ID_LEFT,
+  KEY_ID_ROTATE, KEY_ID_DOWN,
+  KEY_ID_FALL, KEY_ID_PAUSE,
+  KEY_ID_ROTATE_DISPLAY, KEY_ID_QUIT,
   KEY_COUNT
 };
 
