@@ -26,7 +26,6 @@ extern "C" {
 // Empty val in templates
 #define TEMPLATE_EMPTY_CHAR      '.'
 
-
 // Different pieces and their rotations
 //
 

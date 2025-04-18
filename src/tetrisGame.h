@@ -8,7 +8,7 @@
 #ifndef __GEE_TETRIS_GAME_h__
 #define __GEE_TETRIS_GAME_h__   1
 
-#include "consts.h"
+#include "tetrisParameters.h"
 #include "piece.h"
 #include "templates.h"
 #include "playArea.h"
@@ -46,6 +46,48 @@ enum GAME_STATUS{
     STATUS_CANCELED  = 16
 };
 
+//
+// tetrisGame
+//
+//  Handle the gameplay and the game(without display !)
+//
+typedef struct __tetrisGame{
+    uint8_t status;
+    uint8_t playField[PLAYFIELD_HEIGHT][PLAYFIELD_WIDTH];
+    PIECE tetraminos[TETRAMINOS_COUNT];                      // The tetraminos' list
+    int32_t colours[LAST_COLOUR_ID+1];     // Colours in rgb
+    PARAMS parameters;
+    PLAYAREA casioDisplay;
+    int8_t nextIndex;  // -1 = None
+    PIECESTATUS nextPos, currentPos;
+    UVALUE  values[VAL_COUNT];
+} TETRISGAME, * PTETRISGAME;
+
+// tetrisGame_init() : Initialize a new game
+//
+//  @tetris : pointer to a tetrisGame struct.
+//  params : pointer to the game's parameters
+//
+//  @return : TRUE if init done
+//
+BOOL tetrisGame_init(PTETRISGAME const tetris, PPARAMS const params);
+
+// tetrisGame_setParameters() : Set game's parameters
+//
+//  @tetris : pointer to a tetrisGame struct.
+//  @params : Struct. containining parameters for the game
+//    These parameters are choosen by the user
+//
+void tetrisGame_setParameters(PTETRISGAME const tetris, PPARAMS const params);
+
+// pause() : Pause or resume the game
+//
+//  @tetris : Pointer to atretrisGame struct.
+//
+#ifdef DEST_CASIO_CALC
+void tetrisGame_pause(PTETRISGAME const tetris);
+#endif // #ifdef DEST_CASIO_CALC
+
 //----------------------------------------------------------------------
 //--
 //-- tetrisGame object
@@ -54,26 +96,17 @@ enum GAME_STATUS{
 //--
 //----------------------------------------------------------------------
 
-class tetrisGame {
+class tetrisGameOld{
 
     // Public methods
     //
     public:
-
-        // Construction
-        tetrisGame(tetrisParameters* params);
 
         // Destruction
         ~tetrisGame() {
             end();
         }
 
-        // setParameters() : Set game's parameters
-        //
-        //  @params : Struct. containining parameters for the game
-        //    These parameters are choosen by the user
-        //
-        void setParameters(tetrisParameters* params);
 
         // start() : Start the tetris game
         //
@@ -89,11 +122,6 @@ class tetrisGame {
         void pause();
 #endif // FXCG50
 
-        // Status
-        //
-        bool isRunning() {
-            return STATUS_RUNNING == status_;
-        }
 
         // Cancel the game
         void cancel() {
@@ -111,13 +139,6 @@ class tetrisGame {
         // Force the end of the game
         void end() {
             status_ |= STATUS_STOPPED;
-        }
-
-        // Update the display
-        void updateDisplay(){
-#ifdef DEST_CASIO_CALC
-            dupdate();
-#endif // #ifdef DEST_CASIO_CALC
         }
 
         //
@@ -152,10 +173,7 @@ class tetrisGame {
     //
     private:
 
-        // The tetrisGame is empty ...
-        void _emptyTetrisGame() {
-            memset(playField_, COLOUR_ID_BOARD, PLAYFIELD_HEIGHT * PLAYFIELD_WIDTH);
-        }
+
 
         // Change the game speed (in ticks)
         int _getSpeed(int currentTicks, uint8_t incLevel = 1);
@@ -255,29 +273,6 @@ class tetrisGame {
         }
 #endif // #ifdef DEST_CASIO_CALC
 
-    // Members
-    //
-    protected:
-
-        uint8_t status_; // Game status
-
-        uint8_t playField_[PLAYFIELD_HEIGHT][PLAYFIELD_WIDTH];      // The playfield
-        piece   tetraminos_[TETRAMINOS_COUNT];                      // The tetraminos' list
-
-        tetrisParameters parameters_;
-
-        int32_t colours_[LAST_COLOUR_ID+1];     // Colours in rgb
-
-        playArea casioDisplay_;
-
-        // Current iece and next piece
-        int8_t nextIndex_;  // -1 = None
-        pieceStatus nextPos_, currentPos_;
-
-        // Indicators (and associated names)
-        UVALUE  values_[VAL_COUNT];
-
-        keyboard    keyboard_;      // Keyboard handler
 };
 
 #ifdef __cplusplus

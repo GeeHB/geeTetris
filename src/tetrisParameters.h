@@ -33,7 +33,7 @@ typedef struct __tetrisParameters{
     int startLevel;
     int dirtyLines;
     BOOL shadow;
-    BOOL rotatedDisplay;
+    CALC_ORIENTATION orientation;
 } tetrisParameters, PARAMS, * PPARAMS;
 
 BOOL params_init(PPARAMS const params);

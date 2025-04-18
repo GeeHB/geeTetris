@@ -83,12 +83,12 @@ void playArea_defaultFont(){
 #endif // #ifdef DEST_CASIO_CALC
 }
 
-// playArea_rotatedDisplay() : Update members on rotation
+// playArea_rotateDisplay() : Update members on rotation
 //
 //  @area : Pointer to the area
 //  @orientation : New area orientation
 //
-void playArea_rotatedDisplay(PPLAYAREA const area, CALC_ORIENTATION orientation){
+void playArea_rotateDisplay(PPLAYAREA const area, CALC_ORIENTATION orientation){
     if (area){
         if (CALC_VERTICAL == (area->orientation = orientation)){
             area->zones[ZONE_PLAYFIELD].boxWidth = CASIO_BOX_WIDTH;
@@ -296,7 +296,6 @@ void playArea_drawBorder(PPLAYAREA const area, uint16_t x, uint16_t y,
 #endif // #ifdef FX9860G
 }
 
-/*
 // playArea_shitfToZone() : Change the origin and the coordinate system
 //          according to a selected drawing zone
 //
@@ -306,20 +305,21 @@ void playArea_drawBorder(PPLAYAREA const area, uint16_t x, uint16_t y,
 //  @width, @height : (new) dimensions in pixels of a single block in the choosen area
 //
 void playArea_shitfToZone(PPLAYAREA const area, uint8_t zoneID, uint16_t* x, uint16_t* y,
-    uint16_t& width, uint16_t& height) {
-    if (zoneID == ZONE_GAME){
-        x = area->zones[ZONE_PLAYFIELD].pos.x + x * area->zones[ZONE_PLAYFIELD].boxWidth;
-        y = area->zones[ZONE_PLAYFIELD].pos.y + (PLAYFIELD_HEIGHT - 1 - y) * area->zones[ZONE_PLAYFIELD].boxWidth;
-        width = height = area->zones[ZONE_PLAYFIELD].boxWidth;
-    }
-    else{
-        // For next piece zone
-        x = area->zones[ZONE_NEXTPIECE].pos.x + CASIO_INFO_GAP;
-        y = area->zones[ZONE_NEXTPIECE].pos.y + CASIO_INFO_GAP;
-        width = height = area->zones[ZONE_NEXTPIECE].boxWidth;
+    uint16_t* width, uint16_t* height){
+    if (area){
+        if (zoneID == ZONE_GAME){
+            *x = area->zones[ZONE_PLAYFIELD].pos.x + x * area->zones[ZONE_PLAYFIELD].boxWidth;
+            *y = area->zones[ZONE_PLAYFIELD].pos.y + (PLAYFIELD_HEIGHT - 1 - y) * area->zones[ZONE_PLAYFIELD].boxWidth;
+            *width = *height = area->zones[ZONE_PLAYFIELD].boxWidth;
+        }
+        else{
+            // For next piece zone
+            *x = area->zones[ZONE_NEXTPIECE].pos.x + CASIO_INFO_GAP;
+            *y = area->zones[ZONE_NEXTPIECE].pos.y + CASIO_INFO_GAP;
+            *width = *height = area->zones[ZONE_NEXTPIECE].boxWidth;
+        }
     }
 }
-*/
 
 /*
 // __valtoa() : Transform a numeric value into a string

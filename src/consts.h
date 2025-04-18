@@ -55,17 +55,10 @@ enum VALUE_ID{
     VAL_COUNT = COMPLETED_LINES_ID + 1
 };
 
-#ifdef FX9860G
-#define SCORE_STR   "Sc: "
-#define LEVEL_STR   "Le: "
-#define COMPLETED_LINES_STR "Li: "
-#define MAX_VALUE_NAME_LEN 13
-#else
 #define SCORE_STR   "Score : "
 #define LEVEL_STR   "Level : "
 #define COMPLETED_LINES_STR "Lines : "
 #define MAX_VALUE_NAME_LEN 30
-#endif // #ifdef FX9860G
 
 //
 // Colour IDs

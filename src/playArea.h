@@ -22,26 +22,6 @@ extern "C" {
 // Box dimensions in pixels
 //
 
-#ifdef FX9860G
-#define CASIO_BOX_WIDTH           3
-#define CASIO_BOX_WIDTH_ROTATED   5
-
-#define CASIO_BOX_WIDTH_NP          CASIO_BOX_WIDTH    // next piece preview
-#define CASIO_BOX_WIDTH_NP_ROTATED  3
-
-// Playfield pos & dims
-//
-#define CASIO_PLAYFIELD_LEFT    0
-#define CASIO_PLAYFIELD_BORDER  1
-#define CASIO_BORDER_GAP        1
-
-// Texts pos & dims
-//
-#define CASIO_INFO_LEFT         65
-#define CASIO_INFO_TOP          1
-#define CASIO_INFO_GAP          1       // between border and text
-#define CASIO_INFO_DY           12      // Between each line of text
-#else
 #define CASIO_BOX_WIDTH           9
 #define CASIO_BOX_WIDTH_ROTATED   14
 
@@ -60,7 +40,6 @@ extern "C" {
 #define CASIO_INFO_TOP      5
 #define CASIO_INFO_GAP      4       // between border and text
 #define CASIO_INFO_DY       23
-#endif // #ifdef FX9860G
 
 // 2 zones to draw in :
 //      game zone and next-piece (ie. preview) zone
@@ -127,12 +106,23 @@ void playArea_defaultFont();
 //
 void playArea_clearScreen(int color);
 
-// playArea_rotatedDisplay() : Update members on rotation
+// playArea_shitfToZone() : Change the origin and the coordinate system
+//          according to a selected drawing zone
+//
+//  @area : Pointer to the area
+//  @zoneID  : ID of the desintation zone
+//  @x, @y [i/o] : coordinates to change
+//  @width, @height : (new) dimensions in pixels of a single block in the choosen area
+//
+void playArea_shitfToZone(PPLAYAREA const area, uint8_t zoneID, uint16_t* x, uint16_t* y,
+    uint16_t* width, uint16_t* height);
+
+// playArea_rotateDisplay() : Update members on rotation
 //
 //  @area : Pointer to the area
 //  @orientation : New area orientation
 //
-void playArea_rotatedDisplay(PPLAYAREA const area, CALC_ORIENTATION orientation);
+void playArea_rotateDisplay(PPLAYAREA const area, CALC_ORIENTATION orientation);
 
 // playArea_dtext() : Draw a line of text horizontally or vertically
 //          according to the display orientation

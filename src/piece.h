@@ -123,7 +123,6 @@ BOOL piece_int_addRotation(PPIECE const piece, uint8_t* tempPiece);
 //
 BOOL piece_int_isLineEmpty(PPIECE const piece, uint8_t rotIndex, uint8_t lineIndex);
 
-
 #ifdef __cplusplus
 }
 #endif // #ifdef __cplusplus

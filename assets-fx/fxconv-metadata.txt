@@ -1,4 +1,0 @@
-bw.png:
-  type: bopti-image
-  name: img_geeTetris
-

@@ -8,17 +8,368 @@
 //----------------------------------------------------------------------
 
 #include "tetrisGame.h"
+#include "piece.h"
+#include "playArea.h"
 
 #include <cstdio>
-#include <cmath>
+#include <math.h>
 #include <time.h>
+#include <string.h>
 
-#include "shared/window.h"
-#include "shared/bFile.h"
-
-#ifdef FXCG50
+#ifdef DEST_CASIO_CALC
 extern bopti_image_t g_imgPause;
-#endif // #ifdef FXCG50
+#endif // #ifdef DEST_CASIO_CALC
+
+//
+// tetrisGame
+//
+//  Handle the gameplay and the game(without display !)
+//
+
+//
+//
+//
+
+void _addDirtyLine(PTETRISGAME const tetris, uint8_t lineID);
+void _redraw(PTETRISGAME const tetris);
+void _drawBackGround(PTETRISGAME const tetris);
+void _drawNextPiece(PTETRISGAME const tetris);
+void _eraseNextPiece(PTETRISGAME const tetris);
+void _drawTetrisGame(PTETRISGAME const tetris);
+void _rotateDisplay(PTETRISGAME const tetris, BOOL start);
+
+//
+//
+
+
+
+// tetrisGame_init() : Initialize a new game
+//
+//  @tetris : pointer to a tetrisGame struct.
+//  params : pointer to the game's parameters
+//
+//  @return : TRUE if init done
+//
+BOOL tetrisGame_init(PTETRISGAME const tetris, PPARAMS const params){
+    if (tetris){
+        // Initialize rand num. generator
+        srand((unsigned int)clock());
+
+        // Set indicators name
+        strcpy(tetris->values[SCORE_ID].name, SCORE_STR);
+        strcpy(tetris->values[LEVEL_ID].name, LEVEL_STR);
+        strcpy(tetris->values[COMPLETED_LINES_ID].name, COMPLETED_LINES_STR);
+
+        // Build the tetraminos'list
+        //
+
+        // S
+        piece_init(&tetris->tetraminos[0]);
+        piece_addRotation(&tetris->tetraminos[0], S_0);
+        piece_addRotation(&tetris->tetraminos[0], S_1);
+
+        // Z
+        piece_init(&tetris->tetraminos[1]);
+        piece_addRotation(&tetris->tetraminos[1], Z_0);
+        piece_addRotation(&tetris->tetraminos[1],Z_1);
+
+        // I
+        piece_init(&tetris->tetraminos[2]);
+        piece_addRotation(&tetris->tetraminos[2], I_0);
+        piece_addRotation(&tetris->tetraminos[2], I_1);
+
+        // O
+        piece_init(&tetris->tetraminos[3]);
+        piece_addRotation(&tetris->tetraminos[3], O_0);
+
+        // L
+        piece_init(&tetris->tetraminos[4]);
+        piece_addRotation(&tetris->tetraminos[4], L_0);
+        piece_addRotation(&tetris->tetraminos[4], L_1);
+        piece_addRotation(&tetris->tetraminos[4], L_2);
+        piece_addRotation(&tetris->tetraminos[4], L_3);
+
+        // J
+        piece_init(&tetris->tetraminos[5]);
+        piece_addRotation(&tetris->tetraminos[5], J_0);
+        piece_addRotation(&tetris->tetraminos[5], J_1);
+        piece_addRotation(&tetris->tetraminos[5], J_2);
+        piece_addRotation(&tetris->tetraminos[5], J_3);
+
+        // T
+        piece_init(&tetris->tetraminos[6]);
+        piece_addRotation(&tetris->tetraminos[6], T_0);
+        piece_addRotation(&tetris->tetraminos[6], T_1);
+        piece_addRotation(&tetris->tetraminos[6], T_2);
+        piece_addRotation(&tetris->tetraminos[6], T_3);
+
+        // Colours
+        //
+        tetris->colours[COLOUR_ID_BOARD] = COLOUR_WHITE;
+        tetris->colours[1] = COLOUR_RED;           // Pieces (1 to 7)
+        tetris->colours[2] = COLOUR_GREEN;
+        tetris->colours[3] = COLOUR_YELLOW;
+        tetris->colours[4] = COLOUR_BLUE;
+        tetris->colours[5] = COLOUR_PURPLE;
+        tetris->colours[6] = COLOUR_CYAN;
+        tetris->colours[7] = COLOUR_ORANGE;
+        tetris->colours[COLOUR_ID_SHADOW] = COLOUR_LT_GREY;
+        tetris->colours[COLOUR_ID_TEXT] = COLOUR_BLACK;
+        tetris->colours[COLOUR_ID_BORDER] = COLOUR_DK_GREY;
+        tetris->colours[COLOUR_ID_BKGRND] = COLOUR_WHITE;  // could be different from board !
+
+        tetrisGame_setParameters(tetris, params);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+// tetrisGame_setParameters() : Set game's parameters
+//
+//  @tetris : pointer to a tetrisGame struct.
+//  @params : Struct. containining parameters for the game
+//    These parameters are choosen by the user
+//
+void tetrisGame_setParameters(PTETRISGAME const tetris, PPARAMS const params){
+    if (tetris && params){
+        params_copy(&tetris->parameters, params);
+
+        tetris->values[SCORE_ID].value = 0;
+        tetris->values[LEVEL_ID].value = tetris->parameters.startLevel;
+        tetris->values[COMPLETED_LINES_ID].value = 0;
+        tetris->nextIndex = -1;
+
+        // Initialization of tetraminos(no rotation)
+        for (uint8_t index = 0; index < TETRAMINOS_COUNT; index++) {
+            tetris->tetraminos[index].rotateID = 0;
+        }
+
+        //  Screen rotation
+        playArea_rotateDisplay(&tetris->casioDisplay, params->orientation);
+
+        // Empty the playset
+        memset(tetris->playField, COLOUR_ID_BOARD, PLAYFIELD_HEIGHT * PLAYFIELD_WIDTH);
+
+        // Add dirty lines ...
+        uint8_t maxLines = PLAYFIELD_HEIGHT - PIECE_HEIGHT - 1;
+        if (tetris->parameters.dirtyLines > maxLines) {
+            tetris->parameters.dirtyLines = maxLines;
+        }
+        for (uint8_t index = 0; index < params->dirtyLines; index++) {
+            _addDirtyLine(tetris, index);
+        }
+
+        // Ready for the game
+        tetris->status = STATUS_READY;
+    }
+}
+
+// pause() : Pause or resume the game
+//
+//  @tetris : Pointer to atretrisGame struct.
+//
+#ifdef DEST_CASIO_CALC
+void tetrisGame_pause(PTETRISGAME const tetris){
+    if (tetris){
+        char car = KEY_CODE_NONE;
+        BOOL paused = TRUE;
+
+        // draw the picture
+        //
+
+        // Top of image
+        dsubimage(0, 0, &g_imgPause,
+                0, 0, IMG_PAUSE_W, IMG_PAUSE_COPY_Y, DIMAGE_NOCLIP);
+
+        // "middle"
+        uint16_t y;
+        for (y = IMG_PAUSE_COPY_Y;
+            y < (IMG_PAUSE_COPY_Y + IMG_PAUSE_LINES); y++){
+            dsubimage(0, y, &g_imgPause,
+                0, IMG_PAUSE_COPY_Y,
+                IMG_PAUSE_W, 1, DIMAGE_NOCLIP);
+        }
+
+        // bottom
+        y = CASIO_HEIGHT - IMG_PAUSE_H + IMG_PAUSE_COPY_Y - 1;
+        dsubimage(0, y, &g_imgPause,
+                0, IMG_PAUSE_COPY_Y + 1,
+                IMG_PAUSE_W, IMG_PAUSE_H - IMG_PAUSE_COPY_Y - 1,
+                DIMAGE_NOCLIP);
+
+        dupdate();
+
+        // status_ = STATUS_PAUSED;
+        do{
+            car = getKey();
+
+            // Resume ?
+            if (tetris->casioDisplay.keys[KEY_PAUSE] == car){
+                tetrisGame_redraw(tetris);
+                tetrisGame_drawNextPiece(tetris);
+                dupdate();
+                paused = FALSE;
+            }
+            else{
+                // Exit ?
+                if (tetris->casioDisplay.keys[KEY_QUIT] == car){
+                    if ( ((tetris->status & STATUS_CANCELED) != STATUS_CANCELED)) {
+                        tetris->status |= STATUS_CANCELED;
+                    }
+
+                    paused = FALSE;
+                }
+            }
+
+        }while (paused);
+    }
+}
+#endif // #ifdef DEST_CASIO_CALC
+
+// _addDirtyLine() : Add a randomly generated dirty line in the gameplay
+//
+//  @tetris : pointer to a tetrisGame struct.
+//  @lineID : Index of the line to fill in range [0 , PLAYFIELD_HEIGHT[
+//
+void _addDirtyLine(PTETRISGAME const tetris, uint8_t lineID){
+    if (tetris){
+        uint16_t cubes = (1 + rand() % (int)(pow(2, PLAYFIELD_WIDTH) - 1));
+        uint16_t sBit = 1; // 2 ^ 0
+
+        // Convert 'cubes' bits into coloured blocks
+        for (uint8_t col = 0; col < PLAYFIELD_WIDTH; col++) {
+            // Is the bit set ?
+            if ((cubes & sBit) > 0) {
+                // yes = > add a colored block
+                tetris->playField[lineID][col] = 1 + rand() % TETRAMINOS_COUNT;
+            }
+
+            // next bit value
+            sBit *= 2;
+        }
+    }
+}
+
+// _redraw() : redraw the whole screen
+//
+void _redraw(PTETRISGAME const tetris){
+
+    playArea_clearScreen(tetris->colours[COLOUR_ID_BOARD]);
+
+    _drawBackGround(tetris);
+    _drawTetrisGame(tetris);
+
+    _drawNumValue(tetris, SCORE_ID);
+    _drawNumValue(tetris, LEVEL_ID);
+    _drawNumValue(tetris, COMPLETED_LINES_ID);
+}
+
+// _drawBackGround() : Draw entire background
+//
+//  This methods will redraw all the window except the next piece preview and
+//  the tetris game playfield
+//
+void _drawBackGround(PTETRISGAME const tetris){
+    // Border around the playfield
+    playArea_drawBorder(&tetris->casioDisplay,
+        tetris->casioDisplay.zones[ZONE_PLAYFIELD].pos.x - CASIO_BORDER_GAP,
+        tetris->casioDisplay.zones[ZONE_PLAYFIELD].pos.y - CASIO_BORDER_GAP,
+        tetris->casioDisplay.zones[ZONE_PLAYFIELD].pos.w,
+        tetris->casioDisplay.zones[ZONE_PLAYFIELD].pos.h,
+        tetris->colours[COLOUR_ID_BORDER]);
+
+    // Border for 'Next piece'
+    playArea_drawBorder(&tetris->casioDisplay,
+        tetris->casioDisplay.zones[ZONE_NEXTPIECE].pos.x - CASIO_BORDER_GAP,
+        tetris->casioDisplay.zones[ZONE_NEXTPIECE].pos.y - CASIO_BORDER_GAP,
+        tetris->casioDisplay.zones[ZONE_NEXTPIECE].pos.w + 1,
+        tetris->casioDisplay.zones[ZONE_NEXTPIECE].pos.h + 1,
+        tetris->colours[COLOUR_ID_BORDER]);
+}
+
+// _drawNextPiece() : Display the next piece
+//
+//  The next piece will be drawn in the preview box.
+//  This zone, prior to drawinings, will be erased
+//
+void _drawNextPiece(PTETRISGAME const tetris){
+    // Erase the "previous" next piece
+    _eraseNextPiece(tetris);
+
+    // ... and then draw the new one
+    if (-1 != tetris->nextIndex) {
+        _drawSinglePiece(tetris, _nextPieceDatas(), 0, 0, false);
+    }
+}
+
+// _eraseNextPiece() : Erase the "next piece" tetramino
+//
+void _eraseNextPiece(PTETRISGAME const tetris){
+    uint16_t x =0, y = 0, w, h;
+    playArea_shitfToZone(&tetris->casioDisplay, ZONE_PREVIEW, &x, &y, &w, &h);
+    playArea_drawRectangle(&tetris->casioDisplay, x, y, w * PIECE_WIDTH,
+                        h * PIECE_HEIGHT, colours_[COLOUR_ID_BOARD],
+                        tetris->colours[COLOUR_ID_BOARD]);
+}
+
+
+// _drawTetrisGame() : Draw the tetrisGame
+//
+void _drawTetrisGame(PTETRISGAME const tetris){
+    uint16_t left, leftFirst = 0, top = 0, w, h;
+    playArea_shitfToZone(&tetris->casioDisplay, ZONE_GAME, &leftFirst, &top, &w, &h);
+
+    // Draw all the blocks (coloured or not)
+    for (uint8_t y = 0; y < PLAYFIELD_HEIGHT; y++) {
+        left = leftFirst;
+        for (uint8_t x = 0; x < PLAYFIELD_WIDTH; x++) {
+            playArea_drawRectangle(&tetris->casioDisplay, left, top, w, h, tetris->colours[tetris->playField[y][x]], NO_COLOR);
+            left += w;
+        }
+        top -= h;
+    }
+}
+
+
+// _rotateDisplay() : Rotate the display
+//
+//  @tetris : Pointer to the struct.
+//  @start : Game is starting ?
+//
+void _rotateDisplay(PTETRISGAME const tetris, BOOL start){
+    if (tetris){
+        // (new) rotation mode
+        playArea_rotateDisplay(&tetris->casioDisplay, start?tetris->parameters.orientation:tetris->casioDisplay.orientation);
+
+        _redraw(tetris);
+
+        if (!start){
+            // Redraw the piece and it's shadow
+            if (-1 != tetris->nextPos.shadowTopPos) {
+                // first : the shadow
+                _drawSinglePiece(tetris, _pieceDatas(nextPos_.index_,
+                        nextPos_.rotationIndex_), nextPos_.leftPos_,
+                        nextPos_.shadowTopPos_, TRUE, COLOUR_ID_SHADOW);
+            }
+
+            // and then the tetramino(can recover the shadow !!!!)
+            _drawSinglePiece(tetris, _pieceDatas(nextPos_.index_,
+                        nextPos_.rotationIndex_),
+                        nextPos_.leftPos_, nextPos_.topPos_);
+        }
+
+        // The next pice
+        _drawNextPiece(tetris);
+
+        // go !!!
+#ifdef DEST_CASIO_CALC
+        dupdae();
+#endif // #ifdef DEST_CASIO_CALC
+    }
+}
+
 
 //----------------------------------------------------------------------
 //--
@@ -28,109 +379,6 @@ extern bopti_image_t g_imgPause;
 //--
 //----------------------------------------------------------------------
 
-// Construction
-//
-tetrisGame::tetrisGame(tetrisParameters* params) {
-
-    // Initialize rand num. generator
-    srand((unsigned int)clock());
-
-    // Set indicators name
-    strcpy(values_[SCORE_ID].name, SCORE_STR);
-    strcpy(values_[LEVEL_ID].name, LEVEL_STR);
-    strcpy(values_[COMPLETED_LINES_ID].name, COMPLETED_LINES_STR);
-
-    // Build the tetraminos'list
-    //
-
-    // S
-    tetraminos_[0].addRotation(S_0);
-    tetraminos_[0].addRotation(S_1);
-
-    // Z
-    tetraminos_[1].addRotation(Z_0);
-    tetraminos_[1].addRotation(Z_1);
-
-    // I
-    tetraminos_[2].addRotation(I_0);
-    tetraminos_[2].addRotation(I_1);
-
-    // O
-    tetraminos_[3].addRotation(O_0);
-
-    // L
-    tetraminos_[4].addRotation(L_0);
-    tetraminos_[4].addRotation(L_1);
-    tetraminos_[4].addRotation(L_2);
-    tetraminos_[4].addRotation(L_3);
-
-    // J
-    tetraminos_[5].addRotation(J_0);
-    tetraminos_[5].addRotation(J_1);
-    tetraminos_[5].addRotation(J_2);
-    tetraminos_[5].addRotation(J_3);
-
-    // T
-    tetraminos_[6].addRotation(T_0);
-    tetraminos_[6].addRotation(T_1);
-    tetraminos_[6].addRotation(T_2);
-    tetraminos_[6].addRotation(T_3);
-
-    // Colours
-    //
-    colours_[COLOUR_ID_BOARD] = COLOUR_WHITE;
-    colours_[1] = COLOUR_RED;           // Pieces (1 to 7)
-    colours_[2] = COLOUR_GREEN;
-    colours_[3] = COLOUR_YELLOW;
-    colours_[4] = COLOUR_BLUE;
-    colours_[5] = COLOUR_PURPLE;
-    colours_[6] = COLOUR_CYAN;
-    colours_[7] = COLOUR_ORANGE;
-    colours_[COLOUR_ID_SHADOW] = COLOUR_LT_GREY;
-    colours_[COLOUR_ID_TEXT] = COLOUR_BLACK;
-    colours_[COLOUR_ID_BORDER] = COLOUR_DK_GREY;
-    colours_[COLOUR_ID_BKGRND] = COLOUR_WHITE;  // could be different from board !
-
-    setParameters(params);
-}
-
-// setParameters() : Set game's parameters
-//
-//  @params : Struct. containining parameters for the game
-//    These parameters are choosen by the user
-//
-void tetrisGame::setParameters(tetrisParameters* params) {
-    // Copy (and init) parameters
-    parameters_.copy(params);
-
-    values_[SCORE_ID].value = 0;
-    values_[LEVEL_ID].value = parameters_.startLevel_;
-    values_[COMPLETED_LINES_ID].value = 0;
-    nextIndex_ = -1;
-
-    // Initialization of tetraminos(no rotation)
-    for (uint8_t index = 0; index < TETRAMINOS_COUNT; index++) {
-        tetraminos_[index].rotateBack();
-    }
-
-    //  Screen rotation
-    casioDisplay_.rotatedDisplay(params->rotatedDisplay_, true);
-
-    // Empty the playset
-    _emptyTetrisGame();
-
-    // Add dirty lines ...
-    uint8_t maxLines(PLAYFIELD_HEIGHT - PIECE_HEIGHT - 1);
-    if (parameters_.dirtyLines_ > maxLines) {
-        parameters_.dirtyLines_ = maxLines;
-    }
-    for (uint8_t index = 0; index < parameters_.dirtyLines_; index++) {
-        _addDirtyLine(index);
-    }
-
-    // Ready for the game
-    status_ = STATUS_READY;
-}
 
 // start() : Start the tetris game
 //
@@ -216,61 +464,6 @@ bool tetrisGame::start() {
     return (!isCancelled());
 }
 
-// pause() : Pause or resume the game
-//
-#ifdef FXCG50
-void tetrisGame::pause(){
-    char car(KEY_CODE_NONE);
-    bool paused(true);
-
-    // draw the picture
-    //
-
-    // Top of image
-    dsubimage(0, 0, &g_imgPause,
-            0, 0, IMG_PAUSE_W, IMG_PAUSE_COPY_Y, DIMAGE_NOCLIP);
-
-    // "middle"
-    uint16_t y;
-    for (y = IMG_PAUSE_COPY_Y;
-        y < (IMG_PAUSE_COPY_Y + IMG_PAUSE_LINES); y++){
-        dsubimage(0, y, &g_imgPause,
-            0, IMG_PAUSE_COPY_Y,
-            IMG_PAUSE_W, 1, DIMAGE_NOCLIP);
-    }
-
-    // bottom
-    y = CASIO_HEIGHT - IMG_PAUSE_H + IMG_PAUSE_COPY_Y - 1;
-    dsubimage(0, y, &g_imgPause,
-            0, IMG_PAUSE_COPY_Y + 1,
-            IMG_PAUSE_W, IMG_PAUSE_H - IMG_PAUSE_COPY_Y - 1,
-            DIMAGE_NOCLIP);
-
-    casioDisplay_.update();
-
-    // status_ = STATUS_PAUSED;
-    do{
-        car = keyboard_.getKey();
-
-        // Resume ?
-        if (casioDisplay_.keyPause_== car){
-            _redraw();
-            _drawNextPiece();   // !!!
-            updateDisplay();
-            paused = false;
-        }
-        else{
-            // Exit ?
-            if (casioDisplay_.keyQuit_ == car){
-                cancel();
-                paused = false;
-            }
-        }
-
-    }while (paused);
-}
-#endif // #ifdef FXCG50
-
 // _showScores() : Show best scores and current one (if in the list)
 //
 //  @score : new score. If equal to -1, the bests scores are shown.
@@ -323,18 +516,12 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
     wInf.pos.y = WIN_X;
     wInf.pos.w = WIN_WIDTH;
     wInf.pos.h = WIN_HEIGHT;
-#ifndef FX9860G
     wInf.bkColour = COLOUR_LT_GREY;
-#endif // #ifdef FX9860G
     scWin.create(wInf);
 
     sList::PNODE current(scores.head());
     if (nullptr == current){
-        scWin.drawText("La liste est vide", -1, -1
-#ifndef FX9860G
-            , COLOUR_RED
-#endif // #ifndef FX9860G
-            );
+        scWin.drawText("La liste est vide", -1, -1, COLOUR_RED);
     }
     else{
         uint8_t count(0);
@@ -357,12 +544,7 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 #endif // #ifndef DEST_CASIO_CALC
 
             scWin.drawText(line, px, py, (score == (int32_t)current->record.score)?
-#ifndef FX9860G
-                COLOUR_RED:COLOUR_BLUE
-#else
-                C_BLACK:C_LIGHT
-#endif // FX9860G
-            );
+                COLOUR_RED:COLOUR_BLUE);
 
             // next ...
             py+=11;
@@ -384,41 +566,6 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 //
 // "Private" methods
 //
-
-// _rotateDisplay() : Rotate the display
-//
-//  @first : Game is starting ?
-//
-void tetrisGame::_rotateDisplay(bool first){
-
-    // (new) rotation mode
-    casioDisplay_.rotatedDisplay(first?parameters_.rotatedDisplay_:
-                !casioDisplay_.isRotated());
-
-    _redraw();
-
-    if (!first){
-        // Redraw the piece and it's shadow
-        if (-1 != nextPos_.shadowTopPos_) {
-            // first : the shadow
-            _drawSinglePiece(_pieceDatas(nextPos_.index_,
-                    nextPos_.rotationIndex_), nextPos_.leftPos_,
-                    nextPos_.shadowTopPos_, true, COLOUR_ID_SHADOW);
-        }
-
-        // and then the tetramino(can recover the shadow !!!!)
-        _drawSinglePiece(_pieceDatas(nextPos_.index_,
-                    nextPos_.rotationIndex_),
-                    nextPos_.leftPos_, nextPos_.topPos_);
-    }
-
-    // The next pice
-    _drawNextPiece();
-
-    // go !!!
-    updateDisplay();
-}
-
 
 // _left() : Move left
 //
@@ -753,26 +900,6 @@ void tetrisGame::_clearLine(uint8_t index) {
     }
 }
 
-// _addDirtyLine() : Add a randomly generated dirty line in the gameplay
-//
-//  @lineID : Index of the line to fill in range [0 , PLAYFIELD_HEIGHT[
-//
-void tetrisGame::_addDirtyLine(uint8_t lineID) {
-    uint16_t cubes(1 + rand() % int(pow(2, PLAYFIELD_WIDTH) - 1));
-    uint16_t sBit(1); // 2 ^ 0
-
-    // Convert 'cubes' bits into coloured blocks
-    for (uint8_t col = 0; col < PLAYFIELD_WIDTH; col++) {
-        // Is the bit set ?
-        if ((cubes & sBit) > 0) {
-            // yes = > add a colored block
-            playField_[lineID][col] = 1 + rand() % TETRAMINOS_COUNT;
-        }
-
-        // next bit value
-        sBit *= 2;
-    }
-}
 
 // _putPiece : Put the tetramino at the current position
 //
@@ -891,20 +1018,6 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
     updateDisplay();
 }
 
-// _redraw() : redraw the whole screen
-//
-void tetrisGame::_redraw(){
-    // Clear the screen
-    casioDisplay_.clear(colours_[COLOUR_ID_BOARD]);
-
-    _drawBackGround();
-    _drawTetrisGame();
-
-    _drawNumValue(SCORE_ID);
-    _drawNumValue(LEVEL_ID);
-    _drawNumValue(COMPLETED_LINES_ID);
-}
-
 // _drawSinglePiece() : Draw a whole tetramino using the given colour
 //
 //  @datas is the piece'datas in its current rotation state
@@ -960,74 +1073,6 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX,
         }
         y += h;
     }
-}
-
-// _drawNextPiece() : Display the next piece
-//
-//  The next piece will be drawn in the preview box.
-//  This zone, prior to drawinings, will be erased
-//
-void tetrisGame::_drawNextPiece() {
-    // Erase the "previous" next piece
-    _eraseNextPiece();
-
-    // ... and then draw the new one
-    if (-1 != nextIndex_) {
-        _drawSinglePiece(_nextPieceDatas(), 0, 0, false);
-    }
-}
-
-// _drawTetrisGame() : Draw the tetrisGame
-//
-void tetrisGame::_drawTetrisGame() {
-    uint16_t left, leftFirst(0), top(0), w, h;
-    casioDisplay_.shitfToZone(ZONE_GAME, leftFirst, top, w, h);
-
-    // Draw all the blocks (coloured or not)
-    for (uint8_t y = 0; y < PLAYFIELD_HEIGHT; y++) {
-        left = leftFirst;
-        for (uint8_t x = 0; x < PLAYFIELD_WIDTH; x++) {
-            casioDisplay_.drawRectangle(left, top, w, h, colours_[playField_[y][x]]);
-            left += w;
-        }
-        top -= h;
-    }
-}
-
-// _eraseNextPiece() : Erase the "next piece" tetramino
-//
-//  @left, @top : top left corner of next-piece preview
-//  @width, @height : dimensions of the preview (in box units)
-//  @colourID : ID of the colour to use
-//
-void tetrisGame::_eraseNextPiece(){
-    uint16_t x(0), y(0), w, h;
-    casioDisplay_.shitfToZone(ZONE_PREVIEW, x, y, w, h);
-    casioDisplay_.drawRectangle(x, y, w * PIECE_WIDTH,
-                        h * PIECE_HEIGHT, colours_[COLOUR_ID_BOARD],
-                        colours_[COLOUR_ID_BOARD]);
-}
-
-// _drawBackGround() : Draw entire background
-//
-//  This methods will redraw all the window except the next piece preview and
-//  the tetris game playfield
-//
-void tetrisGame::_drawBackGround(){
-    // Border around the playfield
-    casioDisplay_.drawBorder(
-        casioDisplay_.playfield()->pos.x - CASIO_BORDER_GAP,
-        casioDisplay_.playfield()->pos.y - CASIO_BORDER_GAP,
-        casioDisplay_.playfield()->pos.w,
-        casioDisplay_.playfield()->pos.h,
-        colours_[COLOUR_ID_BORDER]);
-
-    // Border for 'Next piece'
-    casioDisplay_.drawBorder(
-        casioDisplay_.nextPiece()->pos.x - CASIO_BORDER_GAP,
-        casioDisplay_.nextPiece()->pos.y - CASIO_BORDER_GAP,
-        casioDisplay_.nextPiece()->pos.w + 1,
-        casioDisplay_.nextPiece()->pos.h + 1, colours_[COLOUR_ID_BORDER]);
 }
 
 // _drawNumValue() : Draw a value and its name
