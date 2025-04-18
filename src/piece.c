@@ -45,7 +45,7 @@ BOOL pieceStatus_copy(PPIECESTATUS const status, PPIECESTATUS const other){
     return FALSE;
 }
 
-BOOL pieceStatus_equal(PPIECESTATUS const status, PPIECESTATUS const other){
+BOOL pieceStatus_isEqual(PPIECESTATUS const status, PPIECESTATUS const other){
     return (status != other && status && other &&
             status->index == other->index &&
             status->leftPos == other->leftPos &&

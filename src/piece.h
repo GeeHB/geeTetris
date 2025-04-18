@@ -42,12 +42,11 @@ typedef struct __pieceStatus{
     uint8_t topPos;
     uint8_t rotationIndex;     // ID of current rotation
     int8_t shadowTopPos;       // yPos of shadow (-1 = no shadow)
-} pieceStatus, PIECESTATUS, * PPIECESTATUS;
-
+} PIECESTATUS, * PPIECESTATUS;
 
 BOOL pieceStatus_init(PPIECESTATUS const status);
 BOOL pieceStatus_copy(PPIECESTATUS const status, PPIECESTATUS const other);
-BOOL pieceStatus_equal(PPIECESTATUS const status, PPIECESTATUS const other);
+BOOL pieceStatus_isEqual(PPIECESTATUS const status, PPIECESTATUS const other);
 
 //
 //  piece
@@ -60,10 +59,9 @@ typedef struct __piece{
     uint8_t rotateID;      // rotation index (ie. index of the piece to draw)
     uint8_t maxRotate;     // max. rotation(s) allowed for the piece ( = 360°)
     uint8_t maxAllocated;  // Size of points_ in "rotation" count
-
     int8_t vertOffset;     // Initial vert. offset (ie. count of empty lines starting from bottom)
     uint8_t colourIndex;   // Colour ID (0 = invisible)
-} piece, PIECE, * PPIECE;
+} PIECE, * PPIECE;
 
 // piece_init() : Intialize piece's members
 //
@@ -122,6 +120,12 @@ BOOL piece_int_addRotation(PPIECE const piece, uint8_t* tempPiece);
 //  Returns true if the tested line is empty (ie. no colored block)
 //
 BOOL piece_int_isLineEmpty(PPIECE const piece, uint8_t rotIndex, uint8_t lineIndex);
+
+// Accesses
+//
+
+// Piece's datas for the current state
+#define piece_currentDatas(piece) piece.points[piece.rotateID];
 
 #ifdef __cplusplus
 }

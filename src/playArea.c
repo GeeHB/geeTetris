@@ -17,6 +17,12 @@ extern font_t font_vert;
 #endif // #ifdef DEST_CASIO_CALC
 
 //
+// Internal functions
+//
+
+char* __strdrag(char *str, int rightChars);
+
+//
 // playArea
 //
 //  Text and rect. drawing in both modes (vertical et horizontal)
@@ -321,8 +327,7 @@ void playArea_shitfToZone(PPLAYAREA const area, uint8_t zoneID, uint16_t* x, uin
     }
 }
 
-/*
-// __valtoa() : Transform a numeric value into a string
+// playArea_valtoa() : Transform a numeric value into a string
 //
 //  This specific method creates a string composed of the name of the value
 //  and the value it self. It is equivalent to a sprintf(out, "%s : %d", name, value)
@@ -339,8 +344,8 @@ void playArea_shitfToZone(PPLAYAREA const area, uint8_t zoneID, uint16_t* x, uin
 //
 //  @return : pointer to formated string
 //
-char* playArea::__valtoa(int num, const char* name, char* str, size_t rLength){
-    char* strVal(str);
+char* playArea_valtoa(int num, const char* name, char* str, size_t rLength){
+    char* strVal = str;
 
     // Add name
     if (name){
@@ -349,8 +354,8 @@ char* playArea::__valtoa(int num, const char* name, char* str, size_t rLength){
     }
 
     // Append num. value
-    int sum ((num < 0)?-1*num:num);
-    uint8_t i(0), digit, dCount(0);
+    int sum = (num < 0?-1*num:num);
+    uint8_t i = 0, digit, dCount = 0;
     do{
         digit = sum % 10;
         strVal[i++] = '0' + digit;
@@ -372,7 +377,7 @@ char* playArea::__valtoa(int num, const char* name, char* str, size_t rLength){
 
     // Shift to the right ?
     if (rLength){
-        size_t len(strlen(str));
+        size_t len = strlen(str);
         if (rLength > len){
             __strdrag(strVal, rLength - len); // just drag the value
         }
@@ -380,9 +385,7 @@ char* playArea::__valtoa(int num, const char* name, char* str, size_t rLength){
 
     return str;
 }
-*/
 
-/*
 // __strdrag() : Drag a string to the right
 //
 //  Drag the original string to the right.  Chars on the left will be fill
@@ -417,6 +420,5 @@ char* __strdrag(char *str, int rightChars){
     // Finished
     return str;
 }
-*/
 
 // EOF

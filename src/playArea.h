@@ -166,6 +166,25 @@ void playArea_drawRectangle(PPLAYAREA const area, uint16_t x, uint16_t y, uint16
 void playArea_drawBorder(PPLAYAREA const area, uint16_t x, uint16_t y,
         uint16_t width, uint16_t height, int borderColour);
 
+// playArea_valtoa() : Transform a numeric value into a string
+//
+//  This specific method creates a string composed of the name of the value
+//  and the value it self. It is equivalent to a sprintf(out, "%s : %d", name, value)
+//
+//  The base can't be changed it is always equal to 10
+//
+//  This method assumes the output buffer - ie. str - is large enough to contain
+//  the name and the formated value.
+//
+//  @num : Numeric value to transform
+//  @name : Name of the value (can be NULL)
+//  @str : Pointer to output string
+//  @rLength : Align to right ?
+//
+//  @return : pointer to formated string
+//
+char* playArea_valtoa(int num, const char* name, char* str, size_t rLength);
+
 #ifdef __cplusplus
 }
 #endif // #ifdef __cplusplus

@@ -20,8 +20,6 @@
 #include <gint/clock.h>
 #endif // #ifdef DEST_CASIO_CALC
 
-#include <cstdlib>
-
 #ifdef __cplusplus
 extern "C" {
 #endif // #ifdef __cpluscplus
@@ -80,6 +78,17 @@ BOOL tetrisGame_init(PTETRISGAME const tetris, PPARAMS const params);
 //
 void tetrisGame_setParameters(PTETRISGAME const tetris, PPARAMS const params);
 
+// start() : Start the tetris game
+//
+//  The entire game is handled by this method.
+//  It retuns on error or when the game is over
+//
+//  @tetris : pointer to the tetris struct.
+//
+//  @return :  FALSE on error(s) or if canceled by user
+//
+BOOL tetrisGame_start(PTETRISGAME const tetris);
+
 // pause() : Pause or resume the game
 //
 //  @tetris : Pointer to atretrisGame struct.
@@ -88,192 +97,9 @@ void tetrisGame_setParameters(PTETRISGAME const tetris, PPARAMS const params);
 void tetrisGame_pause(PTETRISGAME const tetris);
 #endif // #ifdef DEST_CASIO_CALC
 
-//----------------------------------------------------------------------
-//--
-//-- tetrisGame object
-//--
-//--    Handle the gameplay and the game(without display !)
-//--
-//----------------------------------------------------------------------
-
-class tetrisGameOld{
-
-    // Public methods
-    //
-    public:
-
-        // Destruction
-        ~tetrisGame() {
-            end();
-        }
-
-
-        // start() : Start the tetris game
-        //
-        //  The entire game is handled by this method.
-        //  It retuns on error or when the game is over
-        //
-        //  @return :  false on error(s) or if canceled by user
-        //
-        bool start();
-
-        // Pause or resume the game
-#ifdef FXCG50
-        void pause();
-#endif // FXCG50
-
-
-        // Cancel the game
-        void cancel() {
-            // Already escaped ?
-            if (!isCancelled()) {
-                status_ |= STATUS_CANCELED;
-            }
-        }
-
-        // Escaped / canceled by the user ?
-        bool isCancelled() {
-            return ((status_ & STATUS_CANCELED) == STATUS_CANCELED);
-        }
-
-        // Force the end of the game
-        void end() {
-            status_ |= STATUS_STOPPED;
-        }
-
-        //
-        // Access
-        //
-
-        // Current score
-        int32_t score(){
-            return values_[SCORE_ID].value;
-        }
-
-        // Completed lines
-        int32_t lines(){
-            return values_[COMPLETED_LINES_ID].value;
-        }
-
-        // Current level
-        int32_t level(){
-            return values_[LEVEL_ID].value;
-        }
-
-       // _showScores() : Show best scores and current one (if in the list)
-        //
-        //  @score : new score. If equal to -1, the bests scores are shown.
-        //  @lines : # completed lines
-        //  @level : end level
-        //
-        static void showScores(int32_t score = -1, uint32_t lines = 0, uint32_t level = 0);
-
-
-    // Internal methods
-    //
-    private:
-
-
-
-        // Change the game speed (in ticks)
-        int _getSpeed(int currentTicks, uint8_t incLevel = 1);
-
-        // Handle keyboard events
-        void _handleGameKeys();
-
-        //
-        // Pieces management
-        //
-
-        // Datas of a piece
-        uint8_t* _nextPieceDatas() {
-            return ((nextIndex_ < 0
-                || nextIndex_ >= TETRAMINOS_COUNT) ?
-                 nullptr : tetraminos_[nextIndex_].datas(0));
-        }
-        uint8_t* _pieceDatas(int8_t index, uint8_t  rotIndex) {
-            return ((index < 0 || index >= TETRAMINOS_COUNT
-                    || rotIndex >= tetraminos_[index].maxRotations()) ?
-                    nullptr : tetraminos_[index].datas(rotIndex));
-        }
-
-        // New piece (in the game)
-        void _newPiece();
-
-        // The position of the piece just changed
-        void _piecePosChanged();
-
-        // Get a new index for the next piece
-        uint8_t _newPieceIndex() {
-            return (rand() % TETRAMINOS_COUNT);
-        }
-
-        //
-        // Movements
-        //
-        bool _rotateLeft();
-        bool _left();
-        bool _right();
-        bool _down(bool newPiece = false);
-        void _fall();
-
-        // Rotate the display
-        void _rotateDisplay(bool first = false);
-
-        // Can the current piece be at the given position ?
-        bool _canMove(int8_t leftPos, uint8_t  topPos);
-
-        // Get a piece min.pos.index (vertical value)
-        uint8_t _minTopPosition();
-
-        // Add a randomly generated dirty line in the gameplay
-        void _addDirtyLine(uint8_t lineID);
-
-        // Clear and remove a completed line
-        void _clearLine(uint8_t index);
-
-        // Put the tetramino at the current position
-        void _putPiece();
-
-        // The piece is at the lowest possible level
-        void _reachLowerPos(uint8_t downRowcount = 0);
-
-        // redraw the whole screen
-        void _redraw();
-
-        // Display the next piece
-        void _drawNextPiece();
-
-        // Erase the "next piece" tetramino
-        void _eraseNextPiece();
-
-        // Draw a value and its name
-        void _drawNumValue(uint8_t index);
-
-        // Draw entire background
-        void _drawBackGround();
-
-        // Draw a tetramino using the given colour
-        void _drawSinglePiece(uint8_t* datas, uint16_t cornerX,
-                        uint16_t cornerY, bool inTetrisGame = true,
-                        uint8_t specialColourID = COLOUR_ID_NONE);
-
-        // Draw the tetrisGame
-        void _drawTetrisGame();
-
-        // Lt of scores management
-        static void _scores2List(char* data, sList& scores);
-        static void _list2Scores(sList& scores, char* data);
-
-#ifdef DEST_CASIO_CALC
-        // Callback for game's timer
-        static int __callbackTick(volatile int *pTick){
-            *pTick = 1;
-            return TIMER_CONTINUE;
-        }
-#endif // #ifdef DEST_CASIO_CALC
-
-};
+// end() - Force the end of the game
+//
+#define tetrisGame_end(tetris) tetris->status |= STATUS_STOPPED;
 
 #ifdef __cplusplus
 }
