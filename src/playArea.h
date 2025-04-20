@@ -101,12 +101,6 @@ void playArea_clear(PPLAYAREA area);
 //
 void playArea_defaultFont();
 
-// playArea_clearScreen() : Clear the screen with the given colour
-//
-//  @color : color to use to fill the screen
-//
-void playArea_clearScreen(int color);
-
 // playArea_shitfToZone() : Change the origin and the coordinate system
 //          according to a selected drawing zone
 //

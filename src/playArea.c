@@ -67,20 +67,6 @@ void playArea_clear(PPLAYAREA area){
     }
 }
 
-// playArea_clearScreen() : Clear the screen with the given colour
-//
-//  @color : color to use to fill the screen
-//
-void playArea_clearScreen(int color){
-#ifdef DEST_CASIO_CALC
-#ifdef FX9860G
-    dclear((color_t)color);
-#else
-    dclear(color);
-#endif // #ifdef FX9860G
-#endif // #ifdef DEST_CASIO_CALC
-}
-
 // defaultFont() : return to default font
 //
 void playArea_defaultFont(){

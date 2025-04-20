@@ -320,4 +320,24 @@ int removeBit(int value, int bit){
     return (value & ~bit);
 }
 
+//
+// Utils
+//
+
+// clearScreen() : Clear the whole screen (except menu bar ?)
+//
+//  @bkColour : Background colour
+//  @menuHeight : part of the screen (menu) to be preserved
+//  @update : update screen ?
+//
+void clearScreen(int bkColour, uint8_t menuHeight, BOOL update){
+#ifdef DEST_CASIO_CALC
+    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - menutHeight() - 1, bkColour);
+
+    if (update){
+        dupdate();
+    }
+#endif // #ifdef DEST_CASIO_CALC
+}
+
 // EOF

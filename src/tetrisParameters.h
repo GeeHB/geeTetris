@@ -38,6 +38,8 @@ typedef struct __tetrisParameters{
 
 BOOL params_init(PPARAMS const params);
 BOOL params_copy(PPARAMS const params, PPARAMS const other);
+int8_t params_changeNumValue(uint8_t value,
+                    uint8_t min, uint8_t max, const char* comment);
 
 #ifdef __cplusplus
 }

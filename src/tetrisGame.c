@@ -497,7 +497,7 @@ void _addDirtyLine(PTETRISGAME const tetris, uint8_t lineID){
 //
 void _redraw(PTETRISGAME const tetris){
 
-    playArea_clearScreen(tetris->colours[COLOUR_ID_BOARD]);
+    clearScreen(tetris->colours[COLOUR_ID_BOARD], 0, TRUE);
 
     _drawBackGround(tetris);
     _drawTetrisGame(tetris);

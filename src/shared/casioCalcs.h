@@ -260,6 +260,18 @@ BOOL isBitSet(int value, int bit);
 int setBit(int value, int bit);
 int removeBit(int value, int bit);
 
+//
+// Utils
+//
+
+// clearScreen() : Clear the whole screen (except menu bar ?)
+//
+//  @bkColour : Background colour
+//  @menuHeight : part of the screen (menu) to be preserved
+//  @update : update screen ?
+//
+void clearScreen(int bkColour, uint8_t menuHeight, BOOL update);
+
 #endif // #ifndef __GEE_CASIO_CALCS_h__
 
 // EOF
