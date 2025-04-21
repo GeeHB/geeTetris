@@ -1,21 +1,21 @@
-## *geeTetris* - Un jeu de *Tetris* pour les Casio GRAPH90+E / FX-CG50 et GRAPH35+E ii
+## *geeTetris* - Un jeu de *Tetris* pour Casio GRAPH90+E
 
 ### Présentation
 
-`geeTetris` est un jeu de type *Tetris* pour les calculatrices Casio Graph90+E et Graph35+E ii développé en C++ en utilisant `gint`.
+`geeTetris` est un jeu de type *Tetris* pour Casio Graph90+Edéveloppé en C en utilisant `gint`.
 
-Il offre différentes options : affichage de l'ombre de la pièce, démarrage avec un handicap de lignes 'sales', démarrage sur un niveau plus rapide. 
+Il offre différentes options : affichage de l'ombre de la pièce, démarrage avec un handicap de lignes 'sales', démarrage sur un niveau plus rapide.
 Il permet aussi de jouer avec la calculatrice en mode horizontal (position standard) ou en mode vertical.
 
 ### Informations de version
 
 | Dépôt &nbsp;| https://gitea.planet-casio.com/Jhb/geeTetris |
 |----- |-------------------------------------|
-| **Date** | 7 mars 2024 |
-| **Version stable** | **0\.7.1** - branche `main` |
+| **Date** | 21 avril 2024 |
+| **Version stable** | **1.0.1** - branche `dev` |
 | **Dépendances** |  **Casio / gint** |
-| **Testé sur** | *Linux* (Fedora 39) avec `code::blocks`|
-|| *Casio Graph90+E*  et Casio Grapg35+E ii avec `gint`|
+| **Testé sur** | *Linux* (Fedora 42) avec `code::blocks`|
+|| *Casio Graph90+E* avec `gint`|
 
 
 ### Informations pour la compilation
@@ -101,7 +101,7 @@ Ecran d'accueil de `geeTetris` :
 
 ![Accueil](assets/welcome.png)
 
-![Accueil](assets/welcome_fx.png) 
+![Accueil](assets/welcome_fx.png)
 
 Choix du niveau de démarrage :
 

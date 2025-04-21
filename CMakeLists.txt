@@ -9,13 +9,13 @@ set(SOURCES
   src/shared/casioCalcs.c
   src/shared/menu.c
   src/shared/keys.c
+  src/shared/window.c
   src/tetrisParameters.c
   src/sList.c
   src/piece.c
   src/playArea.c
   src/tetrisGame.c
   src/tetrisMenu.c
-  src/shared/window.c
   src/geeTetris.c
 )
 set(ASSETS
