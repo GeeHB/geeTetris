@@ -2,8 +2,7 @@
 //--
 //--    window.c
 //--
-//--            Definition of window object - Show a "window" on
-//--            top of the screen
+//--           Show a "window" on top of the screen
 //--
 //----------------------------------------------------------------------
 

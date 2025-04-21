@@ -12,18 +12,9 @@
 
 #include "shared/casioCalcs.h"
 
-/*
 #ifdef DEST_CASIO_CALC
 #include <gint/keyboard.h>
-#else
-#include <malloc.h>
-#include <cstdint> // <stdint.h>
-#include <cstdio>
 #endif // #ifdef DEST_CASIO_CALC
-
-#include <cstring>
-#include <cstdlib>
-*/
 
 #ifdef __cplusplus
 extern "C" {
