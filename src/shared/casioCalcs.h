@@ -10,6 +10,8 @@
 #ifndef __GEE_CASIO_CALCS_h__
 #define __GEE_CASIO_CALCS_h__    1
 
+#define _GEEHB_CASIO_CALC_VER_  "1.0.1"
+
 #ifdef DEST_CASIO_CALC
 // Specific includes for calculators
 #include <gint/gint.h>

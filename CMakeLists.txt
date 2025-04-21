@@ -15,7 +15,7 @@ set(SOURCES
   src/playArea.c
   src/tetrisGame.c
   src/tetrisMenu.c
-  #src/shared/window.cpp
+  src/shared/window.c
   src/geeTetris.c
 )
 set(ASSETS

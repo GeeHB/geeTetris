@@ -91,11 +91,11 @@ typedef struct __playArea{
 //
 BOOL playArea_init(PPLAYAREA area);
 
-// playArea_clear() : Clear | delete the playArea
+// playArea_free() : Free | delete the playArea
 //
 //  @area : pointer to an area
 //
-void playArea_clear(PPLAYAREA area);
+void playArea_free(PPLAYAREA area);
 
 // defaultFont() : return to default font
 //
