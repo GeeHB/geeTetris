@@ -332,7 +332,7 @@ int removeBit(int value, int bit){
 //
 void clearScreen(int bkColour, uint8_t menuHeight, BOOL update){
 #ifdef DEST_CASIO_CALC
-    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - menutHeight() - 1, bkColour);
+    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - menuHeight - 1, bkColour);
 
     if (update){
         dupdate();

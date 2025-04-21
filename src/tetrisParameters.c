@@ -7,8 +7,12 @@
 //----------------------------------------------------------------------
 
 #include"tetrisParameters.h"
-#include "shared/casioCalcs.h"
 #include "shared/menu.h"
+
+#ifdef DEST_CASIO_CALC
+#include <gint/clock.h>
+#include <gint/timer.h>
+#endif // #ifdef DEST_CASIO_CALC
 
 BOOL params_init(PPARAMS const params){
     if (params){
@@ -66,14 +70,14 @@ int8_t params_changeNumValue(uint8_t value,
 
 #ifdef DEST_CASIO_CALC
     // Position (centered)
-    uint16_t xPos((CASIO_WIDTH - VAL_RANGE_BOX_WIDTH * (max - min + 1)) / 2);
-    uint16_t yPos(int((CASIO_HEIGHT - menu_.getHeight()) / 2));
+    uint16_t xPos = (CASIO_WIDTH - VAL_RANGE_BOX_WIDTH * (max - min + 1)) / 2;
+    uint16_t yPos = (int)((CASIO_HEIGHT - menu_.getHeight()) / 2);
 
     // Draw all possible numbers
-    uint8_t maxCount(max - min);
-    uint16_t x(xPos);
+    uint8_t maxCount = max - min;
+    uint16_t x = xPos;
 
-    for (uint8_t index(0); index<=maxCount; index++){
+    for (uint8_t index = 0; index<=maxCount; index++){
         drect_border(x, yPos,
                     x + VAL_RANGE_BOX_WIDTH,
                     yPos + VAL_RANGE_BOX_WIDTH,
@@ -90,13 +94,13 @@ int8_t params_changeNumValue(uint8_t value,
     }
 
     // Select current val.
-    int8_t oldVal(-1), newVal(value);
+    int8_t oldVal = -1, newVal = value;
      _selectValue(newVal, min, max, xPos, yPos);
     dupdate();
 
     // Timer for blinking effect
-    int tickCount(BLINK_TICKCOUNT);
-    static volatile int tick(1);
+    int tickCount = BLINK_TICKCOUNT;
+    static volatile int tick = 1;
     int timerID = timer_configure(TIMER_ANY, BLINK_TICK_DURATION*1000,
                     GINT_CALL(__callbackTickMenu, &tick));
     if (timerID >= 0){
@@ -109,7 +113,7 @@ int8_t params_changeNumValue(uint8_t value,
     menu.update();
 
     // Handle menu
-    bool cont(true), redraw(false), showSelected(false);
+    BOOL cont = TRUE, redraw = FALSE, showSelected = FALSE;
     while (cont){
         if (timerID >= 0){
             while(!tick){

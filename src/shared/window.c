@@ -77,7 +77,7 @@ BOOL window_create(PWINDOW win){
 
 #ifdef DEST_CASIO_CALC
         struct dwindow dest;
-        window_rect2Window(win->pos, dest);
+        window_RECT2Window(&win->pos, &dest);
         dwindow_set(dest);
 
         dest.right--;   // included
@@ -86,13 +86,13 @@ BOOL window_create(PWINDOW win){
         dclear((color_t)win->bkColour); // background
 
         // Draw border(s)
-        if (infos_.style & WIN_STYLE_SBORDER || infos_.style & WIN_STYLE_DBORDER){
-            window_drawBorder(win, win->pos);
+        if (win->style & WIN_STYLE_SBORDER || win->style & WIN_STYLE_DBORDER){
+            window_drawBorder(win, &win->pos);
 
-            if (infos_.style & WIN_STYLE_DBORDER){
+            if (win->style & WIN_STYLE_DBORDER){
                 RECT dBorder;
                 copyRect(&dBorder, &win->pos);
-                deFlateRect(&dBorder, WIN_BORDER_WIDTH);
+                deflateRect(&dBorder, WIN_BORDER_WIDTH, WIN_BORDER_WIDTH);
                 window_drawBorder(win, &dBorder);
             }
         }
@@ -106,18 +106,18 @@ BOOL window_create(PWINDOW win){
         // Draw title
         if (win->title && win->title[0]){       // At least a char
             int width, height;
-            int len = strlen(win->title)
+            int len = strlen(win->title);
             int nLen = len;
             int maxWidth = win->client.w - 2 * WIN_BORDER_WIDTH;
             dnsize(win->title, len, NULL, &width, &height);
 
             // Adjust title length ?
             if (width > maxWidth){
-                nLen = (int)((len * maxWidth) / width);
+                nLen = (int)(len * maxWidth / width);
             }
 
             // Center the title (or part of the title that fit window size)
-            dtext_opt(win->clien.x + (win->client.w - width)/2,
+            dtext_opt(win->client.x + (win->client.w - width)/2,
                         win->client.y + WIN_BORDER_WIDTH, win->textColour,
                         win->bkColour, DTEXT_LEFT, DTEXT_TOP,
                         win->title, nLen);
@@ -170,14 +170,14 @@ void window_drawText(PWINDOW win, const char* text, int x, int y, int tCol, int 
     if (win && win->activated && text && text[0]){
 #ifdef DEST_CASIO_CALC
         POINT dest;
-        int w(0), h(0);
+        int w, h;
         if (x < 0 || y < 0){
             dsize(text, NULL, &w, &h);  // Need text dims to center
         }
 
         // Center text (or not ...)
-        dest.x = win->client.x + ((x<0)?((win->client.w - w)/2):x);
-        dest.y = win->client.y + ((y<0)?((win->client.h - h)/2):y);
+        dest.x = win->client.x + ((x<0)?(((int)win->client.w - w)/2):x);
+        dest.y = win->client.y + ((y<0)?(((int)win->client.h - h)/2):y);
 
         dtext_opt(dest.x, dest.y,
             (tCol==-1)?win->textColour:tCol,
@@ -195,10 +195,10 @@ void window_drawText(PWINDOW win, const char* text, int x, int y, int tCol, int 
 //
 void window_drawBorder(PWINDOW const win, PRECT rect){
 #ifdef DEST_CASIO_CALC
-    dline(rect->x, rect->y, rect->x + rect->w - 1, rect->y, infos_.borderColour);
-    dline(rect->x, rect->y + rect->h - 1, rect->x + rect->w - 1, rect->y + rect->h - 1, infos_.borderColour);
-    dline(rect->x, rect->y, rect->x, rect->y + rect->h - 1, infos_.borderColour);
-    dline(rect->x + rect->w - 1, rect->y, rect->x + rect->w - 1, rect->y + rect->h - 1, infos_.borderColour);
+    dline(rect->x, rect->y, rect->x + rect->w - 1, rect->y, win->borderColour);
+    dline(rect->x, rect->y + rect->h - 1, rect->x + rect->w - 1, rect->y + rect->h - 1, win->borderColour);
+    dline(rect->x, rect->y, rect->x, rect->y + rect->h - 1, win->borderColour);
+    dline(rect->x + rect->w - 1, rect->y, rect->x + rect->w - 1, rect->y + rect->h - 1, win->borderColour);
 #endif // #ifdef DEST_CASIO_CALC
 }
 
@@ -221,7 +221,7 @@ void window_win2Screen(PWINDOW win, PPOINT coord){
 //  @rwin : pointer to a dwindow struct.
 //
 void window_RECT2Window(PRECT rect, struct dwindow* rwin){
-    if (rect & rwin){
+    if (rect && rwin){
         rwin->left = rect->x;
         rwin->top = rect->y;
         rwin->right = rect->x + rect->w;

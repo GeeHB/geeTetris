@@ -9,6 +9,11 @@
 #ifndef __GEE_TETRIS_PARAMETERS_h__
 #define __GEE_TETRIS_PARAMETERS_h__    1
 
+#ifdef DEST_CASIO_CALC
+#include <gint/keyboard.h>
+#endif // #ifdef DEST_CASIO_CALC
+
+#include "consts.h"
 #include "shared/casioCalcs.h"
 
 #ifdef __cplusplus
