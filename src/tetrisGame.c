@@ -165,7 +165,7 @@ BOOL tetrisGame_init(PTETRISGAME const tetris, PPARAMS const params){
 //
 void tetrisGame_setParameters(PTETRISGAME const tetris, PPARAMS const params){
     if (tetris && params){
-        params_copy(&tetris.parameters, params);
+        params_copy(&tetris->parameters, params);
 
         tetris->values[SCORE_ID].value = 0;
         tetris->values[LEVEL_ID].value = tetris->parameters.startLevel;
@@ -641,7 +641,7 @@ BOOL _right(PTETRISGAME const tetris){
 //  When the piece has been added newly to the game and going down is
 //  not possible, it means the game is over
 //
-BOOL down(PTETRISGAME const tetris, BOOL newPiece) {
+BOOL _down(PTETRISGAME const tetris, BOOL newPiece) {
     // Test position
     if (_canMove(tetris, tetris->nextPos.leftPos, tetris->nextPos.topPos - 1)){
         // correct

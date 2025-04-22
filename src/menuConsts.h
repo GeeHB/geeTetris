@@ -39,19 +39,6 @@ extern "C" {
 #define IDM_QUIT                4
 #define IDS_QUIT                "Quit"
 
-// Parameters sub-menu
-//
-#define IDM_PARAMS_SHADOW       21
-#define IDS_PARAMS_SHADOW       "Shadow"
-
-#define IDM_PARAMS_LINES        22
-#define IDS_PARAMS_LINES        "Lines"
-#define COMMENT_PARAMS_LINES    "'Dirty' lines :"
-
-#define IDM_PARAMS_LEVEL        23
-#define IDS_PARAMS_LEVEL        "Level"
-#define COMMENT_PARAMS_LEVEL    "Starting level :"
-
 //
 // Parameters' menu
 //
@@ -68,6 +55,18 @@ extern "C" {
 #define IDM_PARAMS_CANCEL       204
 #define IDS_PARAMS_CANCEL       "Cancel"
 
+// Parameters sub-menu
+//
+#define IDM_PARAMS_SHADOW       21
+#define IDS_PARAMS_SHADOW       "Shadow"
+
+#define IDM_PARAMS_LINES        22
+#define IDS_PARAMS_LINES        "Lines"
+#define COMMENT_PARAMS_LINES    "'Dirty' lines :"
+
+#define IDM_PARAMS_LEVEL        23
+#define IDS_PARAMS_LEVEL        "Level"
+#define COMMENT_PARAMS_LEVEL    "Starting level :"
 
 #ifdef __cplusplus
 }

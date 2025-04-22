@@ -8,40 +8,12 @@
 
 #include"tetrisParameters.h"
 #include "shared/menu.h"
+#include "menuConsts.h"
 
 #ifdef DEST_CASIO_CALC
 #include <gint/clock.h>
 #include <gint/timer.h>
 #endif // #ifdef DEST_CASIO_CALC
-
-//
-// Parameters' menu
-//
-
-#define IDM_PARAMS_OK           201
-#define IDS_PARAMS_OK           "Ok"
-
-#define IDM_PARAMS_PREV         202
-#define IDS_PARAMS_PREV         "<<"
-
-#define IDM_PARAMS_NEXT         203
-#define IDS_PARAMS_NEXT         ">>"
-
-#define IDM_PARAMS_CANCEL       204
-#define IDS_PARAMS_CANCEL       "Cancel"
-
-// Parameters sub-menu
-//
-#define IDM_PARAMS_SHADOW       21
-#define IDS_PARAMS_SHADOW       "Shadow"
-
-#define IDM_PARAMS_LINES        22
-#define IDS_PARAMS_LINES        "Lines"
-#define COMMENT_PARAMS_LINES    "'Dirty' lines :"
-
-#define IDM_PARAMS_LEVEL        23
-#define IDS_PARAMS_LEVEL        "Level"
-#define COMMENT_PARAMS_LEVEL    "Starting level :"
 
 //
 // Int. functions
@@ -111,7 +83,7 @@ int8_t params_changeNumValue(uint8_t value,
 #ifdef DEST_CASIO_CALC
     // Position (centered)
     uint16_t xPos = (CASIO_WIDTH - VAL_RANGE_BOX_WIDTH * (max - min + 1)) / 2;
-    uint16_t yPos = (int)((CASIO_HEIGHT - menu_.getHeight()) / 2);
+    uint16_t yPos = (int)((CASIO_HEIGHT - menu_getHeight(NULL)) / 2);
 
     // Draw all possible numbers
     uint8_t maxCount = max - min;
@@ -152,7 +124,7 @@ int8_t params_changeNumValue(uint8_t value,
     PMENUBAR bar = menu_getMenuBar(menu);
 
     _createMenu(bar);
-    menu.update();
+    menu_update(menu);
 
     // Handle menu
     BOOL cont = TRUE, redraw = FALSE, showSelected = FALSE;

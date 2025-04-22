@@ -97,7 +97,7 @@ void playArea_rotateDisplay(PPLAYAREA const area, CALC_ORIENTATION orientation){
             // Nextpiece zone dims
             area->zones[ZONE_NEXTPIECE].boxWidth = CASIO_BOX_WIDTH_NP;
             area->zones[ZONE_NEXTPIECE].pos.x = CASIO_INFO_LEFT + CASIO_INFO_GAP;
-            if (area->zones[ZONE_NEXTPIECE].pos.x <= (area->zones[ZONE_PLAYFIELD].pos.x + area->zones[ZONE_PLAYFIELD].pos.w)){
+            if (area->zones[ZONE_NEXTPIECE].pos.x <= (area->zones[ZONE_PLAYFIELD].pos.x + (int)area->zones[ZONE_PLAYFIELD].pos.w)){
                 area->zones[ZONE_NEXTPIECE].pos.x = area->zones[ZONE_PLAYFIELD].pos.x
                     + area->zones[ZONE_PLAYFIELD].pos.w + 2 * CASIO_INFO_GAP;
             }

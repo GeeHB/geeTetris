@@ -10,8 +10,9 @@
 #include "tetrisParameters.h"
 
 #include "menuConsts.h"
-
 #include "tetrisGame.h"
+
+#include <string.h>
 
 // Background image
 #ifdef DEST_CASIO_CALC
@@ -21,7 +22,7 @@ extern bopti_image_t g_imgAbout;
 
 // _onAbout() : Show "about" informations
 //.
-void _onAbout(){
+void _onAbout(POWNMENU menu){
 
     clearScreenEx(COLOUR_WHITE, 0, FALSE);
 
@@ -41,7 +42,7 @@ void _onAbout(){
     int w, h;
     dsize(copyright, NULL, &w, &h);
     dtext(CASIO_WIDTH - w - 5,
-            CASIO_HEIGHT - menu_.getHeight() - h - 10,
+            CASIO_HEIGHT - menu_getHeight(menu) - h - 10,
             COLOUR_BLACK, copyright);
 
     dupdate();
@@ -67,9 +68,9 @@ void _onStart(POWNMENU menu, PPARAMS const params){
     menu_update(menu);
 }
 
-// _createMenu() : Create app. menu
+// _createMainMenu() : Create app. menu
 //
-POWNMENU _createMenu(PPARAMS params){
+POWNMENU _createMainMenu(PPARAMS params){
     POWNMENU menu = menu_create();
     if (menu){
         PMENUBAR bar = menu_getMenuBar(menu);
@@ -114,7 +115,7 @@ void _run(POWNMENU menu, PPARAMS params){
 
                     // About
                     case IDM_ABOUT:
-                        _onAbout();
+                        _onAbout(menu);
                         break;
 
                     // Parameters
@@ -174,12 +175,12 @@ int main(){
     POWNMENU mainMenu = NULL;
     tetrisParameters params;
 
-    _onAbout();
-
     params_init(&params);       // Default parameters
-    mainMenu = _createMenu(&params);
+    mainMenu = _createMainMenu(&params);
 
     if (mainMenu){
+        _onAbout(mainMenu);   
+
         _run(mainMenu, &params);
         menu_free(mainMenu);
     }
