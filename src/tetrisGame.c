@@ -165,7 +165,7 @@ BOOL tetrisGame_init(PTETRISGAME const tetris, PPARAMS const params){
 //
 void tetrisGame_setParameters(PTETRISGAME const tetris, PPARAMS const params){
     if (tetris && params){
-        params_copy(&tetris->parameters, params);
+        params_copy(&tetris.parameters, params);
 
         tetris->values[SCORE_ID].value = 0;
         tetris->values[LEVEL_ID].value = tetris->parameters.startLevel;
@@ -497,7 +497,7 @@ void _addDirtyLine(PTETRISGAME const tetris, uint8_t lineID){
 //
 void _redraw(PTETRISGAME const tetris){
 
-    clearScreen(tetris->colours[COLOUR_ID_BOARD], 0, TRUE);
+    clearScreenEx(tetris->colours[COLOUR_ID_BOARD], 0, TRUE);
 
     _drawBackGround(tetris);
     _drawTetrisGame(tetris);

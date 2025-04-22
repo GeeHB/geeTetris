@@ -15,7 +15,6 @@ set(SOURCES
   src/piece.c
   src/playArea.c
   src/tetrisGame.c
-  src/tetrisMenu.c
   src/geeTetris.c
 )
 set(ASSETS

@@ -272,7 +272,8 @@ int removeBit(int value, int bit);
 //  @menuHeight : part of the screen (menu) to be preserved
 //  @update : update screen ?
 //
-void clearScreen(int bkColour, uint8_t menuHeight, BOOL update);
+void clearScreenEx(int bkColour, uint8_t menuHeight, BOOL update);
+#define clearScreen(bkColour)   clearScreenEx(bkColour, 0, TRUE);
 
 #endif // #ifndef __GEE_CASIO_CALCS_h__
 
