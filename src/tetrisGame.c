@@ -606,7 +606,7 @@ BOOL _right(PTETRISGAME const tetris){
 //  When the piece has been added newly to the game and going down is
 //  not possible, it means the game is over
 //
-BOOL down(PTETRISGAME const tetris, BOOL newPiece) {
+BOOL _down(PTETRISGAME const tetris, BOOL newPiece) {
     // Test position
     if (_canMove(tetris, tetris->nextPos.leftPos, tetris->nextPos.topPos - 1)){
         // correct
