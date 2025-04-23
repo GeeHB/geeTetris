@@ -277,7 +277,7 @@ void playArea_drawBorder(PPLAYAREA const area, uint16_t x, uint16_t y,
 
 #ifdef DEST_CASIO_CALC
     drect_border(pos.x, pos.y, pos.x + pos.w -1, pos.y + pos.h - 1, C_NONE, 1, borderColour);
-#endif // #ifdef FX9860G
+#endif // #ifdef DEST_CASIO_CALC
 }
 
 // playArea_shitfToZone() : Change the origin and the coordinate system

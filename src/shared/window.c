@@ -14,7 +14,7 @@
 //  window - A basic window on top of the screen
 //
 
-// window_init() : Close the current window
+// window_init() : Initialize the window
 //
 //  @win : Pointer to a window struct.
 //  @title : window's title (can be NULL)

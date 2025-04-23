@@ -32,10 +32,8 @@ void _onAbout(POWNMENU menu){
 
     char copyright[255];    // Should be enough !
     strcpy(copyright, APP_NAME);
-#ifdef FXCG50
     strcat(copyright, " par ");
     strcat(copyright, APP_AUTHOR);
-#endif // #ifdef FX9860G
     strcat(copyright, " v");
     strcat(copyright, APP_VERSION);
 
@@ -58,10 +56,7 @@ void _onStart(POWNMENU menu, PPARAMS const params){
     tetrisGame_init(&game, params);
 
     if (tetrisGame_start(&game)){
-        /*
-        game.showScores(game.score(),
-            game.lines(), game.level());  // Show final score
-            */
+        tetrisGame_showScores(&game);
     }
 
     menubar_selectByIndex(menu_getMenuBar(menu), 0, TRUE);
@@ -179,7 +174,7 @@ int main(){
     mainMenu = _createMainMenu(&params);
 
     if (mainMenu){
-        _onAbout(mainMenu);   
+        _onAbout(mainMenu);
 
         _run(mainMenu, &params);
         menu_free(mainMenu);

@@ -1,3 +1,10 @@
+#### v1.0.1
+* avril 2025
+* Ajouts
+    * Première version 100% c
+    * Plus de génération pour FX9860G
+    * casioCalcs devient une "librairie" de fonctions paratagées
+
 #### v0.7
 * xxx mars. 2024
 * Taille réduite du binaire
@@ -66,4 +73,3 @@
 #### v0.1 - Première version fonctionnelle du jeu nu
 * 15 oct. 2023
 * classe `tetrisGame` operationnelle
-

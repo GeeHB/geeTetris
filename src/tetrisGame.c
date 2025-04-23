@@ -12,6 +12,7 @@
 #include "piece.h"
 #include "playArea.h"
 #include "shared/casioCalcs.h"
+#include "shared/window.h"
 
 #include <math.h>
 #include <time.h>
@@ -271,7 +272,7 @@ static int __callbackTick(volatile int * pTick){
 }
 #endif // #ifdef DEST_CASIO_CALC
 
-// start() : Start the tetris game
+// tetrisGame_start() : Start the tetris game
 //
 //  The entire game is handled by this method.
 //  It retuns on error or when the game is over
@@ -281,7 +282,7 @@ static int __callbackTick(volatile int * pTick){
 //  @return :  FALSE on error(s) or if canceled by user
 //
 BOOL tetrisGame_start(PTETRISGAME const tetris){
-    if (!tetris || STATUS_READY != tetris->status) {
+    if (!tetris || STATUS_READY == tetris->status) {
         return FALSE;
     }
 
@@ -353,109 +354,75 @@ BOOL tetrisGame_start(PTETRISGAME const tetris){
 
     playArea_defaultFont();
 
-    return ((tetris->status & STATUS_CANCELED) != STATUS_CANCELED);
+    return (tetris->status == STATUS_CANCELED);
 }
 
-// _showScores() : Show best scores and current one (if in the list)
+// tetrisGame_showScores() : Show best scores and current one (if in the list)
 //
-//  @score : new score. If equal to -1, the bests scores are shown.
-//  @lines : # completed lines
-//  @level : end level
+//  @tetris : pointer to the tetris struct.
 //
-/*
-void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
-    sList scores;
-    char data[SIZE_SCORES_FILE];
-    memset(data, 0x00, SIZE_SCORES_FILE);  // scores list is empty
-
-    // Load scores
-    bFile scoresFile;
-    if (scoresFile.open((FONTCHARACTER)SCORES_FILENAME, BFile_ReadOnly)){
-        if (SIZE_SCORES_FILE == scoresFile.read((void*)data, SIZE_SCORES_FILE, -1)){
-            _scores2List(data, scores);
-        }
-        scoresFile.close();
+void tetrisGame_showScores(PTETRISGAME tetris){
+    SCORES scores;
+    if (!tetris || tetris->status != STATUS_OVER ||
+        -1 == scores_load(SCORES_FILENAME, &scores)){
+        return;
     }
 
     // Add the current score
-    if (score != -1 && scores.add(score, lines, level)){
-        scoresFile.remove((FONTCHARACTER)SCORES_FILENAME);
-
-        // Try to create (and open) the file
-        int size(SIZE_SCORES_FILE);
-        scoresFile.createEx((FONTCHARACTER)SCORES_FILENAME,
-                    BFile_File, &size, BFile_WriteOnly);
-
-        // Save the new list
-        if (BFILE_NO_ERROR == scoresFile.getLastError()){
-            _list2Scores(scores, data);
-            scoresFile.write(data, SIZE_SCORES_FILE);
-        }
-
-        scoresFile.close();
+    if (scores_add(&scores, tetris->values[SCORE_ID].value,
+            tetris->values[COMPLETED_LINES_ID].value,
+            tetris->values[LEVEL_ID].value)){
+        scores_save(SCORES_FILENAME, &scores, MAX_SCORES);  // update on disk
     }
 
     // Display scores
     //
-
 #ifdef DEST_CASIO_CALC
     dfont(dfont_default());     // return to default font
 #endif // #ifdef DEST_CASIO_CALC
 
-    window scWin;
-    window::winInfo wInf;
-    wInf.title = (char*)"Best scores";
-    wInf.style = WIN_STYLE_DBORDER | WIN_STYLE_HCENTER;
-    wInf.pos.y = WIN_X;
-    wInf.pos.w = WIN_WIDTH;
-    wInf.pos.h = WIN_HEIGHT;
-    wInf.bkColour = COLOUR_LT_GREY;
-    scWin.create(wInf);
+    WINDOW scWin;
 
-    sList::PNODE current(scores.head());
-    if (nullptr == current){
-        scWin.drawText("La liste est vide", -1, -1, COLOUR_RED);
+    window_init(&scWin, SCORES_DEF_TITLE);
+    scWin.style = WIN_STYLE_DBORDER | WIN_STYLE_HCENTER;
+    scWin.pos.y = WIN_X;
+    scWin.pos.w = WIN_WIDTH;
+    scWin.pos.h = WIN_HEIGHT;
+    scWin.bkColour = COLOUR_LT_GREY;
+    window_create(&scWin);
+
+    PSCORENODE current = scores.head;
+    if (!current){
+        window_drawText(&scWin, "La liste est vide", -1, -1, COLOUR_RED, -1);
     }
     else{
-        uint8_t count(0);
-        int px(15), py(8);
+        uint8_t count = 0;
+        int px = 15, py = 8;
         char line[26];
+        int32_t currentScore = tetris->values[SCORE_ID].value;
         while (current && count < MAX_SCORES){
             line[0] = 0;
-            playArea::__valtoa(++count, NULL, line, 3);
-            playArea::__valtoa(current->record.score, NULL, line + 3, 9); // score
-            playArea::__valtoa(current->record.lines, NULL, line + 12, 5); // lines
-#ifndef FX9860G
-            // No "levels" for FX9860G
-            playArea::__valtoa(current->record.level, NULL, line + 17, 5); // level
-#endif // FX9860G
-
-#ifndef DEST_CASIO_CALC
-            if (score == (int32_t)current->record.score){
-                line[0] = '>';
-            }
-#endif // #ifndef DEST_CASIO_CALC
-
-            scWin.drawText(line, px, py, (score == (int32_t)current->record.score)?
-                COLOUR_RED:COLOUR_BLUE);
+            playArea_valtoa(++count, NULL, line, 3);
+            playArea_valtoa(current->score.score, NULL, line + 3, 9); // score
+            playArea_valtoa(current->score.lines, NULL, line + 12, 5); // lines
+            window_drawText(&scWin, line, px, py, (currentScore == (int32_t)current->score.score)?
+                COLOUR_RED:COLOUR_BLUE, -1);
 
             // next ...
             py+=11;
             current = current->next;
         }
 
-        scWin.update();
-
 #ifdef DEST_CASIO_CALC
+        dupdate();
+
         // Wait for any key to be pressed
         getkey();
 #endif // DEST_CASIO_CALC
 
-        // Close the window
-        scWin.close();
+        window_close(&scWin);
     }
 }
-*/
 
 //
 // "Private" methods
@@ -464,9 +431,7 @@ void tetrisGame::showScores(int32_t score, uint32_t lines, uint32_t level){
 // _cancel()
 //
 void _cancel(PTETRISGAME const tetris){
-    if ( ((tetris->status & STATUS_CANCELED) != STATUS_CANCELED)) {
-        tetris->status |= STATUS_CANCELED;
-    }
+    tetris->status = STATUS_CANCELED;
 }
 
 // _addDirtyLine() : Add a randomly generated dirty line in the gameplay
@@ -641,7 +606,7 @@ BOOL _right(PTETRISGAME const tetris){
 //  When the piece has been added newly to the game and going down is
 //  not possible, it means the game is over
 //
-BOOL _down(PTETRISGAME const tetris, BOOL newPiece) {
+BOOL down(PTETRISGAME const tetris, BOOL newPiece) {
     // Test position
     if (_canMove(tetris, tetris->nextPos.leftPos, tetris->nextPos.topPos - 1)){
         // correct
@@ -947,7 +912,7 @@ void _newPiece(PTETRISGAME const tetris){
     // Can I go on line down ?
     if (!_down(tetris, TRUE)) {
         // No = > the game is over
-        tetris->status |= STATUS_STOPPED;
+        tetris->status = STATUS_OVER;
     }
 }
 
@@ -1124,57 +1089,6 @@ void _drawNumValue(PTETRISGAME const tetris, uint8_t index){
 
     tetris->values[index].previous = tetris->values[index].value; // to erase the value next time
 }
-
-// _scores2List() : Transfer file content to the list os scores
-//
-//  @data : Buffer read from scores file
-//  @scores : List
-//
-/*
-void tetrisGame::_scores2List(char* data, sList& scores){
-    scores.clear();
-
-    if (data){
-        sList::RECORD record;
-        char* pos(data);
-        for (uint8_t i=0; i<MAX_SCORES; i++){
-            memcpy(&record, pos, SIZE_SCORE);
-
-            // append to list (no need to add, values are already ordered)
-            if (record.score){
-                scores.append(record.score, record.lines
-#ifndef FX9860G
-                    , record.level
-#endif // #ifndef FX9860G
-                );
-            }
-            pos+=SIZE_SCORE;    // next record
-        }
-    }
-}
-*/
-
-// _scores2List() : Transfer list of scores to a buffer
-//
-//  @scores : List
-//  @data : Destination buffer
-//
-/*
-void tetrisGame::_list2Scores(sList& scores, char* data){
-    memset(data, 0x00, SIZE_SCORES_FILE);  // dest. buffer is empty
-
-    sList::PNODE item(scores.head());
-    uint8_t index(0);
-    char* pos(data);
-    sList::RECORD* prec;
-    while (item && index++ < MAX_SCORES){
-        prec = &item->record;
-        memcpy(pos, (char*)prec, SIZE_SCORE);
-        item = item->next;  // Next score
-        pos+=SIZE_SCORE;    // forward
-    }
-}
-*/
 
 // Datas of a piece
 uint8_t* _nextPieceDatas(PTETRISGAME const tetris){

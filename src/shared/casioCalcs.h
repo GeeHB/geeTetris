@@ -38,22 +38,6 @@
 #define C_RGB(r,g,b)    ((uint32_t)(((uint8_t)(r)|((uint16_t)((uint8_t)(g))<<8))|(((uint32_t)(uint8_t)(b))<<16)))
 #endif // #ifndef DEST_CASIO_CALC
 
-#ifdef FX9860G
-#define COLOUR_BLACK    C_BLACK
-#define COLOUR_WHITE    C_WHITE
-#define COLOUR_RED      C_DARK
-#define COLOUR_GREEN    C_BLACK
-#define COLOUR_YELLOW   C_BLACK
-#define COLOUR_BLUE     C_DARK
-#define COLOUR_LT_BLUE  C_BLACK
-#define COLOUR_PURPLE   C_DARK
-#define COLOUR_CYAN     C_BLACK
-#define COLOUR_ORANGE   C_DARK
-#define COLOUR_LT_GREY  C_LIGHT
-#define COLOUR_GREY     C_WHITE
-#define COLOUR_DK_GREY  C_DARK
-#define NO_COLOR        -1
-#else
 #define COLOUR_BLACK    C_RGB(0, 0, 0)
 #define COLOUR_WHITE    C_RGB(31, 31, 31)
 #define COLOUR_RED      C_RGB(31, 0, 0)
@@ -68,7 +52,6 @@
 #define COLOUR_GREY     C_RGB(16, 16, 16)
 #define COLOUR_DK_GREY  C_RGB(8, 8, 8)
 #define NO_COLOR        -1
-#endif // #ifdef FX9860G
 
 // BOOLEANS
 //

@@ -48,7 +48,7 @@ typedef struct _window{
 }window, WINDOW, * PWINDOW;
 
 
-// window_init() : Close the current window
+// window_init() : Initialize the window
 //
 //  @win : Pointer to a window struct.
 //  @title : window's title (can be NULL)
@@ -62,6 +62,14 @@ BOOL window_init(PWINDOW const win, const char* title);
 //  @win : Pointer to a window struct.
 //
 void window_clear(PWINDOW const win);
+
+// window_create() : Creation of a window
+//
+//  @win : Pointer to a window struct.
+//
+//  @return : TRUE if created else false
+//
+BOOL window_create(PWINDOW win);
 
 // window_close() : Close the current window
 //

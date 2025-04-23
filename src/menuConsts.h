@@ -20,21 +20,13 @@ extern "C" {
 //
 
 #define IDM_START               1
-#ifdef FX9860G
-#define IDS_START               "Go"
-#else
 #define IDS_START               "Start"
-#endif // #ifdef FX9860G
 
 #define IDM_PARAMS              2
 #define IDS_PARAMS              "Params."
 
 #define IDM_ABOUT               3
-#ifdef FX9860G
-#define IDS_ABOUT               "?"
-#else
 #define IDS_ABOUT               "About"
-#endif // #ifdef FX9860G
 
 #define IDM_QUIT                4
 #define IDS_QUIT                "Quit"

@@ -12,7 +12,7 @@
 #include "piece.h"
 #include "templates.h"
 #include "playArea.h"
-#include "sList.h"
+#include "scores.h"
 #include "shared/keys.h"
 
 #ifdef DEST_CASIO_CALC
@@ -40,8 +40,8 @@ extern "C" {
 enum GAME_STATUS{
     STATUS_READY     = 1,
     STATUS_RUNNING   = 2,
-    STATUS_STOPPED   = 8,
-    STATUS_CANCELED  = 16
+    STATUS_OVER      = 3,
+    STATUS_CANCELED  = 4
 };
 
 //
@@ -78,7 +78,7 @@ BOOL tetrisGame_init(PTETRISGAME const tetris, PPARAMS const params);
 //
 void tetrisGame_setParameters(PTETRISGAME const tetris, PPARAMS const params);
 
-// start() : Start the tetris game
+// tetrisGame_start() : Start the tetris game
 //
 //  The entire game is handled by this method.
 //  It retuns on error or when the game is over
@@ -88,6 +88,12 @@ void tetrisGame_setParameters(PTETRISGAME const tetris, PPARAMS const params);
 //  @return :  FALSE on error(s) or if canceled by user
 //
 BOOL tetrisGame_start(PTETRISGAME const tetris);
+
+// tetrisGame_showScores() : Show best scores and current one (if in the list)
+//
+//  @tetris : pointer to the tetris struct.
+//
+void tetrisGame_showScores(PTETRISGAME tetris);
 
 // pause() : Pause or resume the game
 //

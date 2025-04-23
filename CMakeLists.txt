@@ -11,7 +11,7 @@ set(SOURCES
   src/shared/keys.c
   src/shared/window.c
   src/tetrisParameters.c
-  src/sList.c
+  src/scores.c
   src/piece.c
   src/playArea.c
   src/tetrisGame.c
