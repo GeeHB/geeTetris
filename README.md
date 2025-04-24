@@ -2,7 +2,7 @@
 
 ### Présentation
 
-`geeTetris` est un jeu de type *Tetris* pour Casio Graph90+Edéveloppé en C en utilisant `gint`.
+`geeTetris` est un jeu de type *Tetris* pour Casio Graph90+E développé en C en utilisant `gint`.
 
 Il offre différentes options : affichage de l'ombre de la pièce, démarrage avec un handicap de lignes 'sales', démarrage sur un niveau plus rapide.
 Il permet aussi de jouer avec la calculatrice en mode horizontal (position standard) ou en mode vertical.
@@ -11,39 +11,11 @@ Il permet aussi de jouer avec la calculatrice en mode horizontal (position stand
 
 | Dépôt &nbsp;| https://gitea.planet-casio.com/Jhb/geeTetris |
 |----- |-------------------------------------|
-| **Date** | 21 avril 2024 |
+| **Date** | 24 avril 2025 |
 | **Version stable** | **1.0.1** - branche `dev` |
 | **Dépendances** |  **Casio / gint** |
 | **Testé sur** | *Linux* (Fedora 42) avec `code::blocks`|
 || *Casio Graph90+E* avec `gint`|
-
-
-### Informations pour la compilation
-#### Sources
-Les sources sont organisés selon dossiers suivants :
-* `src/` : Sources spécifiques à l'application;
-* `src/shared` : Sources des objets pouvant être utilisés dans d'autres projets.
-
-#### Constantes de l'application
-La majorité des comportements est régi par des constantes que l'on peut trouver pour leur grande majorité dans deux fichiers distincts :
-* `src/consts.h` - Contantes et définitions générales de l'application
-* `src/shared/casioCalcs.h` - Constantes spécifiques aux calculatrices.
-
-A défaut, les constantes, toujours en majusucules dans les sources, sont définies avec les objets qui les concernent spécifiquement. Par exemple `src/shared/tabs.h` et `src/shared/tabs.cpp` proposent les définitions liées aux onglets.
-
-Faute d'émulateur, tous les sources sont 100% fonctionnels en C/CPP ANSI. Ils peuvent donc être compilés dans un projet Windows (testé avec Visual Studio) ou sous Linux. Dans ce cas seuls les affichages ne seront pas effectués :).
-
-#### Mode TRACE et capture d'écran
-Il est possible de compiler les sources afin d'ajouter la fonction de capture d'écran (utilisation de *fxlink*). Pour cela, il faut :
-
-* dans `src/shared/trace.h` : définir la constante TRACE_MODE :
-
-![trace.h](assets/Capture_trace.png)
-
-* dans `CMakelists.txt` : Ajouter la compilation du module `src/shared/scrCapture.cpp`. La ligne est par défaut commentée :
-![CMakeLists](assets/Capture_CMakelists.png)
-
-Ne reste plus qu'à recompiler le ou les binaires.
 
 ### Utilisation du clavier
 #### A partir du menu principal
@@ -101,37 +73,26 @@ Ecran d'accueil de `geeTetris` :
 
 ![Accueil](assets/welcome.png)
 
-![Accueil](assets/welcome_fx.png)
-
 Choix du niveau de démarrage :
 
 ![Level](assets/levels.png)
-
-![Level](assets/levels_fx.png)
 
 
 Choix du nombre de ligne 'sales' à ajouter en début de partie :
 
 ![Dirty lines](assets/dirty.png)
 
-![Dirty lines](assets/dirty_fx.png)
-
-
 Affichage ou masquage de l'ombre des pièces :
 
-![Shdow](assets/shadow.png)
+![Shadow](assets/shadow.png)
 
 Jeu en mode normal :
 
 ![Horz](assets/horz.png)
 
-![Horz](assets/horz_fx.png)
-
 ... la même partie continue en affichage vertical :
 
 ![Vertical](assets/vert.png)
-
-![Vertical](assets/vert_fx.png)
 
 
 Affichage des meilleurs scores à partir de la page principale :

@@ -171,7 +171,7 @@ int scores_save(const char* filename, PSCORES const sList, uint max){
         if (fd != -1){
             PSCORENODE node = sList->head;
             count = 0;
-            while (node && count < max){
+            while (node && count < (int)max){
                 write(fd, &node->score, SIZE_SCORE);
                 count++;
                 node = node->next;
