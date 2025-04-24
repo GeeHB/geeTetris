@@ -139,7 +139,7 @@ BOOL scores_add(PSCORES const sList, uint32_t score, uint16_t lines, uint16_t le
 //
 //  @return : TRUE if successfully added to the list
 //
-BOOL scores_append(PSCORES const sList, uint32_t score, uint16_t lines, uint16_t level);
+// BOOL scores_append(PSCORES const sList, uint32_t score, uint16_t lines, uint16_t level);
 
 #ifdef __cplusplus
 }

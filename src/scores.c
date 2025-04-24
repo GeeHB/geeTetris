@@ -171,7 +171,7 @@ int scores_save(const char* filename, PSCORES const sList, uint max){
         if (fd != -1){
             PSCORENODE node = sList->head;
             count = 0;
-            while (node){
+            while (node && count < max){
                 write(fd, &node->score, SIZE_SCORE);
                 count++;
                 node = node->next;
@@ -249,6 +249,7 @@ BOOL scores_add(PSCORES const sList, uint32_t score, uint16_t lines, uint16_t le
     return FALSE;
 }
 
+/*
 // scores_append() : Append a score to the list
 //
 //  @sList : pointer to the list
@@ -280,5 +281,6 @@ BOOL scores_append(PSCORES const sList, uint32_t score, uint16_t lines, uint16_t
 
     return FALSE;
 }
+*/
 
 // EOF
