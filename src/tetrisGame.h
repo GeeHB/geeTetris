@@ -37,12 +37,12 @@ extern "C" {
 
 // Game status
 //
-enum GAME_STATUS{
-    STATUS_READY     = 1,
-    STATUS_RUNNING   = 2,
-    STATUS_OVER      = 3,
-    STATUS_CANCELED  = 4
-};
+typedef enum{
+    STATUS_READY,
+    STATUS_RUNNING,
+    STATUS_OVER,
+    STATUS_CANCELED
+} GAME_STATUS;
 
 //
 // tetrisGame
@@ -50,7 +50,7 @@ enum GAME_STATUS{
 //  Handle the gameplay and the game(without display !)
 //
 typedef struct __tetrisGame{
-    uint8_t status;
+    GAME_STATUS status;
     uint8_t playField[PLAYFIELD_HEIGHT][PLAYFIELD_WIDTH];
     PIECE tetraminos[TETRAMINOS_COUNT];                      // The tetraminos' list
     int32_t colours[LAST_COLOUR_ID+1];     // Colours in rgb
@@ -58,7 +58,7 @@ typedef struct __tetrisGame{
     PLAYAREA casioDisplay;
     int8_t nextIndex;  // -1 = None
     PIECESTATUS nextPos, currentPos;
-    UVALUE  values[VAL_COUNT];
+    UVALUE values[VAL_COUNT];
 } TETRISGAME, * PTETRISGAME;
 
 // tetrisGame_init() : Initialize a new game

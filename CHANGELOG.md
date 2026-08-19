@@ -1,9 +1,10 @@
-#### v1.0.1
+#### v1.0.2
 * avril 2025
 * Ajouts
-    * Première version 100% c
-    * Plus de génération pour FX9860G
-    * casioCalcs devient une "librairie" de fonctions paratagées
+    * Première version 100% langage c
+    * Fin de la génération pour FX9860G
+    * casioCalcs devient une "librairie" de fonctions partagées
+* Corrections
 
 #### v0.7
 * xxx mars. 2024

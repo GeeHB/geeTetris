@@ -5,6 +5,7 @@ include(GenerateG3A)
 include(Fxconv)
 find_package(Gint 2.9 REQUIRED)
 
+set (SHARED_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../shared-files")
 set(SOURCES
   src/shared/casioCalcs.c
   src/shared/menu.c
@@ -26,6 +27,8 @@ set(ASSETS_cg
   assets-cg/pause.png
   assets-cg/menu.png
 )
+
+include_directories (${SHARED_PATH})
 
 fxconv_declare_assets(${ASSETS} ${ASSETS_cg} WITH_METADATA)
 

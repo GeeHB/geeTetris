@@ -12,7 +12,7 @@ Il permet aussi de jouer avec la calculatrice en mode horizontal (position stand
 | Dépôt &nbsp;| https://gitea.planet-casio.com/Jhb/geeTetris |
 |----- |-------------------------------------|
 | **Date** | 24 avril 2025 |
-| **Version stable** | **1.0.1** - branche `dev` |
+| **Version stable** | **1.0.2** - branche `dev` |
 | **Dépendances** |  **Casio / gint** |
 | **Testé sur** | *Linux* (Fedora 42) avec `code::blocks`|
 || *Casio Graph90+E* avec `gint`|
